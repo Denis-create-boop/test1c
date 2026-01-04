@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css"/>
+    {% block title %}{% endblock %}
+</head>
+<body>
+    <div class="body">
+
+        {% block header %}
+        {% endblock %}
+
+        <div class="inside_body">
+            {% block content %}
+            {% endblock %}
+        </div> 
+    </div> 
+<script>
+    const submitButton = document.getElementById('submitButton');
+    const radioButtons = document.querySelectorAll('input[name="answer"]');
+    const context = document.getElementById('context');
+    
+
+    function checkRadioSelections() {
+        let isChecked = false;
+
+        for (const radio of radioButtons) {
+            const div = document.getElementById(radio.value);
+            div.style.backgroundColor = '';
+            if (radio.checked) {
+                isChecked = true;
+                
+                if (radio.value === context.value) {
+                    const div = document.getElementById(radio.value);
+                    div.style.backgroundColor = 'green';
+                    
+                } else {
+                    div.style.backgroundColor = '';
+                    const divWrong = document.getElementById(radio.value);
+                    const divRight = document.getElementById(context.value);
+                    divWrong.style.backgroundColor = 'red';
+                    divRight.style.backgroundColor = 'green';
+                }
+                break;
+            }
+        }
+        submitButton.disabled = !isChecked;
+    }
+
+    radioButtons.forEach(radio => {
+        radio.addEventListener('change', checkRadioSelections);
+    });
+
+    checkRadioSelections();
+
+
+    const submitButtonParts = document.getElementById('submitButtonParts');
+    const radioButtonsParts = document.querySelectorAll('input[name="answerParts"]');
+    const contextParts = document.getElementById('context');
+    
+    function checkRadioSelectionsParts() {
+        let isChecked = false;
+        const wrong = '';
+        for (const radio of radioButtonsParts) {
+            const div = document.getElementById(radio.value);
+            console.log(radio.value);
+            console.log(contextParts.value);
+            if (radio.checked) {
+                isChecked = true;
+                if (radio.value === contextParts.value) {
+                    const div = document.getElementById(radio.value);
+                    div.style.backgroundColor = 'green';
+                    wrong.style.backgroundColor = '';
+                } else {
+                    div.style.backgroundColor = '';
+                    const divWrong = document.getElementById(radio.value);
+                    const divRight = document.getElementById(contextParts.value);
+                    wrong = divWrong;
+                    divWrong.style.backgroundColor = 'red';
+                    divRight.style.backgroundColor = 'green';
+                }
+                break;
+            }
+        }
+        submitButtonParts.disabled = !isChecked;
+    }
+    radioButtonsParts.forEach(radio => {
+        radio.addEventListener('change', checkRadioSelectionsParts);
+    });
+    checkRadioSelectionsParts();
+
+</script>
+</body>
+</html>

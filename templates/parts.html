@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>{{ context.title }}</title>
+{% endblock %}
+
+{% block header %}
+    <div class="header">
+        <h2 class="global_text">Учить по категориям, выберите категорию</h2>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <br>
+    {% for k, v in context.questions.items() %}
+        <div class="head_inside">
+        
+            <a class="start_button clean_a" href="{{ v.url }}">
+                <button class="start_button_1 global_text">{{ v.text }}</button>
+            </a>
+            <br>
+        </div>
+    {% endfor %}
+
+    <div class="head_inside">
+        <a class="start_button clean_a" href="{{ url_for('index') }}"><button class="start_button_1 global_text">На главную</button></a>
+        <br>
+    </div> 
+
+{% endblock %}
