@@ -9,6 +9,8 @@ REPEAT_QUESTIONS = []
 ANSWERS_LIST = []
 COUNT = 1
 FLAG = False
+EXAM_COUNT = 0
+
 
 
 def study_for_parts(title, url, questions):
@@ -35,7 +37,31 @@ def study_for_parts(title, url, questions):
             }
             COUNT += 1
     return context
-    
+ 
+ 
+def write():
+    id = Questions().get_last_id()
+    if id:
+        return
+    else:
+        data = {1: {"path": "./questions/part_one.txt", "db": PartOne()},
+                2: {"path": "./questions/part_two.txt", "db": PartTwo()},
+                3: {"path": "./questions/part_three.txt", "db": PartThree()},
+                4: {"path": "./questions/part_four.txt", "db": PartFour()},
+                5: {"path": "./questions/part_five.txt", "db": PartFive()},
+                6: {"path": "./questions/part_six.txt", "db": PartSix()},
+                7: {"path": "./questions/part_seven.txt", "db": PartSeven()},
+                8: {"path": "./questions/part_eight.txt", "db": PartEight()},}
+            #    9: {"path": "./questions/part_nine.txt", "db": PartNine()},
+            #    10: {"path": "./questions/part_ten.txt", "db": PartTen()},
+            #    11: {"path": "./questions/part_eleven.txt", "db": PartEleven()},
+            #    12: {"path": "./questions/part_twelve.txt", "db": PartTwelve()},
+             #   13: {"path": "./questions/part_thirteen.txt", "db": PartThirteen()},
+            #    14: {"path": "./questions/part_fourteen.txt", "db": PartFourteen()}}
+        for k, v in data.items():
+            write_to_db(v["path"], v["db"])
+            
+                  
     
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -59,12 +85,17 @@ def test():
     global QUESTIONS, REPEAT_QUESTIONS, FLAG, COUNT
     COUNT = 1
     FLAG = False
+    part_list = [PartOne(), PartTwo(), PartThree(), PartFour(), PartFive(), PartSix(), PartSeven(), PartEight(), PartNine(), PartTen(), PartEleven(), 
+                 PartTwelve(), PartThirteen(), PartFourteen()]
     questions = Questions()
     last_id = questions.get_last_id()
-    while len(QUESTIONS) < 14:
-        number = random.randrange(1, last_id+1)
-        if number not in QUESTIONS:
-            QUESTIONS.append(number)
+    
+    for part in part_list:
+        last_id = part.get_last_id()
+        number = random.randrange(1, last_id)
+        question = part.get_question(number)
+        QUESTIONS.append(question)
+
     REPEAT_QUESTIONS = QUESTIONS
     context = {
         "title": "test",
@@ -95,19 +126,14 @@ def test_with_answers():
     
 @app.route('/test_quest', methods=['GET', "POST"])
 def test_quest():
-    global QUESTIONS, FLAG, COUNT
+    global QUESTIONS, FLAG, COUNT, EXAM_COUNT
     COUNT = 1
     
-    if len(QUESTIONS) > 0:
+    if len(QUESTIONS) > 0  and COUNT != 14:
         if request.method == 'POST':
             ANSWERS_LIST.append(request.form['answer'])
-            id = QUESTIONS[0]
-            one_question = Questions().get_question(id=id)
-            print(one_question)
-            if len(QUESTIONS) == 1:
-                QUESTIONS = []
-            else:
-                QUESTIONS = QUESTIONS[1:]
+            one_question = QUESTIONS[EXAM_COUNT]
+            EXAM_COUNT += 1
                 
             context = {
                 "question": one_question,
@@ -116,9 +142,8 @@ def test_quest():
             }
 
         else:
-            id = QUESTIONS[0]
-            one_question = Questions().get_question(id=id)
-            QUESTIONS = QUESTIONS[1:]
+            one_question = QUESTIONS[EXAM_COUNT]
+            EXAM_COUNT += 1
             context = {
                 "question": one_question,
                 "flag": FLAG,
@@ -197,15 +222,15 @@ def study():
             3: {'text': '3 Редакторы и инструменты режима разработки', 'url': 'part_three'},
             4: {'text': '4 Конструкторы', 'url': 'part_four'},
             5: {'text': '5 Технология разработки', 'url': 'part_five'},
-            6: {'text': '6 Объектная модель прикладного решения', 'url': ''},
-            7: {'text': '7 Табличная модель прикладного решения', 'url': ''},
-            8: {'text': '8 Механизмы интеграции и обмена данными', 'url': ''},
-            9: {'text': '9 Система взаимодействия', 'url': ''},
-            10: {'text': '10 Интерфейсные механизмы', 'url': ''},
-            11: {'text': '11 Механизмы построения отчетности', 'url': ''},
-            12: {'text': '12 Механизмы оперативного учета', 'url': ''},
-            13: {'text': '13 Объекты и механизмы бухгалтирского учета', 'url': ''},
-            14: {'text': '14 Механизмы сложных переодических расчетов', 'url': ''}
+            6: {'text': '6 Объектная модель прикладного решения', 'url': 'part_six'},
+            7: {'text': '7 Табличная модель прикладного решения', 'url': 'part_seven'},
+            8: {'text': '8 Механизмы интеграции и обмена данными', 'url': 'part_eight'},
+            9: {'text': '9 Система взаимодействия', 'url': 'part_nine'},
+            10: {'text': '10 Интерфейсные механизмы', 'url': 'part_ten'},
+            11: {'text': '11 Механизмы построения отчетности', 'url': 'part_eleven'},
+            12: {'text': '12 Механизмы оперативного учета', 'url': 'part_twelve'},
+            13: {'text': '13 Объекты и механизмы бухгалтирского учета', 'url': 'part_thirteen'},
+            14: {'text': '14 Механизмы сложных переодических расчетов', 'url': 'part_fourteen'}
         },
         'flag': True,
     }
@@ -221,10 +246,10 @@ def part_one():
     questions = PartOne()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
-        context = study_for_parts("part_one", "part_one", questions)
+        context = study_for_parts("общие механизмы, понятия и термины", "part_one", questions)
     else:
         context = {
-            "title": "part_one",
+            "title": "общие механизмы, понятия и термины",
             "question": all_questions[COUNT],
             "url": "part_one",
             "flag": True,
@@ -242,10 +267,10 @@ def part_two():
     questions = PartTwo()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
-        context = study_for_parts("part_two", "part_two", questions)    
+        context = study_for_parts("Редакторы и инструменты общие", "part_two", questions)    
     else:
         context = {
-            "title": "part_two",
+            "title": "Редакторы и инструменты общие",
             "question": all_questions[COUNT],
             "url": "part_two",
             "flag": True,
@@ -263,10 +288,10 @@ def part_three():
     questions = PartThree()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
-        context = study_for_parts("part_three", "part_three", questions)    
+        context = study_for_parts("Редакторы и инструменты режима разработки", "part_three", questions)    
     else:
         context = {
-            "title": "part_three",
+            "title": "Редакторы и инструменты режима разработки",
             "question": all_questions[COUNT],
             "url": "part_three",
             "flag": True,
@@ -285,10 +310,10 @@ def part_four():
     questions = PartFour()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
-        context = study_for_parts("part_four", "part_four", questions)    
+        context = study_for_parts("Конструкторы", "part_four", questions)    
     else:
         context = {
-            "title": "part_four",
+            "title": "Конструкторы",
             "question": all_questions[COUNT],
             "url": "part_four",
             "flag": True,
@@ -306,10 +331,10 @@ def part_five():
     questions = PartFive()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
-        context = study_for_parts("part_five", "part_five", questions)    
+        context = study_for_parts("Технология разработки", "part_five", questions)    
     else:
         context = {
-            "title": "part_five",
+            "title": "Технология разработки",
             "question": all_questions[COUNT],
             "url": "part_five",
             "flag": True,
@@ -319,18 +344,201 @@ def part_five():
     
     return render_template('test.html', context=context)
 
+
+@app.route('/part_six', methods=['GET', 'POST'])
+def part_six():
+    global COUNT, FLAG
+    FLAG = True
+    questions = PartSix()
+    all_questions = questions.get_all_question()
+    if request.method == 'POST':
+        context = study_for_parts("Объектная модель прикладного решения", "part_six", questions)    
+    else:
+        context = {
+            "title": "Объектная модель прикладного решения",
+            "question": all_questions[COUNT],
+            "url": "part_six",
+            "flag": True,
+            'last_question': False,
+        }
+        COUNT += 1
+    
+    return render_template('test.html', context=context)
+  
+
+
+@app.route('/part_seven', methods=['GET', 'POST'])
+def part_seven():
+    global COUNT, FLAG
+    FLAG = True
+    questions = PartSeven()
+    all_questions = questions.get_all_question()
+    if request.method == 'POST':
+        context = study_for_parts("Табличная модель прикладного решения", "part_seven", questions)    
+    else:
+        context = {
+            "title": "Табличная модель прикладного решения",
+            "question": all_questions[COUNT],
+            "url": "part_seven",
+            "flag": True,
+            'last_question': False,
+        }
+        COUNT += 1
+    
+    return render_template('test.html', context=context)
+
+
+@app.route('/part_eight', methods=['GET', 'POST'])
+def part_eight():
+    global COUNT, FLAG
+    FLAG = True
+    questions = PartEight()
+    all_questions = questions.get_all_question()
+    if request.method == 'POST':
+        context = study_for_parts("Механизмы интеграции и обмена данными", "part_eight", questions)    
+    else:
+        context = {
+            "title": "Механизмы интеграции и обмена данными",
+            "question": all_questions[COUNT],
+            "url": "part_eight",
+            "flag": True,
+            'last_question': False,
+        }
+        COUNT += 1
+    
+    return render_template('test.html', context=context)
+ 
+
+@app.route('/part_nine', methods=['GET', 'POST'])
+def part_nine():
+    global COUNT, FLAG
+    FLAG = True
+    questions = PartNine()
+    all_questions = questions.get_all_question()
+    if request.method == 'POST':
+        context = study_for_parts("Система взаимодействия", "part_nine", questions)    
+    else:
+        context = {
+            "title": "Система взаимодействия",
+            "question": all_questions[COUNT],
+            "url": "part_nine",
+            "flag": True,
+            'last_question': False,
+        }
+        COUNT += 1
+    
+    return render_template('test.html', context=context)
+
+
+@app.route('/part_ten', methods=['GET', 'POST'])
+def part_ten():
+    global COUNT, FLAG
+    FLAG = True
+    questions = PartTen()
+    all_questions = questions.get_all_question()
+    if request.method == 'POST':
+        context = study_for_parts("Интерфейсные механизмы", "part_ten", questions)    
+    else:
+        context = {
+            "title": "Интерфейсные механизмы",
+            "question": all_questions[COUNT],
+            "url": "part_ten",
+            "flag": True,
+            'last_question': False,
+        }
+        COUNT += 1
+    
+    return render_template('test.html', context=context)
+
+
+@app.route('/part_eleven', methods=['GET', 'POST'])
+def part_eleven():
+    global COUNT, FLAG
+    FLAG = True
+    questions = PartEleven()
+    all_questions = questions.get_all_question()
+    if request.method == 'POST':
+        context = study_for_parts("Механизмы построения отчетности", "part_eleven", questions)    
+    else:
+        context = {
+            "title": "Механизмы построения отчетности",
+            "question": all_questions[COUNT],
+            "url": "part_eleven",
+            "flag": True,
+            'last_question': False,
+        }
+        COUNT += 1
+    
+    return render_template('test.html', context=context)
+
+
+@app.route('/part_twelve', methods=['GET', 'POST'])
+def part_twelve():
+    global COUNT, FLAG
+    FLAG = True
+    questions = PartTwelve()
+    all_questions = questions.get_all_question()
+    if request.method == 'POST':
+        context = study_for_parts("Механизмы оперативного учета", "part_twelve", questions)    
+    else:
+        context = {
+            "title": "Механизмы оперативного учета",
+            "question": all_questions[COUNT],
+            "url": "part_twelve",
+            "flag": True,
+            'last_question': False,
+        }
+        COUNT += 1
+    
+    return render_template('test.html', context=context)
+
+
+@app.route('/part_thirteen', methods=['GET', 'POST'])
+def part_thirteen():
+    global COUNT, FLAG
+    FLAG = True
+    questions = PartThirteen()
+    all_questions = questions.get_all_question()
+    if request.method == 'POST':
+        context = study_for_parts("Объекты и механизмы бухгалтирского учета", "part_thirteen", questions)    
+    else:
+        context = {
+            "title": "Объекты и механизмы бухгалтирского учета",
+            "question": all_questions[COUNT],
+            "url": "part_thirteen",
+            "flag": True,
+            'last_question': False,
+        }
+        COUNT += 1
+    
+    return render_template('test.html', context=context)
+
+
+@app.route('/part_fourteen', methods=['GET', 'POST'])
+def part_fourteen():
+    global COUNT, FLAG
+    FLAG = True
+    questions = PartFourteen()
+    all_questions = questions.get_all_question()
+    if request.method == 'POST':
+        context = study_for_parts("Механизмы сложных переодических расчетов", "part_fourteen", questions)    
+    else:
+        context = {
+            "title": "Механизмы сложных переодических расчетов",
+            "question": all_questions[COUNT],
+            "url": "part_fourteen",
+            "flag": True,
+            'last_question': False,
+        }
+        COUNT += 1
+    
+    return render_template('test.html', context=context)
+
+
     
 if __name__ == '__main__':
-    id = Questions().get_last_id()
-    if id:
-        app.run()
-    else:
-        data = {1: {"path": "./questions/part_one.txt", "db": PartOne()},
-                2: {"path": "./questions/part_two.txt", "db": PartTwo()},
-                3: {"path": "./questions/part_three.txt", "db": PartThree()},
-                4: {"path": "./questions/part_four.txt", "db": PartFour()},
-                5: {"path": "./questions/part_five.txt", "db": PartFive()}}
-        for k, v in data.items():
-            write_to_db(v["path"], v["db"])
-
-        app.run()
+    write()
+    app.run()
+    
+    
+    
