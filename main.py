@@ -40,32 +40,35 @@ def study_for_parts(title, url, questions):
  
  
 def write():
-    id = Questions().get_last_id()
-    if id:
-        return
-    else:
-        data = {1: {"path": "./questions/part_one.txt", "db": PartOne()},
-                2: {"path": "./questions/part_two.txt", "db": PartTwo()},
-                3: {"path": "./questions/part_three.txt", "db": PartThree()},
-                4: {"path": "./questions/part_four.txt", "db": PartFour()},
-                5: {"path": "./questions/part_five.txt", "db": PartFive()},
-                6: {"path": "./questions/part_six.txt", "db": PartSix()},
-                7: {"path": "./questions/part_seven.txt", "db": PartSeven()},
-                8: {"path": "./questions/part_eight.txt", "db": PartEight()},}
-            #    9: {"path": "./questions/part_nine.txt", "db": PartNine()},
-            #    10: {"path": "./questions/part_ten.txt", "db": PartTen()},
-            #    11: {"path": "./questions/part_eleven.txt", "db": PartEleven()},
-            #    12: {"path": "./questions/part_twelve.txt", "db": PartTwelve()},
-             #   13: {"path": "./questions/part_thirteen.txt", "db": PartThirteen()},
-            #    14: {"path": "./questions/part_fourteen.txt", "db": PartFourteen()}}
-        for k, v in data.items():
+    
+    data = {1: {"path": "./questions/part_one.txt", "db": PartOne()},
+            2: {"path": "./questions/part_two.txt", "db": PartTwo()},
+            3: {"path": "./questions/part_three.txt", "db": PartThree()},
+            4: {"path": "./questions/part_four.txt", "db": PartFour()},
+            5: {"path": "./questions/part_five.txt", "db": PartFive()},
+            6: {"path": "./questions/part_six.txt", "db": PartSix()},
+            7: {"path": "./questions/part_seven.txt", "db": PartSeven()},
+            8: {"path": "./questions/part_eight.txt", "db": PartEight()},
+            9: {"path": "./questions/part_nine.txt", "db": PartNine()},
+            10: {"path": "./questions/part_ten.txt", "db": PartTen()},
+            11: {"path": "./questions/part_eleven.txt", "db": PartEleven()},
+            12: {"path": "./questions/part_twelve.txt", "db": PartTwelve()},
+            13: {"path": "./questions/part_thirteen.txt", "db": PartThirteen()},
+            14: {"path": "./questions/part_fourteen.txt", "db": PartFourteen()}}
+    for k, v in data.items():
+        if v["db"].get_last_id():
+            continue
+        else:
             write_to_db(v["path"], v["db"])
-            
-                  
+                              
     
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    global COUNT
+    global COUNT, QUESTIONS, EXAM_COUNT, REPEAT_QUESTIONS, ANSWERS_LIST
+    QUESTIONS = []
+    EXAM_COUNT = 0
+    REPEAT_QUESTIONS = []
+    ANSWERS_LIST = []
     COUNT = 1
     if request.method == 'POST':
         context = {
@@ -98,7 +101,7 @@ def test():
 
     REPEAT_QUESTIONS = QUESTIONS
     context = {
-        "title": "test",
+        "title": "Экзамен",
         'url': 'test_quest',
     }
     
@@ -109,15 +112,19 @@ def test_with_answers():
     global QUESTIONS, REPEAT_QUESTIONS, FLAG, COUNT
     COUNT = 1
     FLAG = True
+    part_list = [PartOne(), PartTwo(), PartThree(), PartFour(), PartFive(), PartSix(), PartSeven(), PartEight(), PartNine(), PartTen(), PartEleven(), 
+                 PartTwelve(), PartThirteen(), PartFourteen()]
     questions = Questions()
     last_id = questions.get_last_id()
-    while len(QUESTIONS) < 14:
-        number = random.randrange(1, last_id+1)
-        if number not in QUESTIONS:
-            QUESTIONS.append(number)
+    
+    for part in part_list:
+        last_id = part.get_last_id()
+        number = random.randrange(1, last_id)
+        question = part.get_question(number)
+        QUESTIONS.append(question)
     REPEAT_QUESTIONS = QUESTIONS
     context = {
-        "title": "with_answers",
+        "title": "Экзамен с ответами",
         'url': 'test_quest',
     }
     
@@ -128,31 +135,36 @@ def test_with_answers():
 def test_quest():
     global QUESTIONS, FLAG, COUNT, EXAM_COUNT
     COUNT = 1
-    
-    if len(QUESTIONS) > 0  and COUNT != 14:
+
+    if EXAM_COUNT < 14:
         if request.method == 'POST':
             ANSWERS_LIST.append(request.form['answer'])
             one_question = QUESTIONS[EXAM_COUNT]
+            one_question["id"] = EXAM_COUNT + 1
             EXAM_COUNT += 1
                 
             context = {
                 "question": one_question,
                 'flag': FLAG,
                 'url': 'test_quest',
+                "title": "Экзамен"
             }
 
         else:
             one_question = QUESTIONS[EXAM_COUNT]
+            one_question["id"] = EXAM_COUNT + 1
             EXAM_COUNT += 1
             context = {
                 "question": one_question,
                 "flag": FLAG,
                 'url': 'test_quest',
+                "title": "Экзамен"
             }
         
         return render_template('test.html', context=context)
     else:
         ANSWERS_LIST.append(request.form['answer'])
+        EXAM_COUNT = 0
         answers = 0
         misstakes = 0
         misstake_dict = {
@@ -165,23 +177,30 @@ def test_quest():
             7: "ошибок",
             8: "ошибок",
             9: "ошибок",
-            10: "ошибок"
+            10: "ошибок",
+            11: "ошибок",
+            12: "ошибок",
+            13: "ошибок",
+            14: "ошибок"
         }
-        for i in range(len(REPEAT_QUESTIONS)):
+        
+        for question in REPEAT_QUESTIONS:
 
-            if Questions().get_question(REPEAT_QUESTIONS[i])['answer'] == ANSWERS_LIST[i]:
+            if Questions().get_question(question["id"])['answer'] == ANSWERS_LIST[EXAM_COUNT]:
                 answers += 1
+                EXAM_COUNT += 1
             else:
                 misstakes += 1
         if misstakes > 2:
             result = f"Тест не пройден вы совершили {misstakes} {misstake_dict[misstakes]}"
         else:
             result = "Поздровляем тест сдан"
-            
+        EXAM_COUNT = 0    
         context = {
-            "title": "result",
+            "title": "Результат",
             "result": result,
             "misstakes": misstakes,
+            "flag": FLAG
         }
         
         return render_template('result.html', context=context)
@@ -189,24 +208,41 @@ def test_quest():
 
 @app.route('/show_misstakes')
 def show_misstakes():
-    global REPEAT_QUESTIONS, ANSWERS_LIST
-    question = Questions().get_question(REPEAT_QUESTIONS[0])
-    REPEAT_QUESTIONS = REPEAT_QUESTIONS[1:]
-    answer = ANSWERS_LIST[0]
-    ANSWERS_LIST = ANSWERS_LIST[1:]
-    if len(REPEAT_QUESTIONS) > 0:
+    global REPEAT_QUESTIONS, ANSWERS_LIST, EXAM_COUNT
+    
+    if EXAM_COUNT < 14:
         url = 'show_misstakes'
         message = "Следующий вопрос"
+        question = REPEAT_QUESTIONS[EXAM_COUNT]
+        answer = ANSWERS_LIST[EXAM_COUNT]
+        EXAM_COUNT += 1
     else:
         url = 'index'
         message = "На главную"
-    context = {
-        "title": "show misstakes",
-        "question": question,
-        "answer": answer,
-        "url": url,
-        "message": message
-    }
+        
+    if EXAM_COUNT < 14:
+        context = {
+            "title": "Посмотреть ошибки",
+            "question": question,
+            "answer": answer,
+            "url": url,
+            "message": message,
+            "flag": True
+        }
+    elif EXAM_COUNT == 14:
+        context = {
+            "title": "Посмотреть ошибки",
+            "question": question,
+            "answer": answer,
+            "url": url,
+            "message": message,
+            "flag": False
+        }
+    else:
+        context = {
+            "title": "Посмотреть ошибки",
+            "flag": False
+        }
 
     return render_template('answers.html', context=context)
 
@@ -306,7 +342,6 @@ def part_three():
 def part_four():
     global COUNT, FLAG
     FLAG = True
-    COUNT = 52
     questions = PartFour()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
