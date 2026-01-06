@@ -105,10 +105,13 @@
                 <a class="start_button clean_a" href="{{ url_for('login') }}"><button class="start_button_1 global_text">Назад</button></a>
                 <br>
             </div>
-            <div class="head_inside">
-                <a class="start_button clean_a" href="{{ url_for('index') }}"><button class="start_button_1 global_text">На Главную</button></a>
-                <br>
-            </div>
+            <form action="{{ url_for('index') }}" method="post">
+                <div class="head_inside">
+                    <a class="start_button clean_a" href="{{ url_for('index') }}">
+                        <button name="name" value="{{ [context.admin, context.user] }}" class="start_button_1 global_text">На главную</button></a>
+                    <br>
+                </div>
+            </form>
         </div>
     {% else %}
     <div class="form">

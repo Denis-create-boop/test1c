@@ -6,7 +6,7 @@
 
 
 {% block content %}
-    {% if context.flag %}
+    {% if context.admin %}
         <div class="head_inside">
             <h3 class="global_text">{{ context.message }}</h3>
         </div>
@@ -15,7 +15,7 @@
             <br>
         </div>
         <div class="head_inside">
-            <a class="start_button clean_a" href="{{ url_for('index') }}"><button class="start_button_1 global_text">На главную</button></a>
+            <a class="start_button clean_a" href="{{ url_for('index') }}"><button name="name" value="{{ [context.admin, context.user] }}" class="start_button_1 global_text">На главную</button></a>
             <br>
         </div>
         <div class="head_inside">
@@ -25,10 +25,6 @@
     {% else %}
         <div class="head_inside">
             <h3 class="misstake">{{ context.message }}</h3>
-        </div>
-        <div class="head_inside">
-            <a class="start_button clean_a" href="{{ url_for('index') }}"><button class="start_button_1 global_text">На главную</button></a>
-            <br>
         </div>
         <div class="head_inside">
             <a class="start_button clean_a" href="{{ url_for('login') }}"><button class="start_button_1 global_text">Войти</button></a>

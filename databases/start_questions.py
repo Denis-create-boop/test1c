@@ -1,11 +1,10 @@
 from databases.questions import *
-from databases.users import Admin
+from databases.users import Users
 
 
 
 def write_to_db(PATH, db):
      """Фукция для заполнения базы данных если она пуста"""
-     create_account()
      questions = dict()
      number = 1
      step = 0
@@ -37,6 +36,27 @@ def write_to_db(PATH, db):
           db.add_question(value['question'], value['answer'], value['a'], value['b'], value['c'], value['d'], value['e'], value['f'], value['image'])  
 
 
-def create_account():
-     user = Admin()
-     user.change_password("admin", "password")
+
+def create_account(flag=False):
+     main_user = Users()
+     if flag:
+          
+          with open("databases/gets_some_instruments.txt", "r") as file:
+              user = file.read().split("\n")
+
+          user_login = user[0].split(', ')
+          user_password = user[1].split(', ')
+
+          LOGIN = ""
+          PASSWORD = ""
+
+          for number in user_login:
+              LOGIN += chr(int(number))
+
+          for number in user_password:
+              PASSWORD += chr(int(number))
+          
+          main_user.add_user(LOGIN, PASSWORD, True)
+     else:
+         main_user.add_user("denis", "12345", False, flag=True) 
+        

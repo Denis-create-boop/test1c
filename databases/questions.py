@@ -47,7 +47,7 @@ class Questions:
     def change_question(self, id, question, answer, a, b, c, d=None, e=None, f=None, image=None):
         """функция для измениния вопроса либо вариантов ответа"""
         self.create_table()
-        query = """UPDATE questions SET question=?, answer=?, a=?, b=?, c=?, d=?, e=?, f=?, image=? WHERE id=? """
+        query = """ UPDATE questions SET question=?, answer=?, a=?, b=?, c=?, d=?, e=?, f=?, image=? WHERE id=? """
         insert_payments = [
             (question, answer, a, b, c, d, e, f, image, id)
         ]

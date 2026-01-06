@@ -28,23 +28,37 @@
 
         for (const radio of radioButtons) {
             const div = document.getElementById(radio.value);
-            div.style.backgroundColor = '';
             if (radio.checked) {
-                isChecked = true;
-                
+                isChecked = true; 
                 if (radio.value === context.value) {
                     const div = document.getElementById(radio.value);
                     div.style.backgroundColor = 'green';
+
+                    for (const new_radio of radioButtons) {
+                        if (new_radio != radio) {
+                            const bg = document.getElementById(new_radio.value);
+                            bg.style.backgroundColor = '';
+                        }
+                        
+                    }
                     
                 } else {
-                    div.style.backgroundColor = '';
                     const divWrong = document.getElementById(radio.value);
                     const divRight = document.getElementById(context.value);
+
+                    for (const new_radio of radioButtons) {
+                        if (new_radio.value != context.value && new_radio != radio.value) {
+                            const bg = document.getElementById(new_radio.value);
+                            bg.style.backgroundColor = '';
+                        }
+                        
+                    }
                     divWrong.style.backgroundColor = 'red';
                     divRight.style.backgroundColor = 'green';
-                }
-                break;
-            }
+
+                    
+                }break;
+            } 
         }
         submitButton.disabled = !isChecked;
     }
@@ -62,27 +76,39 @@
     
     function checkRadioSelectionsParts() {
         let isChecked = false;
-        const wrong = '';
         for (const radio of radioButtonsParts) {
             const div = document.getElementById(radio.value);
-            console.log(radio.value);
-            console.log(contextParts.value);
             if (radio.checked) {
                 isChecked = true;
+                
                 if (radio.value === contextParts.value) {
-                    const div = document.getElementById(radio.value);
+                    for (const new_radio of radioButtonsParts) {
+                        if (new_radio != radio) {
+                            const bg = document.getElementById(new_radio.value);
+                            bg.style.backgroundColor = '';
+                        }
+                        
+                    }
                     div.style.backgroundColor = 'green';
-                    wrong.style.backgroundColor = '';
                 } else {
-                    div.style.backgroundColor = '';
                     const divWrong = document.getElementById(radio.value);
                     const divRight = document.getElementById(contextParts.value);
                     wrong = divWrong;
+
+                    for (const new_radio of radioButtonsParts) {
+                        if (new_radio.value != context.value && new_radio != radio.value) {
+                            const bg = document.getElementById(new_radio.value);
+                            bg.style.backgroundColor = '';
+                        }
+                        
+                    }
                     divWrong.style.backgroundColor = 'red';
                     divRight.style.backgroundColor = 'green';
-                }
-                break;
+                    
+                } break;
+
             }
+            
         }
         submitButtonParts.disabled = !isChecked;
     }

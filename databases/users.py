@@ -1,7 +1,7 @@
 import sqlite3
 
 
-class Admin:
+class Users:
     
     def __init__(self):
         self.db = None
@@ -10,34 +10,65 @@ class Admin:
     
     def create_table(self):
         """функция для создания таблицы"""
-        with sqlite3.connect('./databases/admin.db') as db:
+        with sqlite3.connect('./databases/users.db') as db:
             self.db = db
             self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS Admin (login Text, password Text) """
+            query = """ CREATE TABLE IF NOT EXISTS users (login Text, password Text, is_admin TEXT) """
             self.cursor.execute(query)
             self.db.commit()
             
             
-    def change_password(self, new_login, new_password, flag=False):
+    def add_user(self, new_login, new_password, admin, flag=False):
         self.create_table()
         if flag:
-            query = """UPDATE Admin SET password=? WHERE login=?"""
-            self.cursor.executemany(query, [(new_password, new_login,)])
+            query = """ INSERT INTO users (login, password, is_admin) VALUES(?, ?, ?) """
+            self.cursor.executemany(query, [(new_login, new_password, admin,)])
             self.db.commit()
         
         else:
-            query = """INSERT INTO Admin (login, password) VALUES (?, ?)"""
-            self.cursor.executemany(query, [(new_login, new_password,)])
-            self.db.commit()
+            query = """ SELECT * FROM users WHERE is_admin=1 """
+            self.cursor.execute(query)
+            is_admin = False
+            for row in self.cursor:
+                is_admin = True
+            if is_admin:
+                return
+            else:
+                query = """ INSERT INTO users (login, password, is_admin) VALUES (?, ?, ?) """
+                self.cursor.executemany(query, [(new_login, new_password, admin,)])
+                self.db.commit()
+
+
             
             
-    def get_login_and_password(self):
+    def get_login_and_password(self, send_login):
         self.create_table()
-        query = """SELECT * FROM Admin"""
+        str_query = f""" SELECT * FROM users WHERE login='{send_login}' """
+        query = str_query
         self.cursor.execute(query)
-        data = {}
+        data = dict()
         for row in self.cursor:
             data["login"] = row[0]
             data["password"] = row[1]
+            data["admin"] = row[2]
             
         return data
+    
+    def get_all(self):
+        self.create_table()
+        quesry = """ SELECT * FROM users """
+        self.cursor.execute(quesry)
+        data = []
+        for row in self.cursor:
+            data.append(row)
+            
+        return data
+    
+    
+
+        
+    
+            
+    
+
+

@@ -3,9 +3,7 @@ from databases.start_questions import *
 import random
 
 
-    
 QUESTIONS = []
-REPEAT_QUESTIONS = []
 ANSWERS_LIST = []
 COUNT = 1
 FLAG = False
@@ -64,30 +62,56 @@ def write():
     
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    global COUNT, QUESTIONS, EXAM_COUNT, REPEAT_QUESTIONS, ANSWERS_LIST
+    global COUNT, QUESTIONS, EXAM_COUNT, ANSWERS_LIST
+    
+    create_account(flag=True)
+    create_account()
     QUESTIONS = []
     EXAM_COUNT = 0
-    REPEAT_QUESTIONS = []
     ANSWERS_LIST = []
     COUNT = 1
     if request.method == 'POST':
+
+        params = Online().get_params()
+        ADMIN = False if int(params["admin"]) == 0 else  True
+        USER = False if int(params["user"]) == 0 else True
+
+        params = Online()
+        params.change_params(ADMIN, USER)    
         context = {
             'title': '1c', 
             'flag': True,
+            "user": USER,
+            "admin": ADMIN,
+
         }
+        if ADMIN or USER:
+            return render_template('index.html', context=context)
+        else:
+            return render_template('login.html', context=context)
     else:
+        params = Online().get_params()
+        ADMIN = False if int(params["admin"]) == 0 else  True
+        USER = False if int(params["user"]) == 0 else True
         context = {
             'title': '1c', 
             'flag': False,
+            "admin": ADMIN,
+            "user": USER,
+
         }
-    return render_template('index.html', context=context)
+        if ADMIN or USER:
+            return render_template('index.html', context=context)
+        else:
+            return render_template('login.html', context=context)
 
 
 @app.route('/test')
 def test():
-    global QUESTIONS, REPEAT_QUESTIONS, FLAG, COUNT
+    global QUESTIONS, FLAG, COUNT
     COUNT = 1
     FLAG = False
+    
     part_list = [PartOne(), PartTwo(), PartThree(), PartFour(), PartFive(), PartSix(), PartSeven(), PartEight(), PartNine(), PartTen(), PartEleven(), 
                  PartTwelve(), PartThirteen(), PartFourteen()]
     questions = Questions()
@@ -99,17 +123,22 @@ def test():
         question = part.get_question(number)
         QUESTIONS.append(question)
 
-    REPEAT_QUESTIONS = QUESTIONS
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True     
     context = {
         "title": "Экзамен",
         'url': 'test_quest',
+        "admin": ADMIN,
+        "user": USER,
     }
+
     
     return render_template('test.html', context=context)
     
 @app.route('/test_with_answers') 
 def test_with_answers():
-    global QUESTIONS, REPEAT_QUESTIONS, FLAG, COUNT
+    global QUESTIONS, FLAG, COUNT
     COUNT = 1
     FLAG = True
     part_list = [PartOne(), PartTwo(), PartThree(), PartFour(), PartFive(), PartSix(), PartSeven(), PartEight(), PartNine(), PartTen(), PartEleven(), 
@@ -122,10 +151,15 @@ def test_with_answers():
         number = random.randrange(1, last_id)
         question = part.get_question(number)
         QUESTIONS.append(question)
-    REPEAT_QUESTIONS = QUESTIONS
+
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True 
     context = {
         "title": "Экзамен с ответами",
         'url': 'test_quest',
+        "admin": ADMIN,
+        "user": USER,
     }
     
     return render_template('test.html', context=context)
@@ -138,6 +172,10 @@ def test_quest():
 
     if EXAM_COUNT < 14:
         if request.method == 'POST':
+            params = Online().get_params()
+            ADMIN = False if int(params["admin"]) == 0 else  True
+            USER = False if int(params["user"]) == 0 else True
+               
             ANSWERS_LIST.append(request.form['answer'])
             one_question = QUESTIONS[EXAM_COUNT]
             one_question["id"] = EXAM_COUNT + 1
@@ -147,18 +185,25 @@ def test_quest():
                 "question": one_question,
                 'flag': FLAG,
                 'url': 'test_quest',
-                "title": "Экзамен"
+                "title": "Экзамен",
+                "admin": ADMIN,
+                "user": USER,
             }
 
         else:
             one_question = QUESTIONS[EXAM_COUNT]
             one_question["id"] = EXAM_COUNT + 1
             EXAM_COUNT += 1
+            params = Online().get_params()
+            ADMIN = False if int(params["admin"]) == 0 else  True
+            USER = False if int(params["user"]) == 0 else True
             context = {
                 "question": one_question,
                 "flag": FLAG,
                 'url': 'test_quest',
-                "title": "Экзамен"
+                "title": "Экзамен",
+                "admin": ADMIN,
+                "user": USER,
             }
         
         return render_template('test.html', context=context)
@@ -184,9 +229,8 @@ def test_quest():
             14: "ошибок"
         }
         
-        for question in REPEAT_QUESTIONS:
-
-            if Questions().get_question(question["id"])['answer'] == ANSWERS_LIST[EXAM_COUNT]:
+        for question in QUESTIONS:
+            if question['answer'] == ANSWERS_LIST[EXAM_COUNT]:
                 answers += 1
                 EXAM_COUNT += 1
             else:
@@ -195,12 +239,17 @@ def test_quest():
             result = f"Тест не пройден вы совершили {misstakes} {misstake_dict[misstakes]}"
         else:
             result = "Поздровляем тест сдан"
-        EXAM_COUNT = 0    
+        EXAM_COUNT = 0   
+        params = Online().get_params()
+        ADMIN = False if int(params["admin"]) == 0 else  True
+        USER = False if int(params["user"]) == 0 else True 
         context = {
             "title": "Результат",
             "result": result,
             "misstakes": misstakes,
-            "flag": FLAG
+            "flag": FLAG,
+            "admin": ADMIN,
+            "user": USER,
         }
         
         return render_template('result.html', context=context)
@@ -208,18 +257,20 @@ def test_quest():
 
 @app.route('/show_misstakes')
 def show_misstakes():
-    global REPEAT_QUESTIONS, ANSWERS_LIST, EXAM_COUNT
+    global  ANSWERS_LIST, EXAM_COUNT
     
     if EXAM_COUNT < 14:
         url = 'show_misstakes'
         message = "Следующий вопрос"
-        question = REPEAT_QUESTIONS[EXAM_COUNT]
+        question = QUESTIONS[EXAM_COUNT]
         answer = ANSWERS_LIST[EXAM_COUNT]
         EXAM_COUNT += 1
     else:
         url = 'index'
         message = "На главную"
-        
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True    
     if EXAM_COUNT < 14:
         context = {
             "title": "Посмотреть ошибки",
@@ -227,7 +278,9 @@ def show_misstakes():
             "answer": answer,
             "url": url,
             "message": message,
-            "flag": True
+            "flag": True,
+            "admin": ADMIN,
+            "user": USER,
         }
     elif EXAM_COUNT == 14:
         context = {
@@ -236,12 +289,16 @@ def show_misstakes():
             "answer": answer,
             "url": url,
             "message": message,
-            "flag": False
+            "flag": False,
+            "admin": ADMIN,
+            "user": USER,
         }
     else:
         context = {
             "title": "Посмотреть ошибки",
-            "flag": False
+            "flag": False,
+            "admin": ADMIN,
+            "user": USER,
         }
 
     return render_template('answers.html', context=context)
@@ -251,6 +308,9 @@ def show_misstakes():
 def study():
     global COUNT
     COUNT = 1
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True
     context = {
         'questions': {
             1: {'text': '1 общие механизмы, понятия и термины', 'url': 'part_one'},
@@ -269,6 +329,8 @@ def study():
             14: {'text': '14 Механизмы сложных переодических расчетов', 'url': 'part_fourteen'}
         },
         'flag': True,
+        "admin": ADMIN,
+        "user": USER,
     }
     
     
@@ -279,6 +341,9 @@ def study():
 def part_one():
     global COUNT, FLAG
     FLAG = True
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True
     questions = PartOne()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
@@ -290,6 +355,8 @@ def part_one():
             "url": "part_one",
             "flag": True,
             "last_question": False,
+            "admin": ADMIN,
+            "user": USER,
         }
         COUNT += 1
     
@@ -300,6 +367,9 @@ def part_one():
 def part_two():
     global COUNT, FLAG
     FLAG = True
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True
     questions = PartTwo()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
@@ -311,6 +381,8 @@ def part_two():
             "url": "part_two",
             "flag": True,
             'last_question': False,
+            "admin": ADMIN,
+            "user": USER,
         }
         COUNT += 1
     
@@ -321,6 +393,9 @@ def part_two():
 def part_three():
     global COUNT, FLAG
     FLAG = True
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True 
     questions = PartThree()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
@@ -332,6 +407,8 @@ def part_three():
             "url": "part_three",
             "flag": True,
             'last_question': False,
+            "admin": ADMIN,
+            "user": USER,
         }
         COUNT += 1
     
@@ -342,6 +419,9 @@ def part_three():
 def part_four():
     global COUNT, FLAG
     FLAG = True
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True
     questions = PartFour()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
@@ -353,6 +433,8 @@ def part_four():
             "url": "part_four",
             "flag": True,
             'last_question': False,
+            "admin": ADMIN,
+            "user": USER,
         }
         COUNT += 1
     
@@ -363,6 +445,9 @@ def part_four():
 def part_five():
     global COUNT, FLAG
     FLAG = True
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True
     questions = PartFive()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
@@ -374,6 +459,8 @@ def part_five():
             "url": "part_five",
             "flag": True,
             'last_question': False,
+            "admin": ADMIN,
+            "user": USER,
         }
         COUNT += 1
     
@@ -384,6 +471,9 @@ def part_five():
 def part_six():
     global COUNT, FLAG
     FLAG = True
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True
     questions = PartSix()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
@@ -395,17 +485,21 @@ def part_six():
             "url": "part_six",
             "flag": True,
             'last_question': False,
+            "admin": ADMIN,
+            "user": USER,
         }
         COUNT += 1
     
     return render_template('test.html', context=context)
   
 
-
 @app.route('/part_seven', methods=['GET', 'POST'])
 def part_seven():
     global COUNT, FLAG
     FLAG = True
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True
     questions = PartSeven()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
@@ -417,6 +511,8 @@ def part_seven():
             "url": "part_seven",
             "flag": True,
             'last_question': False,
+            "admin": ADMIN,
+            "user": USER,
         }
         COUNT += 1
     
@@ -427,6 +523,9 @@ def part_seven():
 def part_eight():
     global COUNT, FLAG
     FLAG = True
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True
     questions = PartEight()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
@@ -438,6 +537,8 @@ def part_eight():
             "url": "part_eight",
             "flag": True,
             'last_question': False,
+            "admin": ADMIN,
+            "user": USER,
         }
         COUNT += 1
     
@@ -448,6 +549,9 @@ def part_eight():
 def part_nine():
     global COUNT, FLAG
     FLAG = True
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True
     questions = PartNine()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
@@ -459,6 +563,8 @@ def part_nine():
             "url": "part_nine",
             "flag": True,
             'last_question': False,
+            "admin": ADMIN,
+            "user": USER,
         }
         COUNT += 1
     
@@ -469,6 +575,9 @@ def part_nine():
 def part_ten():
     global COUNT, FLAG
     FLAG = True
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True 
     questions = PartTen()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
@@ -480,6 +589,8 @@ def part_ten():
             "url": "part_ten",
             "flag": True,
             'last_question': False,
+            "admin": ADMIN,
+            "user": USER,
         }
         COUNT += 1
     
@@ -490,6 +601,9 @@ def part_ten():
 def part_eleven():
     global COUNT, FLAG
     FLAG = True
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True
     questions = PartEleven()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
@@ -501,6 +615,8 @@ def part_eleven():
             "url": "part_eleven",
             "flag": True,
             'last_question': False,
+            "admin": ADMIN,
+            "user": USER,
         }
         COUNT += 1
     
@@ -511,6 +627,9 @@ def part_eleven():
 def part_twelve():
     global COUNT, FLAG
     FLAG = True
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True
     questions = PartTwelve()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
@@ -522,6 +641,8 @@ def part_twelve():
             "url": "part_twelve",
             "flag": True,
             'last_question': False,
+            "admin": ADMIN,
+            "user": USER,
         }
         COUNT += 1
     
@@ -532,6 +653,9 @@ def part_twelve():
 def part_thirteen():
     global COUNT, FLAG
     FLAG = True
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True
     questions = PartThirteen()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
@@ -543,6 +667,8 @@ def part_thirteen():
             "url": "part_thirteen",
             "flag": True,
             'last_question': False,
+            "admin": ADMIN,
+            "user": USER,
         }
         COUNT += 1
     
@@ -553,6 +679,9 @@ def part_thirteen():
 def part_fourteen():
     global COUNT, FLAG
     FLAG = True
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True
     questions = PartFourteen()
     all_questions = questions.get_all_question()
     if request.method == 'POST':
@@ -564,6 +693,8 @@ def part_fourteen():
             "url": "part_fourteen",
             "flag": True,
             'last_question': False,
+            "admin": ADMIN,
+            "user": USER,
         }
         COUNT += 1
     
@@ -573,7 +704,9 @@ def part_fourteen():
     
 if __name__ == '__main__':
     write()
+    Online().change_params(False, False)
     app.run()
     
     
-    
+  
+# проверил 9 разделов  

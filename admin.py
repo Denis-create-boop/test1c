@@ -1,60 +1,92 @@
 from flask import Flask, render_template, request
 from databases.questions import Questions
-from databases.users import Admin
+from databases.users import Users
+from databases.params import *
 
 
 app = Flask(__name__)
 
 
 QUESTIONS = Questions()
-IF_AUTENTICATED = False
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    global IF_AUTENTICATED
+    params = Online()
     if request.method == 'POST':
-        user = Admin()
-        data = user.get_login_and_password()
-        if request.form["login"] == data["login"] and request.form["password"] == data["password"]:
-            context = {
-                "title": "administrator",
-                "message": "",
-                "flag": True,
-            }
-            IF_AUTENTICATED = True
-        
-            return render_template("login.html", context=context)
-        
+        user = Users()
+        try:
+            data = user.get_login_and_password(request.form["login"])
+        except:
+            data = {}
+        if data: 
+            if request.form["login"] == data["login"] and request.form["password"] == data["password"]:
+                if data["admin"] == '1':
+                    ADMIN = True
+                    USER = False 
+                    context = {
+                        "title": "administrator",
+                        "message": "",
+                        "admin": ADMIN,
+                        "user": USER,
+                    }
+                else:
+                    USER = True
+                    ADMIN = False
+                    context = {
+                        "title": data["login"],
+                        "message": "",
+                        "admin": ADMIN,
+                        "user": USER,
+                    }
+
+                params.change_params(ADMIN, USER)
+                return render_template("index.html", context=context)
+            else:
+                context = {
+                    "title": "login",
+                    "message": "Неверный логин или пароль",
+
+                }
+
+                return render_template('login.html', context=context)
         else:
             context = {
                 "title": "login",
                 "message": "Неверный логин или пароль",
-                "flag": False,
+
             }
             
             return render_template('login.html', context=context)
     else:
-        if IF_AUTENTICATED:
-            context = {
-                "title": "administrator",
-                "message": "",
-                "flag": True,
-            }
-        
-            return render_template("login.html", context=context)
-    
-        else:
-            context = {
-                'title': 'login',
-                "flag": False
-            }
-            return render_template('login.html', context=context)
-    
+        params = Online().get_params()
+        ADMIN = False if int(params["admin"]) == 0 else True
+        USER = False if int(params["user"]) == 0 else True
+        if ADMIN:
+            title = "administrator"
 
+        elif USER:
+            title = "1c"
+
+        else:
+            title = "login"
+            
+        context = {
+            "title": title,
+            "message": "",
+            "admin": ADMIN,
+            "user": USER,
+        }
+        
+        return render_template("login.html", context=context)
+
+    
 @app.route('/add_question', methods=['GET', 'POST'])
 def add_question():
-    if IF_AUTENTICATED:
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else True
+    USER = False if int(params["user"]) == 0 else True
+    if ADMIN:
         if request.method == "POST":
             question = request.form["question"]
             option_a = request.form["option_a"]
@@ -68,7 +100,8 @@ def add_question():
                 "message": "вопрос успешно добавлен",
                 "info": "добавить еще",
                 "url": 'add_question',
-                "flag": True,
+                "admin": ADMIN,
+                "user": USER,
             }
             
             return render_template('info.html', context=context)
@@ -77,7 +110,8 @@ def add_question():
         else:
             context = {
                 "title": "add new question",
-                "flag": False,
+                "admin": ADMIN,
+                "user": USER,
             }
         
             return render_template('add_question.html', context=context)
@@ -86,7 +120,8 @@ def add_question():
         context = {
             "title": "ошибка входа",
             "message": "Вы не авторизованы, пожалуйста войдите в аккаунт",
-            "flag": False,
+            "admin": ADMIN,
+            "user": USER,
         }
         
         return render_template("info.html", context=context)
@@ -94,8 +129,10 @@ def add_question():
     
 @app.route('/change_question', methods=['GET', 'POST'])
 def change_question():
-    global IF_AUTENTICATED
-    if IF_AUTENTICATED:
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else True
+    USER = False if int(params["user"]) == 0 else True
+    if ADMIN:
         if request.method == 'POST':
             if "question_id" in request.form.keys():
                 quest = Questions()
@@ -103,7 +140,8 @@ def change_question():
                 context = {
                     "title": "Изменение вопроса",
                     "question": question,
-                    "flag": True,
+                    "admin": ADMIN,
+                    "user": USER,
                 }
                 
                 return render_template("change_question.html", context=context)
@@ -123,7 +161,8 @@ def change_question():
                     "message": "вопрос успешно изменен",
                     "info": "изменить еще",
                     "url": 'change_question',
-                    "flag": True,
+                    "admin": ADMIN,
+                    "user": USER,
                 }
                 
                 return render_template("info.html", context=context)
@@ -131,7 +170,8 @@ def change_question():
         
             context = {
                 "title": "Изменение вопроса",
-                "flag": False,
+                "admin": ADMIN,
+                "user": USER,
             }
         
             return render_template("change_question.html", context=context)    
@@ -140,7 +180,8 @@ def change_question():
         context = {
             "title": "ошибка входа",
             "message": "Вы не авторизованы, пожалуйста войдите в аккаунт",
-            "flag": False,
+            "admin": ADMIN,
+            "user": USER,
         }
         
         return render_template("info.html", context=context)
@@ -148,14 +189,18 @@ def change_question():
     
 @app.route('/show_all_questions', methods=["GET", "POST"])
 def show_all_questions():
-    global IF_AUTENTICATED
-    if IF_AUTENTICATED:
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else True
+    USER = False if int(params["user"]) == 0 else True
+    if ADMIN:
         if request.method == 'POST':
             question = QUESTIONS.get_question(id=request.form['id'])
             
             context = {
                 "questions": question,
                 "title": "Просмотр вопроса",
+                "admin": ADMIN,
+                "user": USER,
             }
             
             return render_template('questions.html', context=context)
@@ -165,6 +210,8 @@ def show_all_questions():
             context = {
                 "questions": questions,
                 "title": "Все вопросы",
+                "admin": ADMIN,
+                "user": USER,
             }
         return render_template('questions.html', context=context)
     
@@ -172,7 +219,8 @@ def show_all_questions():
         context = {
             "title": "ошибка входа",
             "message": "Вы не авторизованы, пожалуйста войдите в аккаунт",
-            "flag": False,
+            "admin": ADMIN,
+            "user": USER,
         }
         
         return render_template("info.html", context=context)
@@ -180,8 +228,10 @@ def show_all_questions():
     
 @app.route("/show_question", methods=["GET", "POST"])
 def show_question():
-    global IF_AUTENTICATED
-    if IF_AUTENTICATED:
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else True
+    USER = False if int(params["user"]) == 0 else True
+    if ADMIN:
         if request.method == "POST":
             question = Questions().get_question(id=request.form["question_id"])
             option = ''
@@ -204,6 +254,8 @@ def show_question():
                 "flag": True,
                 "question": question,
                 "option": option,
+                "admin": ADMIN,
+                "user": USER,
             }
             return render_template("show_question.html", context=context)
         
@@ -211,6 +263,8 @@ def show_question():
             context = {
                 "title": "просмотр вопроса",
                 "flag": False,
+                "admin": ADMIN,
+                "user": USER,
             }
             return render_template("show_question.html", context=context)
     
@@ -219,6 +273,8 @@ def show_question():
             "title": "ошибка входа",
             "message": "Вы не авторизованы, пожалуйста войдите в аккаунт",
             "flag": False,
+            "admin": ADMIN,
+            "user": USER,
         }
         
         return render_template("info.html", context=context)

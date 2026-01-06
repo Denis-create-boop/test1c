@@ -11,6 +11,7 @@
 {% endblock %}
 
 {% block content %}
+
     <div class="head_inside">
        <h3 class="global_text">Проверь свои знания в 1с</h3>
     </div>
@@ -19,28 +20,34 @@
             <img src="{{ url_for('static', filename='images/1c.jpg') }}" alt="img" width="100%" height="35%">
         </div>
     </div>
-    
-     
-    <div class="head_inside">
-        <a class="start_button clean_a" href="{{ url_for('test') }}"><button class="start_button_1 global_text">Экзамен</button></a>
-        <br>
-    </div>
-    <div class="head_inside">
-        <a class="start_button clean_a" href="{{ url_for('test_with_answers') }}"><button class="start_button_1 global_text">Экзамен с ответами</button></a>
-        <br>
-    </div>
-    <div class="head_inside">
-        <a class="start_button clean_a" href="{{ url_for('study') }}"><button class="start_button_1 global_text">учить по разделам</button></a>
-        <br>
-    </div>
-    {% if context.flag %}
         <div class="head_inside">
-            <a class="start_button clean_a" href="{{ url_for('login') }}"><button class="start_button_1 global_text">В кабинет</button></a>
+            <a class="start_button clean_a" href="{{ url_for('test') }}"><button class="start_button_1 global_text">Экзамен</button></a>
+            <br>
+        </div>   
+
+        <div class="head_inside">
+            <a class="start_button clean_a" href="{{ url_for('test_with_answers') }}">
+                <button class="start_button_1 global_text">
+                    Экзамен с ответами
+                </button>
+            </a>
+            <br>
+        </div>    
+
+        <div class="head_inside">
+            <a class="start_button clean_a" href="{{ url_for('study') }}">
+                <button class="start_button_1 global_text">учить по разделам</button>
+            </a>
             <br>
         </div>
-    {% else %}
+
+    {% if context.admin %}
         <div class="head_inside">
-            <a class="start_button clean_a" href="{{ url_for('login') }}"><button class="start_button_1 global_text">Войти</button></a>
+            <a class="start_button clean_a" href="{{ url_for('login') }}">
+                <button class="start_button_1 global_text">
+                    В кабинет
+                </button>
+            </a>
             <br>
         </div>
     {% endif %}
