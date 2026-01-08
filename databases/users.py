@@ -21,9 +21,17 @@ class Users:
     def add_user(self, new_login, new_password, admin, flag=False):
         self.create_table()
         if flag:
-            query = """ INSERT INTO users (login, password, is_admin) VALUES(?, ?, ?) """
-            self.cursor.executemany(query, [(new_login, new_password, admin,)])
-            self.db.commit()
+            query = f""" SELECT * FROM users WHERE login='{new_login}' """
+            self.cursor.execute(query)
+            is_user = False
+            for row in self.cursor:
+                is_user = True
+            if is_user:
+                return
+            else:
+                query = """ INSERT INTO users (login, password, is_admin) VALUES(?, ?, ?) """
+                self.cursor.executemany(query, [(new_login, new_password, admin,)])
+                self.db.commit()
         
         else:
             query = """ SELECT * FROM users WHERE is_admin=1 """
@@ -67,7 +75,9 @@ class Users:
     
 
         
-    
+a = Users()
+
+print(a.get_all()) 
             
     
 

@@ -8,32 +8,58 @@ ANSWERS_LIST = []
 COUNT = 1
 FLAG = False
 EXAM_COUNT = 0
+part_list = [PartOne(), PartTwo(), PartThree(), PartFour(), PartFive(), PartSix(), PartSeven(), PartEight(), PartNine(), PartTen(), PartEleven(), 
+            PartTwelve(), PartThirteen(), PartFourteen()]
+
+
+params = Online().get_params()
+ADMIN = False if int(params["admin"]) == 0 else  True
+USER = False if int(params["user"]) == 0 else True
 
 
 
-def study_for_parts(title, url, questions):
+
+def study_for_parts(title, url, questions, back_flag=False):
     global COUNT, FLAG
     FLAG = True
+    
+    first = False
     all_questions = questions.get_all_question()
-    if all_questions[COUNT]:
+    if back_flag:
         if COUNT == questions.get_last_id():
-            context = {
-                "title": title,
-                "question": all_questions[COUNT],
-                "url": url,
-                "flag": True,
-                "last_question": True
-            }
-            COUNT = 1
+            COUNT -= 2
+
         else:
-            context = {
-                "title": title,
-                "question": all_questions[COUNT],
-                'url': url,
-                'flag': True,
-                'last_question': False,
-            }
-            COUNT += 1
+            if COUNT == 1:
+                COUNT = questions.get_last_id() - 1
+            else:    
+                COUNT -= 2
+            
+    if COUNT == questions.get_last_id():
+
+        context = {
+            "title": title,
+            "question": all_questions[COUNT],
+            "url": url,
+            "flag": True,
+            "first_question": first,
+            "last_question": True
+        }
+
+        COUNT = 1
+    else:
+        if COUNT == 1:
+            first = True
+
+        context = {
+            "title": title,
+            "question": all_questions[COUNT],
+            'url': url,
+            'flag': True,
+            "first_question": first,
+            'last_question': False,
+        }
+        COUNT += 1
     return context
  
  
@@ -58,26 +84,43 @@ def write():
             continue
         else:
             write_to_db(v["path"], v["db"])
-                              
+ 
+ 
+def get_context(title, questions, url, flag, first_question, last_question):
+    global ADMIN, USER, COUNT
+    all_questions = questions.get_all_question()
+    
+    context = {
+        "title": title,
+        "question": all_questions[COUNT],
+        "url": url,
+        "flag": flag,
+        "first_question": first_question,
+        "last_question": last_question,
+        "admin": ADMIN,
+        "user": USER,
+    }    
+    
+    return context                        
+ 
     
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    global COUNT, QUESTIONS, EXAM_COUNT, ANSWERS_LIST
+    global COUNT, QUESTIONS, EXAM_COUNT, ANSWERS_LIST, ADMIN, USER, params
+    
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True
     
     create_account(flag=True)
     create_account()
+    
     QUESTIONS = []
     EXAM_COUNT = 0
     ANSWERS_LIST = []
     COUNT = 1
+    
     if request.method == 'POST':
-
-        params = Online().get_params()
-        ADMIN = False if int(params["admin"]) == 0 else  True
-        USER = False if int(params["user"]) == 0 else True
-
-        params = Online()
-        params.change_params(ADMIN, USER)    
+        
         context = {
             'title': '1c', 
             'flag': True,
@@ -90,9 +133,6 @@ def index():
         else:
             return render_template('login.html', context=context)
     else:
-        params = Online().get_params()
-        ADMIN = False if int(params["admin"]) == 0 else  True
-        USER = False if int(params["user"]) == 0 else True
         context = {
             'title': '1c', 
             'flag': False,
@@ -108,12 +148,10 @@ def index():
 
 @app.route('/test')
 def test():
-    global QUESTIONS, FLAG, COUNT
+    global QUESTIONS, FLAG, COUNT, ADMIN, USER, part_list
     COUNT = 1
     FLAG = False
-    
-    part_list = [PartOne(), PartTwo(), PartThree(), PartFour(), PartFive(), PartSix(), PartSeven(), PartEight(), PartNine(), PartTen(), PartEleven(), 
-                 PartTwelve(), PartThirteen(), PartFourteen()]
+
     questions = Questions()
     last_id = questions.get_last_id()
     
@@ -122,10 +160,8 @@ def test():
         number = random.randrange(1, last_id)
         question = part.get_question(number)
         QUESTIONS.append(question)
-
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True     
+        random.shuffle(QUESTIONS)
+    
     context = {
         "title": "Экзамен",
         'url': 'test_quest',
@@ -138,11 +174,10 @@ def test():
     
 @app.route('/test_with_answers') 
 def test_with_answers():
-    global QUESTIONS, FLAG, COUNT
+    global QUESTIONS, FLAG, COUNT, ADMIN, USER, part_list
     COUNT = 1
     FLAG = True
-    part_list = [PartOne(), PartTwo(), PartThree(), PartFour(), PartFive(), PartSix(), PartSeven(), PartEight(), PartNine(), PartTen(), PartEleven(), 
-                 PartTwelve(), PartThirteen(), PartFourteen()]
+
     questions = Questions()
     last_id = questions.get_last_id()
     
@@ -152,9 +187,6 @@ def test_with_answers():
         question = part.get_question(number)
         QUESTIONS.append(question)
 
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True 
     context = {
         "title": "Экзамен с ответами",
         'url': 'test_quest',
@@ -167,44 +199,29 @@ def test_with_answers():
     
 @app.route('/test_quest', methods=['GET', "POST"])
 def test_quest():
-    global QUESTIONS, FLAG, COUNT, EXAM_COUNT
+    global QUESTIONS, FLAG, COUNT, EXAM_COUNT, ADMIN, USER
     COUNT = 1
 
     if EXAM_COUNT < 14:
-        if request.method == 'POST':
-            params = Online().get_params()
-            ADMIN = False if int(params["admin"]) == 0 else  True
-            USER = False if int(params["user"]) == 0 else True
-               
+        if request.method == 'POST':   
             ANSWERS_LIST.append(request.form['answer'])
             one_question = QUESTIONS[EXAM_COUNT]
             one_question["id"] = EXAM_COUNT + 1
             EXAM_COUNT += 1
-                
-            context = {
-                "question": one_question,
-                'flag': FLAG,
-                'url': 'test_quest',
-                "title": "Экзамен",
-                "admin": ADMIN,
-                "user": USER,
-            }
 
         else:
             one_question = QUESTIONS[EXAM_COUNT]
             one_question["id"] = EXAM_COUNT + 1
             EXAM_COUNT += 1
-            params = Online().get_params()
-            ADMIN = False if int(params["admin"]) == 0 else  True
-            USER = False if int(params["user"]) == 0 else True
-            context = {
-                "question": one_question,
-                "flag": FLAG,
-                'url': 'test_quest',
-                "title": "Экзамен",
-                "admin": ADMIN,
-                "user": USER,
-            }
+
+        context = {
+            "question": one_question,
+            "flag": FLAG,
+            'url': 'test_quest',
+            "title": "Экзамен",
+            "admin": ADMIN,
+            "user": USER,
+        }
         
         return render_template('test.html', context=context)
     else:
@@ -235,14 +252,13 @@ def test_quest():
                 EXAM_COUNT += 1
             else:
                 misstakes += 1
+                EXAM_COUNT += 1
         if misstakes > 2:
             result = f"Тест не пройден вы совершили {misstakes} {misstake_dict[misstakes]}"
         else:
             result = "Поздровляем тест сдан"
         EXAM_COUNT = 0   
-        params = Online().get_params()
-        ADMIN = False if int(params["admin"]) == 0 else  True
-        USER = False if int(params["user"]) == 0 else True 
+
         context = {
             "title": "Результат",
             "result": result,
@@ -257,7 +273,7 @@ def test_quest():
 
 @app.route('/show_misstakes')
 def show_misstakes():
-    global  ANSWERS_LIST, EXAM_COUNT
+    global  ANSWERS_LIST, EXAM_COUNT, ADMIN, USER
     
     if EXAM_COUNT < 14:
         url = 'show_misstakes'
@@ -268,9 +284,7 @@ def show_misstakes():
     else:
         url = 'index'
         message = "На главную"
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True    
+  
     if EXAM_COUNT < 14:
         context = {
             "title": "Посмотреть ошибки",
@@ -306,11 +320,9 @@ def show_misstakes():
 
 @app.route('/study')
 def study():
-    global COUNT
+    global COUNT, ADMIN, USER
     COUNT = 1
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True
+
     context = {
         'questions': {
             1: {'text': '1 общие механизмы, понятия и термины', 'url': 'part_one'},
@@ -339,25 +351,21 @@ def study():
  
 @app.route('/part_one', methods=['GET', 'POST'])
 def part_one():
-    global COUNT, FLAG
+    global COUNT, FLAG, ADMIN, USER
     FLAG = True
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True
+    
+    title = "общие механизмы, понятия и термины"
+    url = "part_one"
+    
     questions = PartOne()
-    all_questions = questions.get_all_question()
+    
     if request.method == 'POST':
-        context = study_for_parts("общие механизмы, понятия и термины", "part_one", questions)
+        if request.form["toBack"] == 'True':
+            context = study_for_parts(title, url, questions, back_flag = True)
+        else:
+            context = study_for_parts(title, url, questions)
     else:
-        context = {
-            "title": "общие механизмы, понятия и термины",
-            "question": all_questions[COUNT],
-            "url": "part_one",
-            "flag": True,
-            "last_question": False,
-            "admin": ADMIN,
-            "user": USER,
-        }
+        context = get_context(title, questions, url, True, True, False)
         COUNT += 1
     
     return render_template('test.html', context=context)
@@ -365,25 +373,21 @@ def part_one():
  
 @app.route('/part_two', methods=['GET', 'POST'])
 def part_two():
-    global COUNT, FLAG
+    global COUNT, FLAG, ADMIN, USER
     FLAG = True
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True
-    questions = PartTwo()
-    all_questions = questions.get_all_question()
+    
+    title = "Редакторы и инструменты общие"
+    url = "part_two"
+    
+    questions = PartTwo() 
+    
     if request.method == 'POST':
-        context = study_for_parts("Редакторы и инструменты общие", "part_two", questions)    
+        if request.form["toBack"] == 'True':
+            context = study_for_parts(title, url, questions, back_flag = True)
+        else:
+            context = study_for_parts(title, url, questions)    
     else:
-        context = {
-            "title": "Редакторы и инструменты общие",
-            "question": all_questions[COUNT],
-            "url": "part_two",
-            "flag": True,
-            'last_question': False,
-            "admin": ADMIN,
-            "user": USER,
-        }
+        context = get_context(title, questions, url, True, True, False)
         COUNT += 1
     
     return render_template('test.html', context=context)
@@ -391,25 +395,21 @@ def part_two():
 
 @app.route('/part_three', methods=['GET', 'POST'])
 def part_three():
-    global COUNT, FLAG
+    global COUNT, FLAG, ADMIN, USER
     FLAG = True
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True 
+    
+    title = "Редакторы и инструменты режима разработки"
+    url = "part_three"
+
     questions = PartThree()
-    all_questions = questions.get_all_question()
+    
     if request.method == 'POST':
-        context = study_for_parts("Редакторы и инструменты режима разработки", "part_three", questions)    
+        if request.form["toBack"] == 'True':
+            context = study_for_parts(title, url, questions, back_flag = True)
+        else:
+            context = study_for_parts(title, url, questions)   
     else:
-        context = {
-            "title": "Редакторы и инструменты режима разработки",
-            "question": all_questions[COUNT],
-            "url": "part_three",
-            "flag": True,
-            'last_question': False,
-            "admin": ADMIN,
-            "user": USER,
-        }
+        context = get_context(title, questions, url, True, True, False)
         COUNT += 1
     
     return render_template('test.html', context=context)
@@ -417,25 +417,20 @@ def part_three():
  
 @app.route('/part_four', methods=['GET', 'POST'])
 def part_four():
-    global COUNT, FLAG
+    global COUNT, FLAG, ADMIN, USER
     FLAG = True
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True
+    
+    title = "Конструкторы"
+    url = "part_four"
+
     questions = PartFour()
-    all_questions = questions.get_all_question()
     if request.method == 'POST':
-        context = study_for_parts("Конструкторы", "part_four", questions)    
+        if request.form["toBack"] == 'True':
+            context = study_for_parts(title, url, questions, back_flag = True)
+        else:
+            context = study_for_parts(title, url, questions)   
     else:
-        context = {
-            "title": "Конструкторы",
-            "question": all_questions[COUNT],
-            "url": "part_four",
-            "flag": True,
-            'last_question': False,
-            "admin": ADMIN,
-            "user": USER,
-        }
+        context = get_context(title, questions, url, True, True, False)
         COUNT += 1
     
     return render_template('test.html', context=context)
@@ -443,25 +438,21 @@ def part_four():
 
 @app.route('/part_five', methods=['GET', 'POST'])
 def part_five():
-    global COUNT, FLAG
+    global COUNT, FLAG, ADMIN, USER
     FLAG = True
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True
+    
+    title = "Технология разработки"
+    url = "part_five"
+
     questions = PartFive()
-    all_questions = questions.get_all_question()
+    
     if request.method == 'POST':
-        context = study_for_parts("Технология разработки", "part_five", questions)    
+        if request.form["toBack"] == 'True':
+            context = study_for_parts(title, url, questions, back_flag = True)
+        else:
+            context = study_for_parts(title, url, questions)   
     else:
-        context = {
-            "title": "Технология разработки",
-            "question": all_questions[COUNT],
-            "url": "part_five",
-            "flag": True,
-            'last_question': False,
-            "admin": ADMIN,
-            "user": USER,
-        }
+        context = get_context(title, questions, url, True, True, False)
         COUNT += 1
     
     return render_template('test.html', context=context)
@@ -469,25 +460,21 @@ def part_five():
 
 @app.route('/part_six', methods=['GET', 'POST'])
 def part_six():
-    global COUNT, FLAG
+    global COUNT, FLAG, ADMIN, USER
     FLAG = True
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True
+    
+    title = "Объектная модель прикладного решения"
+    url = "part_six"
+
     questions = PartSix()
-    all_questions = questions.get_all_question()
+
     if request.method == 'POST':
-        context = study_for_parts("Объектная модель прикладного решения", "part_six", questions)    
+        if request.form["toBack"] == 'True':
+            context = study_for_parts(title, url, questions, back_flag = True)
+        else:
+            context = study_for_parts(title, url, questions)   
     else:
-        context = {
-            "title": "Объектная модель прикладного решения",
-            "question": all_questions[COUNT],
-            "url": "part_six",
-            "flag": True,
-            'last_question': False,
-            "admin": ADMIN,
-            "user": USER,
-        }
+        context = get_context(title, questions, url, True, True, False)
         COUNT += 1
     
     return render_template('test.html', context=context)
@@ -495,25 +482,21 @@ def part_six():
 
 @app.route('/part_seven', methods=['GET', 'POST'])
 def part_seven():
-    global COUNT, FLAG
+    global COUNT, FLAG, ADMIN, USER
     FLAG = True
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True
+    
+    title = "Табличная модель прикладного решения"
+    url = "part_seven"
+
     questions = PartSeven()
-    all_questions = questions.get_all_question()
+    
     if request.method == 'POST':
-        context = study_for_parts("Табличная модель прикладного решения", "part_seven", questions)    
+        if request.form["toBack"] == 'True':
+            context = study_for_parts(title, url, questions, back_flag = True)
+        else:
+            context = study_for_parts(title, url, questions)   
     else:
-        context = {
-            "title": "Табличная модель прикладного решения",
-            "question": all_questions[COUNT],
-            "url": "part_seven",
-            "flag": True,
-            'last_question': False,
-            "admin": ADMIN,
-            "user": USER,
-        }
+        context = get_context(title, questions, url, True, True, False)
         COUNT += 1
     
     return render_template('test.html', context=context)
@@ -521,25 +504,21 @@ def part_seven():
 
 @app.route('/part_eight', methods=['GET', 'POST'])
 def part_eight():
-    global COUNT, FLAG
+    global COUNT, FLAG, ADMIN, USER
     FLAG = True
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True
+    
+    title = "Механизмы интеграции и обмена данными"
+    url = "part_eight"
+
     questions = PartEight()
-    all_questions = questions.get_all_question()
+
     if request.method == 'POST':
-        context = study_for_parts("Механизмы интеграции и обмена данными", "part_eight", questions)    
+        if request.form["toBack"] == 'True':
+            context = study_for_parts(title, url, questions, back_flag = True)
+        else:
+            context = study_for_parts(title, url, questions)   
     else:
-        context = {
-            "title": "Механизмы интеграции и обмена данными",
-            "question": all_questions[COUNT],
-            "url": "part_eight",
-            "flag": True,
-            'last_question': False,
-            "admin": ADMIN,
-            "user": USER,
-        }
+        context = get_context(title, questions, url, True, True, False)
         COUNT += 1
     
     return render_template('test.html', context=context)
@@ -547,25 +526,21 @@ def part_eight():
 
 @app.route('/part_nine', methods=['GET', 'POST'])
 def part_nine():
-    global COUNT, FLAG
+    global COUNT, FLAG, ADMIN, USER
     FLAG = True
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True
+    
+    title = "Система взаимодействия"
+    url = "part_nine"
+
     questions = PartNine()
-    all_questions = questions.get_all_question()
+
     if request.method == 'POST':
-        context = study_for_parts("Система взаимодействия", "part_nine", questions)    
+        if request.form["toBack"] == 'True':
+            context = study_for_parts(title, url, questions, back_flag = True)
+        else:
+            context = study_for_parts(title, url, questions)   
     else:
-        context = {
-            "title": "Система взаимодействия",
-            "question": all_questions[COUNT],
-            "url": "part_nine",
-            "flag": True,
-            'last_question': False,
-            "admin": ADMIN,
-            "user": USER,
-        }
+        context = get_context(title, questions, url, True, True, False)
         COUNT += 1
     
     return render_template('test.html', context=context)
@@ -573,25 +548,21 @@ def part_nine():
 
 @app.route('/part_ten', methods=['GET', 'POST'])
 def part_ten():
-    global COUNT, FLAG
+    global COUNT, FLAG, ADMIN, USER
     FLAG = True
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True 
+    
+    title = "Интерфейсные механизмы"
+    url = "part_ten"
+
     questions = PartTen()
-    all_questions = questions.get_all_question()
+
     if request.method == 'POST':
-        context = study_for_parts("Интерфейсные механизмы", "part_ten", questions)    
+        if request.form["toBack"] == 'True':
+            context = study_for_parts(title, url, questions, back_flag = True)
+        else:
+            context = study_for_parts(title, url, questions)    
     else:
-        context = {
-            "title": "Интерфейсные механизмы",
-            "question": all_questions[COUNT],
-            "url": "part_ten",
-            "flag": True,
-            'last_question': False,
-            "admin": ADMIN,
-            "user": USER,
-        }
+        context = get_context(title, questions, url, True, True, False)
         COUNT += 1
     
     return render_template('test.html', context=context)
@@ -599,25 +570,21 @@ def part_ten():
 
 @app.route('/part_eleven', methods=['GET', 'POST'])
 def part_eleven():
-    global COUNT, FLAG
+    global COUNT, FLAG, ADMIN, USER
     FLAG = True
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True
+    
+    title = "Механизмы построения отчетности"
+    url = "part_eleven"
+
     questions = PartEleven()
-    all_questions = questions.get_all_question()
+
     if request.method == 'POST':
-        context = study_for_parts("Механизмы построения отчетности", "part_eleven", questions)    
+        if request.form["toBack"] == 'True':
+            context = study_for_parts(title, url, questions, back_flag = True)
+        else:
+            context = study_for_parts(title, url, questions)    
     else:
-        context = {
-            "title": "Механизмы построения отчетности",
-            "question": all_questions[COUNT],
-            "url": "part_eleven",
-            "flag": True,
-            'last_question': False,
-            "admin": ADMIN,
-            "user": USER,
-        }
+        context = get_context(title, questions, url, True, True, False)
         COUNT += 1
     
     return render_template('test.html', context=context)
@@ -625,25 +592,21 @@ def part_eleven():
 
 @app.route('/part_twelve', methods=['GET', 'POST'])
 def part_twelve():
-    global COUNT, FLAG
+    global COUNT, FLAG, ADMIN, USER
     FLAG = True
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True
+    
+    title = "Механизмы оперативного учета"
+    url = "part_twelve"
+
     questions = PartTwelve()
-    all_questions = questions.get_all_question()
+
     if request.method == 'POST':
-        context = study_for_parts("Механизмы оперативного учета", "part_twelve", questions)    
+        if request.form["toBack"] == 'True':
+            context = study_for_parts(title, url, questions, back_flag = True)
+        else:
+            context = study_for_parts(title, url, questions)    
     else:
-        context = {
-            "title": "Механизмы оперативного учета",
-            "question": all_questions[COUNT],
-            "url": "part_twelve",
-            "flag": True,
-            'last_question': False,
-            "admin": ADMIN,
-            "user": USER,
-        }
+        context = get_context(title, questions, url, True, True, False)
         COUNT += 1
     
     return render_template('test.html', context=context)
@@ -651,25 +614,21 @@ def part_twelve():
 
 @app.route('/part_thirteen', methods=['GET', 'POST'])
 def part_thirteen():
-    global COUNT, FLAG
+    global COUNT, FLAG, ADMIN, USER
     FLAG = True
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True
+    
+    title = "Объекты и механизмы бухгалтирского учета"
+    url = "part_thirteen"
+
     questions = PartThirteen()
-    all_questions = questions.get_all_question()
+
     if request.method == 'POST':
-        context = study_for_parts("Объекты и механизмы бухгалтирского учета", "part_thirteen", questions)    
+        if request.form["toBack"] == 'True':
+            context = study_for_parts(title, url, questions, back_flag = True)
+        else:
+            context = study_for_parts(title, url, questions)   
     else:
-        context = {
-            "title": "Объекты и механизмы бухгалтирского учета",
-            "question": all_questions[COUNT],
-            "url": "part_thirteen",
-            "flag": True,
-            'last_question': False,
-            "admin": ADMIN,
-            "user": USER,
-        }
+        context = get_context(title, questions, url, True, True, False)
         COUNT += 1
     
     return render_template('test.html', context=context)
@@ -677,34 +636,49 @@ def part_thirteen():
 
 @app.route('/part_fourteen', methods=['GET', 'POST'])
 def part_fourteen():
-    global COUNT, FLAG
+    global COUNT, FLAG, ADMIN, USER
     FLAG = True
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True
+    
+    title = "Механизмы сложных переодических расчетов"
+    url = "part_fourteen"
+
     questions = PartFourteen()
-    all_questions = questions.get_all_question()
+
     if request.method == 'POST':
-        context = study_for_parts("Механизмы сложных переодических расчетов", "part_fourteen", questions)    
+        if request.form["toBack"] == 'True':
+            context = study_for_parts(title, url, questions, back_flag = True)
+        else:
+            context = study_for_parts(title, url, questions)   
     else:
-        context = {
-            "title": "Механизмы сложных переодических расчетов",
-            "question": all_questions[COUNT],
-            "url": "part_fourteen",
-            "flag": True,
-            'last_question': False,
-            "admin": ADMIN,
-            "user": USER,
-        }
+        context = get_context(title, questions, url, True, True, False)
         COUNT += 1
     
     return render_template('test.html', context=context)
 
 
+@app.route('/out')
+def out():
+    global ADMIN, USER
+    out = Online()
+    ADMIN = False
+    USER = False
+    out.change_params(ADMIN, USER)
+    
+    context = {
+        "title": "1c",
+        "flag": False,
+        "admin": ADMIN,
+        "user": USER,
+    }
+    
+    return render_template('login.html', context=context)
+
     
 if __name__ == '__main__':
     write()
     Online().change_params(False, False)
+    ADMIN = False if int(params["admin"]) == 0 else  True
+    USER = False if int(params["user"]) == 0 else True
     app.run()
     
     

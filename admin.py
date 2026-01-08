@@ -12,41 +12,42 @@ QUESTIONS = Questions()
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    admin = False
+    user = False
     params = Online()
     if request.method == 'POST':
-        user = Users()
+        user_login = Users()
         try:
-            data = user.get_login_and_password(request.form["login"])
+            data = user_login.get_login_and_password(request.form["login"])
         except:
             data = {}
         if data: 
             if request.form["login"] == data["login"] and request.form["password"] == data["password"]:
                 if data["admin"] == '1':
-                    ADMIN = True
-                    USER = False 
+                    admin = True
+                    user = False 
                     context = {
                         "title": "administrator",
                         "message": "",
-                        "admin": ADMIN,
-                        "user": USER,
+                        "admin": admin,
+                        "user": user,
                     }
                 else:
-                    USER = True
-                    ADMIN = False
+                    user = True
+                    admin = False
                     context = {
-                        "title": data["login"],
+                        "title": "1c",
                         "message": "",
-                        "admin": ADMIN,
-                        "user": USER,
+                        "admin": admin,
+                        "user": user,
                     }
 
-                params.change_params(ADMIN, USER)
+                params.change_params(admin, user)
                 return render_template("index.html", context=context)
             else:
                 context = {
                     "title": "login",
                     "message": "Неверный логин или пароль",
-
                 }
 
                 return render_template('login.html', context=context)
@@ -54,18 +55,18 @@ def login():
             context = {
                 "title": "login",
                 "message": "Неверный логин или пароль",
-
             }
             
             return render_template('login.html', context=context)
     else:
         params = Online().get_params()
-        ADMIN = False if int(params["admin"]) == 0 else True
-        USER = False if int(params["user"]) == 0 else True
-        if ADMIN:
+        admin = False if int(params["admin"]) == 0 else True
+        user = False if int(params["user"]) == 0 else True
+        
+        if admin:
             title = "administrator"
 
-        elif USER:
+        elif user:
             title = "1c"
 
         else:
@@ -74,8 +75,8 @@ def login():
         context = {
             "title": title,
             "message": "",
-            "admin": ADMIN,
-            "user": USER,
+            "admin": admin,
+            "user": user,
         }
         
         return render_template("login.html", context=context)

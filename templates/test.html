@@ -88,13 +88,23 @@
                                 {% endif %}
                             {% endif %}
                         {% endif %}
+                        <div class="two_buttons">
+                        {% if not context.first_question %}
+                            <div class="next">
+                                <div class="start_button">
+                                    <button name="toBack" value="True" type="submit" class="start_button_1 global_text">назад</button>    
+                                </div>   
+                            </div> 
+                        {% endif %}     
                         {% if not context.last_question %}
                             <div class="next">
                                 <div class="start_button">
-                                    <button id="submitButton" type="submit" class="start_button_1 global_text">далее</button>    
+                                    <button name="toBack" value="False" id="submitButton" type="submit" class="start_button_1 global_text">далее</button>    
                                 </div>   
                             </div> 
-                        {% endif %} 
+                        {% endif %}
+                        
+                        </div>
                     </form>
                 </div>
                 <div class="head_inside">
@@ -103,19 +113,18 @@
                             К разделам
                         </button>
                     </a>
-                    <br>
                 </div>
                 <form action="{{ url_for('index') }}" method="post">
                     <div class="head_inside">
                         <a class="start_button clean_a" href="{{ url_for('index') }}">
-                            <button name="name" value="{{ [context.admin, context.user] }}" class="start_button_1 global_text">На главную</button></a>
-                        <br>
+                            <button name="name" value="{{ [context.admin, context.user] }}" class="start_button_1 global_text">На главную</button></a>   
                     </div>
+                    <br>
                 </form>   
             {% else %}
                 <div class="head_inside">
                     <div class="question">
-                        <h3 class="global_text">{{ context.question.question }}</h3>
+                        <h3 class="global_text">{{ context.question.id }}: {{ context.question.question }}</h3>
                     </div>
                     
                 </div>
@@ -172,9 +181,9 @@
                 <form action="{{ url_for('index') }}" method="post">
                     <div class="head_inside">
                         <a class="start_button clean_a" href="{{ url_for('index') }}">
-                            <button class="start_button_1 global_text">На главную</button></a>
-                        <br>
+                            <button class="start_button_1 global_text">На главную</button></a>   
                     </div>
+                    <br>
                 </form>
             {% endif %}
         {% else %}
@@ -197,4 +206,12 @@
     {% endif %}
 
     
+
+    
+{% endblock %}
+
+{% block footer %}
+<footer>
+    <img  src="{{ url_for('static', filename='images/footer.png') }}" alt="img">
+</footer>
 {% endblock %}
