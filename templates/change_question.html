@@ -8,82 +8,103 @@
 
 {% block content %}
     {% if context.flag %}
+    <br>
         <div class="form">
+            <br>
             <form action="" method="post">
+            
                 <div class="head_inside">
-                    <input class="input start_button_1 global_text" 
-                        type="text" 
-                        id="id" 
-                        name="id" 
-                        value="{{ context.question.id }}" 
-                        readonly>
-                </div>
-                <div class="head_inside">
-                    <label class="global_text label" for="question">Введите изменения в вопрос:</label>
+                    <label class="global_text label" for="question">Введите новый вопрос:</label>
                 </div>
                 <div class="head_inside">
                     <input class="input start_button_1 global_text" 
                         type="text" 
                         id="question" 
                         name="question" 
-                        value="{{ context.question.question }}" 
+                        value="" 
                         required>
+
+                </div>
+                {% if context.question.image %}  
+                    <div class="head_inside">
+                        <div class="question">
+                            <img class="question_image" src="../static/images/{{ context.question.image }}" alt="img">
+                        </div>   
+                    </div>
+                {% endif %}
+                <div class="head_inside">
+                    <label class="global_text label" for="option_a">Введите новый вариант a:</label>
                 </div>
                 <div class="head_inside">
-                    <label class="global_text label" for="option_a">Введите изменения в вариант A:</label>
-                </div>
-                <div class="head_inside">
-                    <input class="input start_button_1 global_text" 
+                        <input class="input start_button_1 global_text" 
                         type="text" 
                         id="option_a" 
                         name="option_a" 
-                        value="{{ context.question.a }}" 
+                        value="" 
                         required>
+                        
                 </div>
                 <div class="head_inside">
-                    <label class="global_text label" for="option_b">Введите изменения в вариант B:</label>
+                    <label class="global_text label" for="option_b">Введите новый вариант b:</label>
                 </div>
                 <div class="head_inside">
                     <input class="input start_button_1 global_text" 
-                        type="text" 
+                        type="textaria" 
                         id="option_b" 
                         name="option_b" 
-                        value="{{ context.question.b }}" 
+                        value="" 
                         required>
                 </div>
                 <div class="head_inside">
-                    <label class="global_text label" for="option_c">Введите изменения в вариант C:</label>
+                    <label class="global_text label" for="option_c">Введите новый вариант c:</label>
                 </div>
                 <div class="head_inside">
                     <input class="input start_button_1 global_text" 
                         type="text" 
                         id="option_c" 
                         name="option_c" 
-                        value="{{ context.question.c }}" 
+                        value="" 
                         required>
                 </div>
-                <div class="head_inside">
-                    <label class="global_text label" for="option_d">Введите изменения в вариант D:</label>
-                </div>
-                <div class="head_inside">
-                    <input class="input start_button_1 global_text" 
-                        type="text" 
-                        id="option_d" 
-                        name="option_d" 
-                        value="{{ context.question.d }}" 
-                        required>
-                </div>
-                <div class="head_inside">
-                    <label class="global_text label" for="option_e">Введите изменения в вариант E:</label>
-                </div>
-                <div class="head_inside">
-                    <input class="input start_button_1 global_text" 
-                        type="text" 
-                        id="option_e" 
-                        name="option_e" 
-                        value="{{ context.question.e }}" 
-                        required>
-                </div>
+                {% if context.question.d %}
+                    <div class="head_inside">
+                        <label class="global_text label" for="option_d">Введите новый вариант d:</label>
+                    </div>
+                    <div class="head_inside">
+                        <input class="input start_button_1 global_text" 
+                            type="text" 
+                            id="option_d" 
+                            name="option_d" 
+                            value="" 
+                            required>
+                    </div>
+                    {% if context.question.e %}
+                        <div class="head_inside">
+                            <label class="global_text label" for="option_e">Введите новый вариант e:</label>
+                        </div>
+                        <div class="head_inside">
+                            <input class="input start_button_1 global_text" 
+                                type="text" 
+                                id="option_e" 
+                                name="option_e" 
+                                value="" 
+                                required>
+                        </div>
+                        {% if context.question.f %}
+                            <div class="head_inside">
+                                <label class="global_text label" for="option_e">Введите новый вариант f:</label>
+                            </div>
+                            <div class="head_inside">
+                                <input class="input start_button_1 global_text" 
+                                    type="text" 
+                                    id="option_f" 
+                                    name="option_f" 
+                                    value="" 
+                                    required>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
                 <div class="head_inside">
                     <label class="global_text label" for="answer">Введите изменения в ответ:</label>
                 </div>
@@ -92,7 +113,7 @@
                         type="text" 
                         id="answer" 
                         name="answer" 
-                        value="{{ context.question.answer }}" 
+                        value="" 
                         required>
                 </div>
                 <div class="head_inside">
@@ -108,7 +129,7 @@
             <form action="{{ url_for('index') }}" method="post">
                 <div class="head_inside">
                     <a class="start_button clean_a" href="{{ url_for('index') }}">
-                        <button name="name" value="{{ [context.admin, context.user] }}" class="start_button_1 global_text">На главную</button></a>
+                        <button class="start_button_1 global_text">На главную</button></a>
                     <br>
                 </div>
             </form>

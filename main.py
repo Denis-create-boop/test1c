@@ -8,6 +8,8 @@ ANSWERS_LIST = []
 COUNT = 1
 FLAG = False
 EXAM_COUNT = 0
+
+
 part_list = [PartOne(), PartTwo(), PartThree(), PartFour(), PartFive(), PartSix(), PartSeven(), PartEight(), PartNine(), PartTen(), PartEleven(), 
             PartTwelve(), PartThirteen(), PartFourteen()]
 
@@ -17,29 +19,36 @@ ADMIN = False if int(params["admin"]) == 0 else  True
 USER = False if int(params["user"]) == 0 else True
 
 
-
-
-def study_for_parts(title, url, questions, back_flag=False):
+def study_for_parts(title, url, questions, back_flag=False, flag=False):
     global COUNT, FLAG
     FLAG = True
     
     first = False
-    all_questions = questions.get_all_question()
+    if flag:
+        all_questions = questions
+        last_id = len(questions)
+    else:
+        all_questions = questions.get_all_question()
+        last_id = questions.get_last_id()
+        
     if back_flag:
-        if COUNT == questions.get_last_id():
+        if COUNT == last_id or COUNT == last_id + 1:
             COUNT -= 2
 
         else:
             if COUNT == 1:
-                COUNT = questions.get_last_id() - 1
+                COUNT = last_id - 1
             else:    
                 COUNT -= 2
             
-    if COUNT == questions.get_last_id():
-
+    if COUNT == last_id:
+        if flag:
+            question = all_questions[COUNT - 1]
+        else:
+            question = all_questions[COUNT]
         context = {
             "title": title,
-            "question": all_questions[COUNT],
+            "question": question,
             "url": url,
             "flag": True,
             "first_question": first,
@@ -50,10 +59,16 @@ def study_for_parts(title, url, questions, back_flag=False):
     else:
         if COUNT == 1:
             first = True
+        
+        if flag:
+            question = all_questions[COUNT-1]
+            
+        else:
+            question = all_questions[COUNT]
 
         context = {
             "title": title,
-            "question": all_questions[COUNT],
+            "question": question,
             'url': url,
             'flag': True,
             "first_question": first,
@@ -88,6 +103,7 @@ def write():
  
 def get_context(title, questions, url, flag, first_question, last_question):
     global ADMIN, USER, COUNT
+
     all_questions = questions.get_all_question()
     
     context = {
@@ -177,6 +193,7 @@ def test_with_answers():
     global QUESTIONS, FLAG, COUNT, ADMIN, USER, part_list
     COUNT = 1
     FLAG = True
+    QUESTIONS = []
 
     questions = Questions()
     last_id = questions.get_last_id()
@@ -199,34 +216,15 @@ def test_with_answers():
     
 @app.route('/test_quest', methods=['GET', "POST"])
 def test_quest():
-    global QUESTIONS, FLAG, COUNT, EXAM_COUNT, ADMIN, USER
-    COUNT = 1
+    global QUESTIONS, FLAG, COUNT, ADMIN, USER, ANSWERS_LIST
 
-    if EXAM_COUNT < 14:
-        if request.method == 'POST':   
-            ANSWERS_LIST.append(request.form['answer'])
-            one_question = QUESTIONS[EXAM_COUNT]
-            one_question["id"] = EXAM_COUNT + 1
-            EXAM_COUNT += 1
-
-        else:
-            one_question = QUESTIONS[EXAM_COUNT]
-            one_question["id"] = EXAM_COUNT + 1
-            EXAM_COUNT += 1
-
-        context = {
-            "question": one_question,
-            "flag": FLAG,
-            'url': 'test_quest',
-            "title": "Экзамен",
-            "admin": ADMIN,
-            "user": USER,
-        }
-        
-        return render_template('test.html', context=context)
-    else:
+    title = "Экзамен"
+    url = "test_quest"
+    context = None
+    
+    def misstakes():
         ANSWERS_LIST.append(request.form['answer'])
-        EXAM_COUNT = 0
+        COUNT = 0
         answers = 0
         misstakes = 0
         misstake_dict = {
@@ -247,17 +245,17 @@ def test_quest():
         }
         
         for question in QUESTIONS:
-            if question['answer'] == ANSWERS_LIST[EXAM_COUNT]:
+            if question['answer'] == ANSWERS_LIST[COUNT]:
                 answers += 1
-                EXAM_COUNT += 1
+                COUNT += 1
             else:
                 misstakes += 1
-                EXAM_COUNT += 1
+                COUNT += 1
         if misstakes > 2:
             result = f"Тест не пройден вы совершили {misstakes} {misstake_dict[misstakes]}"
         else:
             result = "Поздровляем тест сдан"
-        EXAM_COUNT = 0   
+        COUNT = 0   
 
         context = {
             "title": "Результат",
@@ -269,8 +267,85 @@ def test_quest():
         }
         
         return render_template('result.html', context=context)
+    
+    if COUNT <= 15:
+        if COUNT == 15:
+            if request.method == "POST":
+                try:
+                    if request.form["toBack"] == "True":
+                        context = study_for_parts(title, url, QUESTIONS, back_flag=True, flag=True)
+                        ANSWERS_LIST.pop()  
+                        return render_template('test.html', context=context) 
+                    else:
+                        COUNT += 1
+                        return(misstakes())
+                except:
+                    COUNT +=1
+                    return(misstakes())
+                  
+        else:
+            if request.method == 'POST':
+                try:
+                    if request.form["toBack"] == 'True':
+                        if COUNT == 2:
+                            context = study_for_parts(title, url, QUESTIONS, back_flag=True, flag=True)
+                            ANSWERS_LIST.pop()
+                        else:
+                            context = study_for_parts(title, url, QUESTIONS, back_flag=True, flag=True)
+                            ANSWERS_LIST.pop()
+                            
+                    else:
+                        ANSWERS_LIST.append(request.form['answer'])
+                        question = QUESTIONS[COUNT - 1]
+                        question["id"] = COUNT
+                        context = {
+                            "question": question,
+                            "flag": FLAG,
+                            'url': url,
+                            "title": title,
+                            "first_question": False,
+                            "last_question": False,
+                            "admin": ADMIN,
+                            "user": USER,
+                        }
+                        COUNT += 1
+                except:
+                        ANSWERS_LIST.append(request.form['answer'])
+                        question = QUESTIONS[COUNT - 1]
+                        question["id"] = COUNT
+                        context = {
+                            "question": question,
+                            "flag": FLAG,
+                            'url': url,
+                            "title": title,
+                            "first_question": False,
+                            "last_question": False,
+                            "admin": ADMIN,
+                            "user": USER,
+                        }
+                        COUNT += 1
 
+            else:
+                question = QUESTIONS[COUNT - 1]
+                question["id"] = COUNT
+                COUNT += 1
 
+                context = {
+                    "question": question,
+                    "flag": FLAG,
+                    'url': url,
+                    "title": title,
+                    "first_question": True,
+                    "last_question": False,
+                    "admin": ADMIN,
+                    "user": USER,
+                }
+
+            return render_template('test.html', context=context)
+    else:
+        misstakes()
+
+        
 @app.route('/show_misstakes')
 def show_misstakes():
     global  ANSWERS_LIST, EXAM_COUNT, ADMIN, USER
@@ -679,8 +754,7 @@ if __name__ == '__main__':
     Online().change_params(False, False)
     ADMIN = False if int(params["admin"]) == 0 else  True
     USER = False if int(params["user"]) == 0 else True
-    app.run()
+    app.run(debug=False, port=5000)
     
     
   
-# проверил 9 разделов  

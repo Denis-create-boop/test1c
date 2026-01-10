@@ -8,7 +8,7 @@
 {% block header %}
     <div class="header">
         <div class="head_inside">
-            <h2 class="global_text">{{ context.title }}</h2>
+            <h2 class="header_text">{{ context.title }}</h2>
         </div>
     </div>
 {% endblock %}
@@ -17,7 +17,7 @@
 {% block content %}
 
     <div class="head_inside">
-        <h3 class="global_text">{{ context.result }}</h3>
+        <h3 class="header_text">{{ context.result }}</h3>
     </div>
     {% if not context.flag %}    
         {% if context.misstakes > 0 %}
@@ -32,8 +32,8 @@
         <div class="head_inside">
             <a class="start_button clean_a" href="{{ url_for('index') }}">
                 <button name="name" value="{{ [context.admin, context.user] }}" class="start_button_1 global_text">На главную</button></a>
-            <br>
         </div>
+        <br>
     </form>
     
 {% endblock %}

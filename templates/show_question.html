@@ -7,79 +7,120 @@
 {% block content %}
 {% if context.admin %}
     {% if context.flag %}
-    <div class="head_inside">
-        <div class="form">
-            <div class="head_inside">
-                    <label class="global_text label" for="question">Вопрос:</label>
+    <br>
+        <div class="head_inside">
+            <div class="question p">
+                <h3 class="global_text">{{ context.question.id }}: {{ context.question.question }}</h3>
             </div>
-            <a class="clean_a" href="#" >
-                <button class="start_button_1 global_text" id="question">
-                        <p>{{ context.question.question }}</p>
-                </button>
-            </a>
+        </div>   
+        {% if context.question.image %}  
             <div class="head_inside">
-                    <label class="global_text label" for="question_a">Вариант A:</label>
+                <div class="question">
+                    <img class="question_image" src="../static/images/{{ context.question.image }}" alt="img">
+                </div>   
             </div>
-             <a class="clean_a" href="#" >
-                <button class="start_button_1 global_text" id="question_a">
-                        <p>{{ context.question.a }}</p>
+        {% endif %} 
+        <div class="head_inside">
+            {% if 'a' == context.question.answer %}
+                <button class="button_info_green global_text">
+                    <p>a: {{ context.question.a }}
+                </p>
                 </button>
-            </a>
+            {% else %}
+                <button class="button_info global_text">
+                    <p>a: {{ context.question.a }}
+                </p>
+                </button>
+            {% endif %}
+        </div>
+        <div class="head_inside">
+            {% if 'b' == context.question.answer %}
+                <button class="button_info_green global_text">
+                    <p>b: {{ context.question.b }}
+                </p>
+                </button>
+            {% else %}
+                <button class="button_info global_text">
+                    <p>b: {{ context.question.b }}
+                </p>
+                </button>
+            {% endif %}
+        </div>
+        <div class="head_inside">
+            {% if 'c' == context.question.answer %}
+                <button class="button_info_green global_text">
+                    <p>c: {{ context.question.c }}
+                </p>
+                </button>
+            {% else %}
+                <button class="button_info global_text">
+                    <p>c: {{ context.question.c }}
+                </p>
+                </button>
+            {% endif %}
+        </div>
+        {% if context.question.d %}
             <div class="head_inside">
-                    <label class="global_text label" for="question_b">Вариант B:</label>
+                {% if 'd' == context.question.answer %}
+                    <button class="button_info_green global_text">
+                        <p>d: {{ context.question.d }}
+                    </p>
+                    </button>
+                {% else %}
+                    <button class="button_info global_text">
+                        <p>d: {{ context.question.d }}
+                        </p>
+                    </button>
+                {% endif %}
+            </div>
+
+            {% if context.question.e %}
+                <div class="head_inside">
+                    {% if 'e' == context.question.answer %}
+                        <button class="button_info_green global_text">
+                            <p>e: {{ context.question.e }}
+                            </p>
+                        </button>
+                    {% else %}
+                        <button class="button_info global_text">
+                            <p>e: {{ context.question.e }}
+                            </p>
+                        </button>
+                    {% endif %}
                 </div>
-             <a class="clean_a" href="#" >
-                <button class="start_button_1 global_text" id="question_b">
-                        <p>{{ context.question.b }}</p>
-                </button>
-            </a>
+
+                {% if context.question.f %}
+                    <div class="head_inside">
+                        {% if 'f' == context.question.answer %}
+                            <button class="button_info_green global_text">
+                                <p>f: {{ context.question.f }}
+                            </p>
+                            </button>
+                        {% else %}
+                            <button class="button_info global_text">
+                                <p>f: {{ context.question.f }}
+                            </p>
+                            </button>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endif %}
+
+        {% endif %}
+        <hr class="line">
+
+        <div class="head_inside">
+            <a class="start_button clean_a" href="{{ url_for('login') }}"><button class="start_button_1 global_text">В кабинет</button></a>
+            <br>
+        </div>
+        <form action="{{ url_for('index') }}" method="post">
             <div class="head_inside">
-                    <label class="global_text label" for="question_c">Вариант C:</label>
-                </div>
-             <a class="clean_a" href="#" >
-                <button class="start_button_1 global_text" id="question_c">
-                        <p>{{ context.question.c }}</p>
-                </button>
-            </a>
-            <div class="head_inside">
-                    <label class="global_text label" for="question_d">Вариант D:</label>
-                </div>
-             <a class="clean_a" href="#" >
-                <button class="start_button_1 global_text" id="question_d">
-                        <p>{{ context.question.d }}</p>
-                </button>
-            </a>
-            <div class="head_inside">
-                    <label class="global_text label" for="question_e">Вариант E:</label>
-                </div>
-             <a class="clean_a" href="#" >
-                <button class="start_button_1 global_text" id="question_e">
-                        <p>{{ context.question.e }}</p>
-                </button>
-            </a>
-            <div class="head_inside">
-                    <label class="global_text label" for="question_answer">Ответ:</label>
-                </div>
-             <a class="clean_a" href="#" >
-                <button class="start_button_1 global_text" id="question_answer">
-                        <p>Вариант {{ context.option }}: {{ context.question.answer }}</p>
-                </button>
-            </a>
-        
-            <div class="head_inside">
-                <a class="start_button clean_a" href="{{ url_for('login') }}"><button class="start_button_1 global_text">В кабинет</button></a>
+                <a class="start_button clean_a" href="{{ url_for('index') }}">
+                    <button class="start_button_1 global_text">На главную</button></a>
                 <br>
             </div>
-            <form action="{{ url_for('index') }}" method="post">
-                <div class="head_inside">
-                    <a class="start_button clean_a" href="{{ url_for('index') }}">
-                        <button name="name" value="{{ [context.admin, context.user] }}" class="start_button_1 global_text">На главную</button></a>
-                    <br>
-                </div>
-            </form>
-        </div>
-    </div>
-        
+        </form>
+        <br>
     {% else %}
     <div class="form">
         <form action="" method="post">

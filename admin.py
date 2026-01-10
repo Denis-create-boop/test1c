@@ -141,6 +141,7 @@ def change_question():
                 context = {
                     "title": "Изменение вопроса",
                     "question": question,
+                    "flag": True,
                     "admin": ADMIN,
                     "user": USER,
                 }
@@ -154,9 +155,10 @@ def change_question():
                 option_c = request.form["option_c"]
                 option_d = request.form["option_d"]
                 option_e = request.form["option_e"]
+                option_f = request.form["option_f"]
                 answer = request.form["answer"]
                 id = request.form["id"]
-                questions.change_question(id=id, question=new_question, answer=answer, a=option_a, b=option_b, c=option_c, d=option_d, e=option_e)
+                questions.change_question(id=id, question=new_question, answer=answer, a=option_a, b=option_b, c=option_c, d=option_d, e=option_e, f=option_f)
                 context = {
                     "title": "изменение вопроса",
                     "message": "вопрос успешно изменен",
@@ -171,6 +173,7 @@ def change_question():
         
             context = {
                 "title": "Изменение вопроса",
+                "flag": False,
                 "admin": ADMIN,
                 "user": USER,
             }
@@ -235,26 +238,11 @@ def show_question():
     if ADMIN:
         if request.method == "POST":
             question = Questions().get_question(id=request.form["question_id"])
-            option = ''
-            if question['a'] == question['answer']:
-                option = 'A'
-                
-            elif question['b'] == question['answer']:
-                option = 'B'
-                
-            elif question['c'] == question['answer']:
-                option = 'C'
-                
-            elif question['d'] == question['answer']:
-                option = 'D'
-                
-            elif question['e'] == question['answer']:
-                option = 'E'
+            
             context = {
                 "title": "просмотр вопроса",
                 "flag": True,
                 "question": question,
-                "option": option,
                 "admin": ADMIN,
                 "user": USER,
             }

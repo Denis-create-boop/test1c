@@ -58,5 +58,5 @@ def create_account(flag=False):
           
           main_user.add_user(LOGIN, PASSWORD, True)
      else:
-         main_user.add_user("denis", "12345", False, flag=True) 
+         pass
         

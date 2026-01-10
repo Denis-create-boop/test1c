@@ -6,7 +6,7 @@
 
 {% block header %}
     <div class="header">
-        <h2 class="global_text">{{ context.title }}</h2>
+        <h2 class="header_text">{{ context.title }}</h2>
     </div>
 {% endblock %}
 
@@ -20,17 +20,16 @@
                 
                 <div class="head_inside">
                     <div class="question p">
-                        <h3 class="global_text">{{ context.question.id }}: {{ context.question.question }}</h3>
+                        <h3 class="header_text">{{ context.question.id }}: {{ context.question.question }}</h3>
                     </div>
-                </div>    
-                <div class="head_inside">
-                    {% if context.question.image %}
-                    <div class="question">
-                        <img class="question_image" src="../static/images/{{ context.question.image }}" alt="img">
-                    </div>   
-                    {% endif %}
-                    
-                </div>
+                </div>  
+                {% if context.question.image %}  
+                    <div class="head_inside">
+                        <div class="question">
+                            <img class="question_image" src="../static/images/{{ context.question.image }}" alt="img">
+                        </div>   
+                    </div>
+                {% endif %}
                 <div class="head_inside">
                     <form id="myForm" class="form" action="{{ url_for(context.url) }}" method="post">
                         <div class="ans">
@@ -124,7 +123,7 @@
             {% else %}
                 <div class="head_inside">
                     <div class="question">
-                        <h3 class="global_text">{{ context.question.id }}: {{ context.question.question }}</h3>
+                        <h3 class="header_text">{{ context.question.id }}: {{ context.question.question }}</h3>
                     </div>
                     
                 </div>
@@ -188,7 +187,7 @@
             {% endif %}
         {% else %}
             <div class="head_inside">
-                <h3 class="global_text">
+                <h3 class="header_text">
                     Тест по экзамену 1с профессионал, для сдачи теста ван нужно ответить на 14 вопросов допускаются 2 ошибки
                 </h3>
             </div>
@@ -200,8 +199,8 @@
             </div>
             <div class="head_inside">
                 <a class="start_button clean_a" href="{{ url_for('index') }}"><button class="start_button_1 global_text">назад</button></a>
-                <br>
             </div>
+            <br>
         {% endif %}
     {% endif %}
 

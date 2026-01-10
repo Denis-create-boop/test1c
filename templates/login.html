@@ -6,48 +6,35 @@
 
 {% block content %}
     {% if context.admin %}
+        <br>
         <div class="head_inside">
-            <a class="clean_a form" href="{{ url_for('add_question') }}" >
-                <button class="start_button_1 global_text" 
-                        value='' 
-                        name="answer"><p>добавить вопрос</p>
-                </button>
+            <a class="start_button clean_a" href="{{ url_for('add_question') }}" >
+                <button class="start_button_1 global_text" name="answer">добавить вопрос</button>
             </a>
-            <br>
-        </div>    
+        </div>   
+
         <div class="head_inside">
-            <a class="clean_a form" href="{{ url_for('change_question') }}" >
-                <button class="start_button_1 global_text" 
-                        value='' 
-                        name="answer"><p>изменить вопрос</p>
-                </button>
+            <a class="start_button clean_a" href="{{ url_for('change_question') }}" >
+                <button class="start_button_1 global_text" name="answer">изменить вопрос</button>
             </a>
-            <br>
         </div>
         <div class="head_inside">
-            <a class="clean_a form" href="{{ url_for('show_all_questions') }}" >
-                <button class="start_button_1 global_text" 
-                        value='' 
-                        name="answer"><p>посмотреть все вопросы</p>
-                </button>
+            <a class="start_button clean_a" href="{{ url_for('show_all_questions') }}" >
+                <button class="start_button_1 global_text"  name="answer">посмотреть все вопросы</button>
             </a>
-            <br>
         </div>
         <div class="head_inside">
-            <a class="clean_a form" href="{{ url_for('show_question') }}" >
-                <button class="start_button_1 global_text" 
-                        value='' 
-                        name="answer"><p>посмотреть конкретный вопрос</p>
-                </button>
+            <a class="start_button clean_a" href="{{ url_for('show_question') }}" >
+                <button class="start_button_1 global_text" name="answer">посмотреть конкретный вопрос</button>
             </a>
             <br>
         </div>  
+        <hr class="line">
         <div class="head_inside">
             <a class="start_button clean_a" href="{{ url_for('index') }}">
-                <button class="start_button_1 global_text">На главную</button></a>
-            <br>
+                <button class="start_button_1 global_text">На главную</button></a>    
         </div>
-        
+        <br>
     {% else %}
         <div class="head_inside">
             <form class="form" action="{{ url_for('login') }}" method="post">
@@ -57,17 +44,18 @@
                     </div>
                 {% endif %}
                 <div class="head_inside">
-                    <label class="global_text" for="login">Login:</label>
+                    <label class="header_text" for="login">Login:</label>
                 </div>
                 <div class="head_inside">
                     <input type="text" id="login" name="login" placeholder="Enter your Login" required>
                 </div>
                 <div class="head_inside">
-                    <label class="global_text" for="password">Password:</label>
+                    <label class="header_text" for="password">Password:</label>
                 </div>
                 <div class="head_inside">
                     <input type="password" id="password" name="password" placeholder="Enter your Password" required>
                 </div>
+                <br>
                 <div class="head_inside">
                     <a class="start_button clean_a" href="#">
                     <button class="start_button_1 global_text" type="submit"> Submit </button>

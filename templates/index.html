@@ -6,18 +6,19 @@
 
 {% block header %}
     <div class="header">
-        <h2 class="global_text">Тест по вопросам 1с профессионал</h2>
+        <h2 class="header_text">Тест по вопросам 1с профессионал</h2>
     </div>
 {% endblock %}
 
 {% block content %}
 
     <div class="head_inside">
-       <h3 class="global_text">Проверь свои знания в 1с</h3>
+       <h3 class="header_text">Проверь свои знания в 1с</h3>
     </div>
-    <div class="inside_body_image">
-        <div class="head_inside">
-            <img src="{{ url_for('static', filename='images/1c.jpg') }}" alt="img" width="100%" height="35%">
+    
+    <div class="head_inside">
+        <div class="inside_body_image">
+            <img class="all_img" src="{{ url_for('static', filename='images/1c.jpg') }}" alt="img">
         </div>
     </div>
         <div class="head_inside">
@@ -57,7 +58,6 @@
                 Выйти
             </button>
         </a>
-        <br>
     </div>
-
+    <br>
 {% endblock %}

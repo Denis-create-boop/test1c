@@ -71,13 +71,6 @@ class Users:
             data.append(row)
             
         return data
-    
-    
-
-        
-a = Users()
-
-print(a.get_all()) 
             
     
 
