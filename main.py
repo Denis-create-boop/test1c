@@ -228,6 +228,7 @@ def test_quest():
         answers = 0
         misstakes = 0
         misstake_dict = {
+            0: "ошибок",
             1: "ошибку",
             2: "ошибки",
             3: "ошибки",
@@ -252,9 +253,9 @@ def test_quest():
                 misstakes += 1
                 COUNT += 1
         if misstakes > 2:
-            result = f"Тест не пройден вы совершили {misstakes} {misstake_dict[misstakes]}"
+            result = f"Тест не сдан вы совершили {misstakes} {misstake_dict[misstakes]}"
         else:
-            result = "Поздровляем тест сдан"
+            result = f"Поздровляем тест сдан вы совершили {misstakes} {misstake_dict[misstakes]}"
         COUNT = 0   
 
         context = {
@@ -350,6 +351,8 @@ def test_quest():
 def show_misstakes():
     global  ANSWERS_LIST, EXAM_COUNT, ADMIN, USER
     
+    variants = ["a", "b", "c", "d", "e", "f"]
+    
     if EXAM_COUNT < 14:
         url = 'show_misstakes'
         message = "Следующий вопрос"
@@ -367,6 +370,7 @@ def show_misstakes():
             "answer": answer,
             "url": url,
             "message": message,
+            "variants": variants,
             "flag": True,
             "admin": ADMIN,
             "user": USER,
