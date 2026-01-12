@@ -381,6 +381,7 @@ def show_misstakes():
             "question": question,
             "answer": answer,
             "url": url,
+            "variants": variants,
             "message": message,
             "flag": False,
             "admin": ADMIN,

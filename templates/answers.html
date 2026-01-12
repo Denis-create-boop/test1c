@@ -10,12 +10,10 @@
         <h2 class="header_text">{{ context.title }}</h2>
     </div>
 {% endblock %}
-
-
 {% block content %}
     
     <div class="head_inside">
-       <h3 class="header_text">{{ context.question.question }}</h3>
+       <h3 class="header_text">{{ context.question.id }}: {{ context.question.question }}</h3>
     </div>
     <div class="head_inside">
         {% if context.question.image %}
@@ -47,11 +45,9 @@
                             </div>
                         {% endif %}
                     {% endif %}
-                {% endfor %}
-                            
+                {% endfor %}           
             </form>
-        </div>
-         
+        </div>    
     {% else %}
         <div class="head_inside">
             <form class="form">
@@ -84,10 +80,10 @@
                         {% endif %}
                     {% endif %}
                 {% endfor %}
-
             </form>
         </div>
     {% endif %}
+
     {% if context.flag %}
         <div class="head_inside">
             <a class="start_button clean_a" href="{{ url_for(context.url) }}">
@@ -95,6 +91,7 @@
             <br>
         </div>
     {% endif %}
+
     <form action="{{ url_for('index') }}" method="post">
         <div class="head_inside">
             <a class="start_button clean_a" href="{{ url_for('index') }}">
