@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from databases.questions import Questions
+from databases.questions import *
 from databases.users import Users
 from databases.params import *
 
@@ -210,7 +210,7 @@ def show_all_questions():
             return render_template('questions.html', context=context)
         
         else:
-            questions = QUESTIONS.get_all_question()
+            questions = QUESTIONS.get_all_questions()
             context = {
                 "questions": questions,
                 "title": "Все вопросы",
@@ -267,3 +267,83 @@ def show_question():
         }
         
         return render_template("info.html", context=context)
+    
+    
+    
+@app.route("/categories", methods=["GET", "POST"])
+def categories():
+    params = Online().get_params()
+    ADMIN = False if int(params["admin"]) == 0 else True
+    USER = False if int(params["user"]) == 0 else True
+    
+    CATEGORIES = {1: {'text': '1 общие механизмы, понятия и термины', 'db': "PartOne"},
+                    2: {'text': '2 Редакторы и инструменты общие', 'db': "PartTwo"},
+                    3: {'text': '3 Редакторы и инструменты режима разработки', 'db': "PartThree"},
+                    4: {'text': '4 Конструкторы', 'db': "PartFour"},
+                    5: {'text': '5 Технология разработки', 'db': "PartFive"},
+                    6: {'text': '6 Объектная модель прикладного решения', 'db': "PartSix"},
+                    7: {'text': '7 Табличная модель прикладного решения', 'db': "PartSeven"},
+                    8: {'text': '8 Механизмы интеграции и обмена данными', 'db': "PartEight"},
+                    9: {'text': '9 Система взаимодействия', 'db': "PartNine"},
+                    10: {'text': '10 Интерфейсные механизмы', 'db': "PartTen"},
+                    11: {'text': '11 Механизмы построения отчетности', 'db': "PartEleven"},
+                    12: {'text': '12 Механизмы оперативного учета', 'db': "PartTwelve"},
+                    13: {'text': '13 Объекты и механизмы бухгалтирского учета', 'db': "PartThirteen"},
+                    14: {'text': '14 Механизмы сложных переодических расчетов', 'db': "PartFourteen"}}
+    
+    
+    if ADMIN:
+        if request.method == "POST":
+            str_db = request.form["db"]
+            class_db = {"PartOne": PartOne,
+                        "PartTwo": PartTwo,
+                        "PartThree": PartThree,
+                        "PartFour": PartFour,
+                        "PartFive": PartFive,
+                        "PartSix": PartSix,
+                        "PartSeven": PartSeven,
+                        "PartEight": PartEight,
+                        "PartNine": PartNine,
+                        "PartEleven": PartEleven,
+                        "PartTwelve": PartTwelve,
+                        "PartThirteen": PartThirteen,
+                        "PartFourteen": PartFourteen}
+            
+            db = class_db[str_db]
+            
+            questions = db().get_all_questions()
+            title = None
+            
+            for k, v in CATEGORIES.items():
+                if v["db"] == str_db:
+                    title = v["text"][2:]
+                    break      
+            
+            context = {
+                "questions": questions,
+                "title": f"Все вопросы по категории '{title}'",
+                "admin": ADMIN,
+                "user": USER,
+            }
+            return render_template('questions.html', context=context)
+            
+        
+        else:
+            context = {
+                'questions': CATEGORIES,
+                'flag': True,
+                "show_category": True,
+                "admin": ADMIN,
+                "user": USER,
+            }
+
+            return render_template('parts.html', context= context)
+    
+    else:
+        context = {
+            "title": "ошибка входа",
+            "message": "Вы не авторизованы, пожалуйста войдите в аккаунт",
+            "flag": False,
+            "admin": ADMIN,
+            "user": USER,
+        }

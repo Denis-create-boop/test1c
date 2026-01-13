@@ -13,6 +13,8 @@ EXAM_COUNT = 0
 part_list = [PartOne(), PartTwo(), PartThree(), PartFour(), PartFive(), PartSix(), PartSeven(), PartEight(), PartNine(), PartTen(), PartEleven(), 
             PartTwelve(), PartThirteen(), PartFourteen()]
 
+question_misstakes = 0
+answers = 0
 
 params = Online().get_params()
 ADMIN = False if int(params["admin"]) == 0 else  True
@@ -28,7 +30,7 @@ def study_for_parts(title, url, questions, back_flag=False, flag=False):
         all_questions = questions
         last_id = len(questions)
     else:
-        all_questions = questions.get_all_question()
+        all_questions = questions.get_all_questions()
         last_id = questions.get_last_id()
         
     if back_flag:
@@ -104,7 +106,7 @@ def write():
 def get_context(title, questions, url, flag, first_question, last_question):
     global ADMIN, USER, COUNT
 
-    all_questions = questions.get_all_question()
+    all_questions = questions.get_all_questions()
     
     context = {
         "title": title,
@@ -122,7 +124,7 @@ def get_context(title, questions, url, flag, first_question, last_question):
     
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    global COUNT, QUESTIONS, EXAM_COUNT, ANSWERS_LIST, ADMIN, USER, params
+    global COUNT, QUESTIONS, EXAM_COUNT, ANSWERS_LIST, ADMIN, USER, params, question_misstakes
     
     ADMIN = False if int(params["admin"]) == 0 else  True
     USER = False if int(params["user"]) == 0 else True
@@ -134,6 +136,7 @@ def index():
     EXAM_COUNT = 0
     ANSWERS_LIST = []
     COUNT = 1
+    question_misstakes = 0
     
     if request.method == 'POST':
         
@@ -164,9 +167,10 @@ def index():
 
 @app.route('/test')
 def test():
-    global QUESTIONS, FLAG, COUNT, ADMIN, USER, part_list
+    global QUESTIONS, FLAG, COUNT, ADMIN, USER, part_list, question_misstakes
     COUNT = 1
     FLAG = False
+    question_misstakes = 0
 
     questions = Questions()
     last_id = questions.get_last_id()
@@ -190,10 +194,11 @@ def test():
     
 @app.route('/test_with_answers') 
 def test_with_answers():
-    global QUESTIONS, FLAG, COUNT, ADMIN, USER, part_list
+    global QUESTIONS, FLAG, COUNT, ADMIN, USER, part_list, question_misstakes
     COUNT = 1
     FLAG = True
     QUESTIONS = []
+    question_misstakes = 0
 
     questions = Questions()
     last_id = questions.get_last_id()
@@ -216,17 +221,20 @@ def test_with_answers():
     
 @app.route('/test_quest', methods=['GET', "POST"])
 def test_quest():
-    global QUESTIONS, FLAG, COUNT, ADMIN, USER, ANSWERS_LIST
+    global QUESTIONS, FLAG, COUNT, ADMIN, USER, ANSWERS_LIST, question_misstakes, answers
 
     title = "Экзамен"
     url = "test_quest"
     context = None
     
     def misstakes():
+        global question_misstakes, answers
         ANSWERS_LIST.append(request.form['answer'])
-        COUNT = 0
-        answers = 0
-        misstakes = 0
+        if request.form["answer"] != QUESTIONS[COUNT -3]["answer"]:
+            question_misstakes += 1
+        else:
+            answers += 1
+
         misstake_dict = {
             0: "ошибок",
             1: "ошибку",
@@ -245,29 +253,23 @@ def test_quest():
             14: "ошибок"
         }
         
-        for question in QUESTIONS:
-            if question['answer'] == ANSWERS_LIST[COUNT]:
-                answers += 1
-                COUNT += 1
-            else:
-                misstakes += 1
-                COUNT += 1
-        if misstakes > 2:
-            result = f"Тест не сдан вы совершили {misstakes} {misstake_dict[misstakes]}"
+        if question_misstakes > 2:
+            result = f"Тест не сдан вы совершили {question_misstakes} {misstake_dict[question_misstakes]}"
         else:
-            result = f"Поздровляем тест сдан вы совершили {misstakes} {misstake_dict[misstakes]}"
-        COUNT = 0   
+            result = f"Поздровляем тест сдан вы совершили {question_misstakes} {misstake_dict[question_misstakes]}"
 
         context = {
             "title": "Результат",
             "result": result,
-            "misstakes": misstakes,
+            "misstakes": question_misstakes,
             "flag": FLAG,
             "admin": ADMIN,
             "user": USER,
         }
         
         return render_template('result.html', context=context)
+    
+    
     
     if COUNT <= 15:
         if COUNT == 15:
@@ -297,6 +299,11 @@ def test_quest():
                             
                     else:
                         ANSWERS_LIST.append(request.form['answer'])
+                        if request.form["answer"] != QUESTIONS[COUNT -2]["answer"]:
+                            question_misstakes += 1
+                        else:
+                            answers += 1
+                        
                         question = QUESTIONS[COUNT - 1]
                         question["id"] = COUNT
                         context = {
@@ -306,12 +313,20 @@ def test_quest():
                             "title": title,
                             "first_question": False,
                             "last_question": False,
+                            "misstakes": question_misstakes,
                             "admin": ADMIN,
                             "user": USER,
                         }
                         COUNT += 1
                 except:
                         ANSWERS_LIST.append(request.form['answer'])
+                        print(request.form["answer"])
+                        print(QUESTIONS[COUNT - 2]["answer"])
+                        print(request.form["answer"] == QUESTIONS[COUNT - 2]["answer"])
+                        if request.form["answer"] != QUESTIONS[COUNT -2]["answer"]:
+                            question_misstakes += 1
+                        else:
+                            answers += 1
                         question = QUESTIONS[COUNT - 1]
                         question["id"] = COUNT
                         context = {
@@ -321,6 +336,7 @@ def test_quest():
                             "title": title,
                             "first_question": False,
                             "last_question": False,
+                            "misstakes": question_misstakes,
                             "admin": ADMIN,
                             "user": USER,
                         }
@@ -338,6 +354,7 @@ def test_quest():
                     "title": title,
                     "first_question": True,
                     "last_question": False,
+                    "misstakes": question_misstakes,
                     "admin": ADMIN,
                     "user": USER,
                 }
@@ -421,6 +438,7 @@ def study():
             14: {'text': '14 Механизмы сложных переодических расчетов', 'url': 'part_fourteen'}
         },
         'flag': True,
+        "show_category": False,
         "admin": ADMIN,
         "user": USER,
     }

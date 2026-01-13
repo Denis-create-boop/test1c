@@ -55,7 +55,7 @@ class Questions:
         self.db.commit()
         
 
-    def get_all_question(self):
+    def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
         query = """ SELECT * FROM questions """
@@ -152,7 +152,7 @@ class PartOne:
         self.db.commit()
         
 
-    def get_all_question(self):
+    def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
         query = """ SELECT * FROM part_one """
@@ -249,7 +249,7 @@ class PartTwo:
         self.db.commit()
         
 
-    def get_all_question(self):
+    def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
         query = """ SELECT * FROM part_two """
@@ -345,7 +345,7 @@ class PartThree:
         self.db.commit()
         
 
-    def get_all_question(self):
+    def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
         query = """ SELECT * FROM part_three """
@@ -441,7 +441,7 @@ class PartFour:
         self.db.commit()
         
 
-    def get_all_question(self):
+    def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
         query = """ SELECT * FROM part_four """
@@ -537,7 +537,7 @@ class PartFive:
         self.db.commit()
         
 
-    def get_all_question(self):
+    def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
         query = """ SELECT * FROM part_five """
@@ -633,7 +633,7 @@ class PartSix:
         self.db.commit()
         
 
-    def get_all_question(self):
+    def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
         query = """ SELECT * FROM part_six """
@@ -729,7 +729,7 @@ class PartSeven:
         self.db.commit()
         
 
-    def get_all_question(self):
+    def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
         query = """ SELECT * FROM part_seven """
@@ -825,7 +825,7 @@ class PartEight:
         self.db.commit()
         
 
-    def get_all_question(self):
+    def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
         query = """ SELECT * FROM part_eight """
@@ -920,7 +920,7 @@ class PartNine:
         self.db.commit()
         
 
-    def get_all_question(self):
+    def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
         query = """ SELECT * FROM part_nine """
@@ -1016,7 +1016,7 @@ class PartTen:
         self.db.commit()
         
 
-    def get_all_question(self):
+    def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
         query = """ SELECT * FROM part_ten """
@@ -1111,7 +1111,7 @@ class PartEleven:
         self.db.commit()
         
 
-    def get_all_question(self):
+    def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
         query = """ SELECT * FROM part_eleven """
@@ -1207,7 +1207,7 @@ class PartTwelve:
         self.db.commit()
         
 
-    def get_all_question(self):
+    def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
         query = """ SELECT * FROM part_twelve """
@@ -1303,7 +1303,7 @@ class PartThirteen:
         self.db.commit()
         
 
-    def get_all_question(self):
+    def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
         query = """ SELECT * FROM part_thirteen """
@@ -1399,7 +1399,7 @@ class PartFourteen:
         self.db.commit()
         
 
-    def get_all_question(self):
+    def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
         query = """ SELECT * FROM part_fourteen """
