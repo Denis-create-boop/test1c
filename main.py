@@ -8,10 +8,14 @@ ANSWERS_LIST = []
 COUNT = 1
 FLAG = False
 EXAM_COUNT = 0
+PROF = False
+ERP = False
 
+part_list_prof = [PartOneProf(), PartTwoProf(), PartThreeProf(), PartFourProf(), PartFiveProf(), PartSixProf(), PartSevenProf(), PartEightProf(), 
+                  PartNineProf(), PartTenProf(), PartElevenProf(), PartTwelveProf(), PartThirteenProf(), PartFourteenProf()]
 
-part_list = [PartOne(), PartTwo(), PartThree(), PartFour(), PartFive(), PartSix(), PartSeven(), PartEight(), PartNine(), PartTen(), PartEleven(), 
-            PartTwelve(), PartThirteen(), PartFourteen()]
+part_list_erp = [PartOneErp(), PartTwoErp(), PartThreeErp(), PartFourErp(), PartFiveErp(), PartSixErp(), PartSevenErp(), PartEightErp(), PartNineErp(), 
+                 PartTenErp(), PartElevenErp(), PartTwelveErp(), PartThirteenErp(), PartFourteenErp()]
 
 question_misstakes = 0
 answers = 0
@@ -78,29 +82,110 @@ def study_for_parts(title, url, questions, back_flag=False, flag=False):
         }
         COUNT += 1
     return context
- 
+
+
+def writing_questions(exam):
+    global QUESTIONS, ERP, PROF, part_list_prof, part_list_erp
+    if exam == "prof":
+        questions = QuestionsProf()
+        part_list = part_list_prof
+        PROF = True
+        ERP = False
+        
+    elif exam == "erp":
+        questions = QuestionsErp()
+        part_list = part_list_erp
+        ERP = True
+        PROF = False
+        
+    last_id = questions.get_last_id()
+    
+    for part in part_list:
+        last_id = part.get_last_id()
+        number = random.randrange(1, last_id)
+        question = part.get_question(number)
+        QUESTIONS.append(question)
+        random.shuffle(QUESTIONS) 
+            
  
 def write():
+   
+    data_prof = {1: {"path": "./questions/prof/part_one.txt", "db": PartOneProf()},
+                2: {"path": "./questions/prof/part_two.txt", "db": PartTwoProf()},
+                3: {"path": "./questions/prof/part_three.txt", "db": PartThreeProf()},
+                4: {"path": "./questions/prof/part_four.txt", "db": PartFourProf()},
+                5: {"path": "./questions/prof/part_five.txt", "db": PartFiveProf()},
+                6: {"path": "./questions/prof/part_six.txt", "db": PartSixProf()},
+                7: {"path": "./questions/prof/part_seven.txt", "db": PartSevenProf()},
+                8: {"path": "./questions/prof/part_eight.txt", "db": PartEightProf()},
+                9: {"path": "./questions/prof/part_nine.txt", "db": PartNineProf()},
+                10: {"path": "./questions/prof/part_ten.txt", "db": PartTenProf()},
+                11: {"path": "./questions/prof/part_eleven.txt", "db": PartElevenProf()},
+                12: {"path": "./questions/prof/part_twelve.txt", "db": PartTwelveProf()},
+                13: {"path": "./questions/prof/part_thirteen.txt", "db": PartThirteenProf()},
+                14: {"path": "./questions/prof/part_fourteen.txt", "db": PartFourteenProf()}}
+        
+    parts_prof = {
+            1: {"text": '1 общие механизмы, понятия и термины', "url": 'part_one'},
+            2: {"text": '2 Редакторы и инструменты общие', "url": 'part_two'},
+            3: {"text": '3 Редакторы и инструменты режима разработки', "url": 'part_three'},
+            4: {"text": '4 Конструкторы', "url": 'part_four'},
+            5: {"text": '5 Технология разработки', "url": 'part_five'},
+            6: {"text": '6 Объектная модель прикладного решения', "url": 'part_six'},
+            7: {"text": '7 Табличная модель прикладного решения', "url": 'part_seven'},
+            8: {"text": '8 Механизмы интеграции и обмена данными', "url": 'part_eight'},
+            9: {"text": '9 Система взаимодействия', "url": 'part_nine'},
+            10: {"text": '10 Интерфейсные механизмы', "url": 'part_ten'},
+            11: {"text": '11 Механизмы построения отчетности', "url": 'part_eleven'},
+            12: {"text": '12 Механизмы оперативного учета', "url": 'part_twelve'},
+            13: {"text": '13 Объекты и механизмы бухгалтирского учета', "url": 'part_thirteen'},
+            14: {"text": '14 Механизмы сложных переодических расчетов', "url": 'part_fourteen'}
+        }
+        
+        
     
-    data = {1: {"path": "./questions/part_one.txt", "db": PartOne()},
-            2: {"path": "./questions/part_two.txt", "db": PartTwo()},
-            3: {"path": "./questions/part_three.txt", "db": PartThree()},
-            4: {"path": "./questions/part_four.txt", "db": PartFour()},
-            5: {"path": "./questions/part_five.txt", "db": PartFive()},
-            6: {"path": "./questions/part_six.txt", "db": PartSix()},
-            7: {"path": "./questions/part_seven.txt", "db": PartSeven()},
-            8: {"path": "./questions/part_eight.txt", "db": PartEight()},
-            9: {"path": "./questions/part_nine.txt", "db": PartNine()},
-            10: {"path": "./questions/part_ten.txt", "db": PartTen()},
-            11: {"path": "./questions/part_eleven.txt", "db": PartEleven()},
-            12: {"path": "./questions/part_twelve.txt", "db": PartTwelve()},
-            13: {"path": "./questions/part_thirteen.txt", "db": PartThirteen()},
-            14: {"path": "./questions/part_fourteen.txt", "db": PartFourteen()}}
-    for k, v in data.items():
-        if v["db"].get_last_id():
-            continue
-        else:
-            write_to_db(v["path"], v["db"])
+    data_erp = {1: {"path": "./questions/erp/part_one.txt", "db": PartOneErp()},
+                2: {"path": "./questions/erp/part_two.txt", "db": PartTwoErp()},
+                3: {"path": "./questions/erp/part_three.txt", "db": PartThreeErp()},
+                4: {"path": "./questions/erp/part_four.txt", "db": PartFourErp()},
+                5: {"path": "./questions/erp/part_five.txt", "db": PartFiveErp()},
+                6: {"path": "./questions/erp/part_six.txt", "db": PartSixErp()},
+                7: {"path": "./questions/erp/part_seven.txt", "db": PartSevenErp()},
+                8: {"path": "./questions/erp/part_eight.txt", "db": PartEightErp()},
+                9: {"path": "./questions/erp/part_nine.txt", "db": PartNineErp()},
+                10: {"path": "./questions/erp/part_ten.txt", "db": PartTenErp()},
+                11: {"path": "./questions/erp/part_eleven.txt", "db": PartElevenErp()},
+                12: {"path": "./questions/erp/part_twelve.txt", "db": PartTwelveErp()},
+                13: {"path": "./questions/erp/part_thirteen.txt", "db": PartThirteenErp()},
+                14: {"path": "./questions/erp/part_fourteen.txt", "db": PartFourteenErp()}}
+        
+    parts_erp = {
+            1: {"text": '1 Общие положения, нормативно-справочная информация', "url": 'part_one'},
+            2: {"text": '2 Планирование', "url": 'part_two'},
+            3: {"text": '3 Бюджетирование', "url": 'part_three'},
+            4: {"text": '4 Работа с заказами', "url": 'part_four'},
+            5: {"text": '5 Закупки', "url": 'part_five'},
+            6: {"text": '6 Складское хозяйство', "url": 'part_six'},
+            7: {"text": '7 Продажи', "url": 'part_seven'},
+            8: {"text": '8 Казначейство', "url": 'part_eight'},
+            9: {"text": '9 Ведение взаиморасчетов', "url": 'part_nine'},
+            10: {"text": '10 Нормирование', "url": 'part_ten'},
+            11: {"text": '11 Управление производством', "url": 'part_eleven'},
+            12: {"text": '12 Производство', "url": 'part_twelve'},
+            13: {"text": '13 Оперативный учет', "url": 'part_thirteen'},
+            14: {"text": '14 Регламентированный учет', "url": 'part_fourteen'}
+        }
+        
+    if QuestionsProf().get_last_id() == 0:    
+        for k, v in data_prof.items():
+            write_to_db_questions(v["path"], v["db"], 'prof')
+    
+    if QuestionsErp().get_last_id() == 0:
+        for k, v in data_erp.items():
+            write_to_db_questions(v["path"], v["db"], 'erp')
+        
+    write_to_db_parts(parts_prof, PartsProf())
+    write_to_db_parts(parts_erp, PartsErp())
  
  
 def get_context(title, questions, url, flag, first_question, last_question):
@@ -157,50 +242,80 @@ def index():
             'flag': False,
             "admin": ADMIN,
             "user": USER,
+            "platformaprof": False,
+            "ERP": False,
 
         }
         if ADMIN or USER:
+            
             return render_template('index.html', context=context)
         else:
             return render_template('login.html', context=context)
 
+@app.route('/test_erp')
+def test_erp():
 
-@app.route('/test')
-def test():
-    global QUESTIONS, FLAG, COUNT, ADMIN, USER, part_list, question_misstakes
-    COUNT = 1
-    FLAG = False
-    question_misstakes = 0
-
-    questions = Questions()
-    last_id = questions.get_last_id()
-    
-    for part in part_list:
-        last_id = part.get_last_id()
-        number = random.randrange(1, last_id)
-        question = part.get_question(number)
-        QUESTIONS.append(question)
-        random.shuffle(QUESTIONS)
+    writing_questions("erp")
     
     context = {
         "title": "Экзамен",
         'url': 'test_quest',
         "admin": ADMIN,
         "user": USER,
+        "ERP": True,
+        "platformaprof": False,
     }
-
     
+    return render_template('index.html', context=context)    
+
+
+@app.route("/test_prof")
+def test_prof():
+    writing_questions("prof")
+    
+    context = {
+        "title": "Экзамен",
+        'url': 'test_quest',
+        "admin": ADMIN,
+        "user": USER,
+        "ERP": False,
+        "platformaprof": True,
+    }
+    return render_template('index.html', context=context)  
+
+
+@app.route('/test')
+def test():
+    global FLAG, COUNT, ADMIN, USER, question_misstakes
+    COUNT = 1
+    FLAG = False
+    question_misstakes = 0
+
+        
+    context = {
+            "title": "Экзамен",
+            'url': 'test_quest',
+            "admin": ADMIN,
+            "user": USER,
+        }
+
     return render_template('test.html', context=context)
     
 @app.route('/test_with_answers') 
 def test_with_answers():
-    global QUESTIONS, FLAG, COUNT, ADMIN, USER, part_list, question_misstakes
+    global QUESTIONS, FLAG, COUNT, ADMIN, USER, PROF, ERP, part_list_prof, part_list_erp, question_misstakes
     COUNT = 1
     FLAG = True
     QUESTIONS = []
     question_misstakes = 0
 
-    questions = Questions()
+    if PROF:
+        questions = QuestionsProf()
+        part_list = part_list_prof
+    elif ERP:
+        questions = QuestionsErp()
+        part_list = part_list_erp
+        
     last_id = questions.get_last_id()
     
     for part in part_list:
@@ -268,7 +383,6 @@ def test_quest():
         }
         
         return render_template('result.html', context=context)
-    
     
     
     if COUNT <= 15:
@@ -417,26 +531,16 @@ def show_misstakes():
 
 @app.route('/study')
 def study():
-    global COUNT, ADMIN, USER
+    global COUNT, ADMIN, USER, ERP, PROF
     COUNT = 1
 
+    if PROF:
+        parts = PartsProf().get_parts()
+    elif ERP:
+        parts = PartsErp().get_parts()
+        
     context = {
-        'questions': {
-            1: {'text': '1 общие механизмы, понятия и термины', 'url': 'part_one'},
-            2: {'text': '2 Редакторы и инструменты общие', 'url': 'part_two'},
-            3: {'text': '3 Редакторы и инструменты режима разработки', 'url': 'part_three'},
-            4: {'text': '4 Конструкторы', 'url': 'part_four'},
-            5: {'text': '5 Технология разработки', 'url': 'part_five'},
-            6: {'text': '6 Объектная модель прикладного решения', 'url': 'part_six'},
-            7: {'text': '7 Табличная модель прикладного решения', 'url': 'part_seven'},
-            8: {'text': '8 Механизмы интеграции и обмена данными', 'url': 'part_eight'},
-            9: {'text': '9 Система взаимодействия', 'url': 'part_nine'},
-            10: {'text': '10 Интерфейсные механизмы', 'url': 'part_ten'},
-            11: {'text': '11 Механизмы построения отчетности', 'url': 'part_eleven'},
-            12: {'text': '12 Механизмы оперативного учета', 'url': 'part_twelve'},
-            13: {'text': '13 Объекты и механизмы бухгалтирского учета', 'url': 'part_thirteen'},
-            14: {'text': '14 Механизмы сложных переодических расчетов', 'url': 'part_fourteen'}
-        },
+            'questions': parts,
         'flag': True,
         "show_category": False,
         "admin": ADMIN,
@@ -449,13 +553,18 @@ def study():
  
 @app.route('/part_one', methods=['GET', 'POST'])
 def part_one():
-    global COUNT, FLAG, ADMIN, USER
+    global COUNT, FLAG, ADMIN, USER, PROF, ERP
     FLAG = True
     
-    title = "общие механизмы, понятия и термины"
+    
     url = "part_one"
     
-    questions = PartOne()
+    if PROF:
+        questions = PartOneProf()
+        title = "общие механизмы, понятия и термины"
+    elif ERP:
+        questions = PartOneErp()
+        title = "Общие положения, нормативно-справочная информация"
     
     if request.method == 'POST':
         if request.form["toBack"] == 'True':
@@ -471,13 +580,17 @@ def part_one():
  
 @app.route('/part_two', methods=['GET', 'POST'])
 def part_two():
-    global COUNT, FLAG, ADMIN, USER
+    global COUNT, FLAG, ADMIN, USER, PROF, ERP
     FLAG = True
     
-    title = "Редакторы и инструменты общие"
     url = "part_two"
     
-    questions = PartTwo() 
+    if PROF:
+        questions = PartTwoProf() 
+        title = "Редакторы и инструменты общие"
+    elif ERP:
+        questions = PartTwoErp()
+        title = "Планирование"
     
     if request.method == 'POST':
         if request.form["toBack"] == 'True':
@@ -493,13 +606,17 @@ def part_two():
 
 @app.route('/part_three', methods=['GET', 'POST'])
 def part_three():
-    global COUNT, FLAG, ADMIN, USER
+    global COUNT, FLAG, ADMIN, USER, PROF, ERP
     FLAG = True
     
-    title = "Редакторы и инструменты режима разработки"
     url = "part_three"
 
-    questions = PartThree()
+    if PROF:
+        questions = PartThreeProf()
+        title = "Редакторы и инструменты режима разработки"
+    elif ERP:
+        questions = PartThreeErp()
+        title = "Бюджетирование"
     
     if request.method == 'POST':
         if request.form["toBack"] == 'True':
@@ -515,13 +632,17 @@ def part_three():
  
 @app.route('/part_four', methods=['GET', 'POST'])
 def part_four():
-    global COUNT, FLAG, ADMIN, USER
+    global COUNT, FLAG, ADMIN, USER, PROF, ERP
     FLAG = True
     
-    title = "Конструкторы"
     url = "part_four"
-
-    questions = PartFour()
+    if PROF:
+        questions = PartFourProf()
+        title = "Конструкторы"
+    elif ERP:
+        questions = PartFourErp()
+        title = "Работа с заказами"
+        
     if request.method == 'POST':
         if request.form["toBack"] == 'True':
             context = study_for_parts(title, url, questions, back_flag = True)
@@ -536,13 +657,18 @@ def part_four():
 
 @app.route('/part_five', methods=['GET', 'POST'])
 def part_five():
-    global COUNT, FLAG, ADMIN, USER
+    global COUNT, FLAG, ADMIN, USER, PROF, ERP
     FLAG = True
     
-    title = "Технология разработки"
+    
     url = "part_five"
 
-    questions = PartFive()
+    if PROF:
+        questions = PartFiveProf()
+        title = "Технология разработки"
+    elif ERP:
+        questions = PartFiveErp()
+        title = "Закупки"
     
     if request.method == 'POST':
         if request.form["toBack"] == 'True':
@@ -558,13 +684,18 @@ def part_five():
 
 @app.route('/part_six', methods=['GET', 'POST'])
 def part_six():
-    global COUNT, FLAG, ADMIN, USER
+    global COUNT, FLAG, ADMIN, USER, PROF, ERP
     FLAG = True
     
-    title = "Объектная модель прикладного решения"
+    
     url = "part_six"
 
-    questions = PartSix()
+    if PROF:
+        questions = PartSixProf()
+        title = "Объектная модель прикладного решения"
+    elif ERP:
+        questions = PartSixErp()
+        title = "Складское хозяйство"
 
     if request.method == 'POST':
         if request.form["toBack"] == 'True':
@@ -580,13 +711,18 @@ def part_six():
 
 @app.route('/part_seven', methods=['GET', 'POST'])
 def part_seven():
-    global COUNT, FLAG, ADMIN, USER
+    global COUNT, FLAG, ADMIN, USER, PROF, ERP
     FLAG = True
     
-    title = "Табличная модель прикладного решения"
+    
     url = "part_seven"
 
-    questions = PartSeven()
+    if PROF:
+        questions = PartSevenProf()
+        title = "Табличная модель прикладного решения"
+    elif ERP:
+        questions = PartSevenErp()
+        title = "Продажи"
     
     if request.method == 'POST':
         if request.form["toBack"] == 'True':
@@ -602,13 +738,18 @@ def part_seven():
 
 @app.route('/part_eight', methods=['GET', 'POST'])
 def part_eight():
-    global COUNT, FLAG, ADMIN, USER
+    global COUNT, FLAG, ADMIN, USER, PROF, ERP
     FLAG = True
     
-    title = "Механизмы интеграции и обмена данными"
+    
     url = "part_eight"
 
-    questions = PartEight()
+    if PROF:
+        questions = PartEightProf()
+        title = "Механизмы интеграции и обмена данными"
+    elif ERP:
+        questions = PartEightErp()
+        title = "Казначейство"
 
     if request.method == 'POST':
         if request.form["toBack"] == 'True':
@@ -624,13 +765,17 @@ def part_eight():
 
 @app.route('/part_nine', methods=['GET', 'POST'])
 def part_nine():
-    global COUNT, FLAG, ADMIN, USER
+    global COUNT, FLAG, ADMIN, USER, PROF, ERP
     FLAG = True
     
-    title = "Система взаимодействия"
     url = "part_nine"
 
-    questions = PartNine()
+    if PROF:
+        questions = PartNineProf()
+        title = "Система взаимодействия"
+    elif ERP:
+        questions = PartNineErp()
+        title = "Ведение взаиморасчетов"
 
     if request.method == 'POST':
         if request.form["toBack"] == 'True':
@@ -646,13 +791,17 @@ def part_nine():
 
 @app.route('/part_ten', methods=['GET', 'POST'])
 def part_ten():
-    global COUNT, FLAG, ADMIN, USER
+    global COUNT, FLAG, ADMIN, USER, PROF, ERP
     FLAG = True
     
-    title = "Интерфейсные механизмы"
     url = "part_ten"
 
-    questions = PartTen()
+    if PROF:
+        questions = PartTenProf()
+        title = "Интерфейсные механизмы"
+    elif ERP:
+        questions = PartTenErp()
+        title = "Нормирование"
 
     if request.method == 'POST':
         if request.form["toBack"] == 'True':
@@ -668,13 +817,17 @@ def part_ten():
 
 @app.route('/part_eleven', methods=['GET', 'POST'])
 def part_eleven():
-    global COUNT, FLAG, ADMIN, USER
+    global COUNT, FLAG, ADMIN, USER, PROF, ERP
     FLAG = True
     
-    title = "Механизмы построения отчетности"
     url = "part_eleven"
 
-    questions = PartEleven()
+    if PROF:
+        questions = PartElevenProf()
+        title = "Механизмы построения отчетности"
+    elif ERP:
+        questions = PartElevenErp()
+        title = "Управление производством"
 
     if request.method == 'POST':
         if request.form["toBack"] == 'True':
@@ -690,13 +843,17 @@ def part_eleven():
 
 @app.route('/part_twelve', methods=['GET', 'POST'])
 def part_twelve():
-    global COUNT, FLAG, ADMIN, USER
+    global COUNT, FLAG, ADMIN, USER, PROF, ERP
     FLAG = True
     
-    title = "Механизмы оперативного учета"
     url = "part_twelve"
 
-    questions = PartTwelve()
+    if PROF:
+        questions = PartTwelveProf()
+        title = "Механизмы оперативного учета"
+    elif ERP:
+        questions = PartTwelveErp()
+        title = "Производство"
 
     if request.method == 'POST':
         if request.form["toBack"] == 'True':
@@ -712,13 +869,17 @@ def part_twelve():
 
 @app.route('/part_thirteen', methods=['GET', 'POST'])
 def part_thirteen():
-    global COUNT, FLAG, ADMIN, USER
+    global COUNT, FLAG, ADMIN, USER, PROF, ERP
     FLAG = True
     
-    title = "Объекты и механизмы бухгалтирского учета"
     url = "part_thirteen"
 
-    questions = PartThirteen()
+    if PROF:
+        questions = PartThirteenProf()
+        title = "Объекты и механизмы бухгалтирского учета"
+    elif ERP:
+        questions = PartThirteenErp()
+        title = "Оперативный учет"
 
     if request.method == 'POST':
         if request.form["toBack"] == 'True':
@@ -734,13 +895,18 @@ def part_thirteen():
 
 @app.route('/part_fourteen', methods=['GET', 'POST'])
 def part_fourteen():
-    global COUNT, FLAG, ADMIN, USER
+    global COUNT, FLAG, ADMIN, USER, PROF, ERP
     FLAG = True
     
-    title = "Механизмы сложных переодических расчетов"
+    
     url = "part_fourteen"
 
-    questions = PartFourteen()
+    if PROF:
+        questions = PartFourteenProf()
+        title = "Механизмы сложных переодических расчетов"
+    elif ERP:
+        questions = PartFourteenErp()
+        title = "Регламентированный учет"
 
     if request.method == 'POST':
         if request.form["toBack"] == 'True':

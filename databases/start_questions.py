@@ -1,9 +1,10 @@
-from databases.questions import *
+from databases.questions_prof import *
+from databases.questions_erp import *
 from databases.users import Users
 
 
 
-def write_to_db(PATH, db):
+def write_to_db_questions(PATH, db, exam):
      """Фукция для заполнения базы данных если она пуста"""
      questions = dict()
      number = 1
@@ -29,13 +30,22 @@ def write_to_db(PATH, db):
                          step = 0
                          number += 1
                          flag = False
-                         
-     write = Questions()
+     if exam == "prof":                    
+          write = QuestionsProf()
+     elif exam == "erp":
+          write = QuestionsErp()
+
+     
      for key, value in questions.items():
           write.add_question(value['question'], value['answer'], value['a'], value['b'], value['c'], value['d'], value['e'], value['f'], value['image'])         
           db.add_question(value['question'], value['answer'], value['a'], value['b'], value['c'], value['d'], value['e'], value['f'], value['image'])  
 
 
+def write_to_db_parts(parts, db):
+     
+     for k, v in parts.items():
+          db.write(v["text"], v["url"])
+               
 
 def create_account(flag=False):
      main_user = Users()

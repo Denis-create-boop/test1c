@@ -1,7 +1,7 @@
 import sqlite3
 
 
-class Questions:
+class QuestionsProf:
     """Класс который хранит в базе данных вопросы и варианты ответов"""
     
     def __init__(self):
@@ -12,10 +12,10 @@ class Questions:
     
     def create_table(self):
         """функция для создания таблицы"""
-        with sqlite3.connect('./databases/all_questions.db') as db:
+        with sqlite3.connect('./databases/prof/all_questions_prof.db') as db:
             self.db = db
             self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS questions (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
+            query = """ CREATE TABLE IF NOT EXISTS questions_prof (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
             self.cursor.execute(query)
             self.db.commit()
             
@@ -23,7 +23,7 @@ class Questions:
     def get_last_id(self):
         """функция для получения последнего id"""
         self.create_table()
-        query = """SELECT MAX(id) FROM questions"""
+        query = """SELECT MAX(id) FROM questions_prof"""
         self.cursor.execute(query)
         for row in self.cursor:
             if  row[0]:
@@ -36,7 +36,7 @@ class Questions:
         """функция для добавления вопроса в бд"""
         self.create_table()
         self.get_last_id()
-        query = """INSERT INTO questions (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        query = """INSERT INTO questions_prof (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         insert_payments = [
             (self.id, question, answer, a, b, c, d, e, f, image,)
         ]
@@ -47,7 +47,7 @@ class Questions:
     def change_question(self, id, question, answer, a, b, c, d=None, e=None, f=None, image=None):
         """функция для измениния вопроса либо вариантов ответа"""
         self.create_table()
-        query = """ UPDATE questions SET question=?, answer=?, a=?, b=?, c=?, d=?, e=?, f=?, image=? WHERE id=? """
+        query = """ UPDATE questions_prof SET question=?, answer=?, a=?, b=?, c=?, d=?, e=?, f=?, image=? WHERE id=? """
         insert_payments = [
             (question, answer, a, b, c, d, e, f, image, id)
         ]
@@ -58,7 +58,7 @@ class Questions:
     def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
-        query = """ SELECT * FROM questions """
+        query = """ SELECT * FROM questions_prof """
         self.cursor.execute(query)
         questions = {}
         count = 1
@@ -80,7 +80,7 @@ class Questions:
     def get_question(self, id):
         """функция для получения конкретного вопроса"""
         self.create_table()
-        query = """ SELECT * FROM questions WHERE id=? """
+        query = """ SELECT * FROM questions_prof WHERE id=? """
         self.cursor.execute(query, (id,))
         question = {}
         
@@ -97,9 +97,64 @@ class Questions:
             question['image'] = row[9]
             
         return question
+    
+    def clean(self):
+        self.create_table()
+        query = """ DELETE FROM questions_prof """
+        self.cursor.execute(query)
+        self.db.commit()
+ 
+ 
+class PartsProf:
+    def __init__(self):
+        self.db = None
+        self.cursor = None
+
+        
+    
+    def create_table(self):
+        """функция для создания таблицы"""
+        with sqlite3.connect('./databases/prof/parts_prof.db') as db:
+            self.db = db
+            self.cursor = db.cursor()
+            query = """ CREATE TABLE IF NOT EXISTS parts_prof (text TEXT, url TEXT) """
+            self.cursor.execute(query)
+            self.db.commit()  
+            
+    def write(self, text, path):
+        self.create_table()
+        
+        query = """INSERT INTO parts_prof (text, url) VALUES (?, ?)"""
+        insert_payments = [
+            (text, path),
+        ]
+        self.cursor.executemany(query, insert_payments)
+        self.db.commit()
+        
+    def get_parts(self):
+        self.create_table()
+        
+        query = """ SELECT * FROM parts_prof """
+        self.cursor.execute(query)
+        parts = {}
+        count = 1
+        for row in self.cursor:
+            part = {}
+            part["text"] = row[0]
+            part["url"] = row[1] 
+            parts[count] = part
+            count += 1
+            
+        return parts 
+    
+    def clean(self):
+        self.create_table()
+        query = """ DELETE FROM parts_prof """ 
+        self.cursor.execute(query)
+        self.db.commit()
         
         
-class PartOne:
+class PartOneProf:
     
     def __init__(self):
         self.db = None
@@ -109,10 +164,10 @@ class PartOne:
     
     def create_table(self):
         """функция для создания таблицы"""
-        with sqlite3.connect('./databases/questions.db') as db:
+        with sqlite3.connect('./databases/prof/questions_prof.db') as db:
             self.db = db
             self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS part_one (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
+            query = """ CREATE TABLE IF NOT EXISTS part_one_prof (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
             self.cursor.execute(query)
             self.db.commit()
             
@@ -120,7 +175,7 @@ class PartOne:
     def get_last_id(self):
         """функция для получения последнего id"""
         self.create_table()
-        query = """SELECT MAX(id) FROM part_one"""
+        query = """SELECT MAX(id) FROM part_one_prof"""
         self.cursor.execute(query)
         for row in self.cursor:
             if  row[0]:
@@ -133,7 +188,7 @@ class PartOne:
         """функция для добавления вопроса в бд"""
         self.create_table()
         self.get_last_id()
-        query = """INSERT INTO part_one (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        query = """INSERT INTO part_one_prof (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         insert_payments = [
             (self.id, question, answer, a, b, c, d, e, f, image,)
         ]
@@ -144,7 +199,7 @@ class PartOne:
     def change_question(self, id, question, answer, a, b, c, d=None, e=None):
         """функция для измениния вопроса либо вариантов ответа"""
         self.create_table()
-        query = """UPDATE part_one SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
+        query = """UPDATE part_one_prof SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
         insert_payments = [
             (question, answer, a, b, c, d, e, id)
         ]
@@ -155,7 +210,7 @@ class PartOne:
     def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
-        query = """ SELECT * FROM part_one """
+        query = """ SELECT * FROM part_one_prof """
         self.cursor.execute(query)
         questions = {}
         count = 1
@@ -177,7 +232,7 @@ class PartOne:
     def get_question(self, id):
         """функция для получения конкретного вопроса"""
         self.create_table()
-        query = """ SELECT * FROM part_one WHERE id=? """
+        query = """ SELECT * FROM part_one_prof WHERE id=? """
         self.cursor.execute(query, (id,))
         question = {}
         
@@ -194,9 +249,15 @@ class PartOne:
             question['image'] = row[9]
             
         return question
+    
+    def clean(self):
+        self.create_table()
+        query = """ DELETE FROM part_one_prof """
+        self.cursor.execute(query)
+        self.db.commit()
     
        
-class PartTwo:
+class PartTwoProf:
     
     def __init__(self):
         self.db = None
@@ -206,10 +267,10 @@ class PartTwo:
     
     def create_table(self):
         """функция для создания таблицы"""
-        with sqlite3.connect('./databases/questions.db') as db:
+        with sqlite3.connect('./databases/prof/questions_prof.db') as db:
             self.db = db
             self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS part_two (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
+            query = """ CREATE TABLE IF NOT EXISTS part_two_prof (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
             self.cursor.execute(query)
             self.db.commit()
             
@@ -217,7 +278,7 @@ class PartTwo:
     def get_last_id(self):
         """функция для получения последнего id"""
         self.create_table()
-        query = """ SELECT MAX(id) FROM part_two """
+        query = """ SELECT MAX(id) FROM part_two_prof """
         self.cursor.execute(query)
         for row in self.cursor:
             if  row[0]:
@@ -230,7 +291,7 @@ class PartTwo:
         """функция для добавления вопроса в бд"""
         self.create_table()
         self.get_last_id()
-        query = """INSERT INTO part_two (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        query = """INSERT INTO part_two_prof (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         insert_payments = [
             (self.id, question, answer, a, b, c, d, e, f, image,)
         ]
@@ -241,7 +302,7 @@ class PartTwo:
     def change_question(self, id, question, answer, a, b, c, d=None, e=None):
         """функция для измениния вопроса либо вариантов ответа"""
         self.create_table()
-        query = """UPDATE part_two SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
+        query = """UPDATE part_two_prof SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
         insert_payments = [
             (question, answer, a, b, c, d, e, id)
         ]
@@ -252,7 +313,7 @@ class PartTwo:
     def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
-        query = """ SELECT * FROM part_two """
+        query = """ SELECT * FROM part_two_prof """
         self.cursor.execute(query)
         questions = {}
         count = 1
@@ -274,7 +335,7 @@ class PartTwo:
     def get_question(self, id):
         """функция для получения конкретного вопроса"""
         self.create_table()
-        query = """ SELECT * FROM part_two WHERE id=? """
+        query = """ SELECT * FROM part_two_prof WHERE id=? """
         self.cursor.execute(query, (id,))
         question = {}
         
@@ -291,9 +352,15 @@ class PartTwo:
             question['image'] = row[9]
             
         return question
+    
+    def clean(self):
+        self.create_table()
+        query = """ DELETE FROM part_two_prof """
+        self.cursor.execute(query)
+        self.db.commit()
 
 
-class PartThree:
+class PartThreeProf:
     def __init__(self):
         self.db = None
         self.cursor = None
@@ -302,10 +369,10 @@ class PartThree:
     
     def create_table(self):
         """функция для создания таблицы"""
-        with sqlite3.connect('./databases/questions.db') as db:
+        with sqlite3.connect('./databases/prof/questions_prof.db') as db:
             self.db = db
             self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS part_three (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
+            query = """ CREATE TABLE IF NOT EXISTS part_three_prof (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
             self.cursor.execute(query)
             self.db.commit()
             
@@ -313,7 +380,7 @@ class PartThree:
     def get_last_id(self):
         """функция для получения последнего id"""
         self.create_table()
-        query = """ SELECT MAX(id) FROM part_three """
+        query = """ SELECT MAX(id) FROM part_three_prof """
         self.cursor.execute(query)
         for row in self.cursor:
             if  row[0]:
@@ -326,7 +393,7 @@ class PartThree:
         """функция для добавления вопроса в бд"""
         self.create_table()
         self.get_last_id()
-        query = """INSERT INTO part_three (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        query = """INSERT INTO part_three_prof (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         insert_payments = [
             (self.id, question, answer, a, b, c, d, e, f, image,)
         ]
@@ -337,7 +404,7 @@ class PartThree:
     def change_question(self, id, question, answer, a, b, c, d=None, e=None):
         """функция для измениния вопроса либо вариантов ответа"""
         self.create_table()
-        query = """UPDATE part_three SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
+        query = """UPDATE part_three_prof SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
         insert_payments = [
             (question, answer, a, b, c, d, e, id)
         ]
@@ -348,7 +415,7 @@ class PartThree:
     def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
-        query = """ SELECT * FROM part_three """
+        query = """ SELECT * FROM part_three_prof """
         self.cursor.execute(query)
         questions = {}
         count = 1
@@ -370,7 +437,7 @@ class PartThree:
     def get_question(self, id):
         """функция для получения конкретного вопроса"""
         self.create_table()
-        query = """ SELECT * FROM part_three WHERE id=? """
+        query = """ SELECT * FROM part_three_prof WHERE id=? """
         self.cursor.execute(query, (id,))
         question = {}
         
@@ -388,8 +455,14 @@ class PartThree:
             
         return question
     
+    def clean(self):
+        self.create_table()
+        query = """ DELETE FROM part_three_prof """
+        self.cursor.execute(query)
+        self.db.commit()
+    
 
-class PartFour:
+class PartFourProf:
     def __init__(self):
         self.db = None
         self.cursor = None
@@ -398,10 +471,10 @@ class PartFour:
     
     def create_table(self):
         """функция для создания таблицы"""
-        with sqlite3.connect('./databases/questions.db') as db:
+        with sqlite3.connect('./databases/prof/questions_prof.db') as db:
             self.db = db
             self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS part_four (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
+            query = """ CREATE TABLE IF NOT EXISTS part_four_prof (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
             self.cursor.execute(query)
             self.db.commit()
             
@@ -409,7 +482,7 @@ class PartFour:
     def get_last_id(self):
         """функция для получения последнего id"""
         self.create_table()
-        query = """ SELECT MAX(id) FROM part_four """
+        query = """ SELECT MAX(id) FROM part_four_prof """
         self.cursor.execute(query)
         for row in self.cursor:
             if  row[0]:
@@ -422,7 +495,7 @@ class PartFour:
         """функция для добавления вопроса в бд"""
         self.create_table()
         self.get_last_id()
-        query = """INSERT INTO part_four (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        query = """INSERT INTO part_four_prof (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         insert_payments = [
             (self.id, question, answer, a, b, c, d, e, f, image,)
         ]
@@ -433,7 +506,7 @@ class PartFour:
     def change_question(self, id, question, answer, a, b, c, d=None, e=None):
         """функция для измениния вопроса либо вариантов ответа"""
         self.create_table()
-        query = """UPDATE part_four SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
+        query = """UPDATE part_four_prof SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
         insert_payments = [
             (question, answer, a, b, c, d, e, id)
         ]
@@ -444,7 +517,7 @@ class PartFour:
     def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
-        query = """ SELECT * FROM part_four """
+        query = """ SELECT * FROM part_four_prof """
         self.cursor.execute(query)
         questions = {}
         count = 1
@@ -466,7 +539,7 @@ class PartFour:
     def get_question(self, id):
         """функция для получения конкретного вопроса"""
         self.create_table()
-        query = """ SELECT * FROM part_four WHERE id=? """
+        query = """ SELECT * FROM part_four_prof WHERE id=? """
         self.cursor.execute(query, (id,))
         question = {}
         
@@ -484,8 +557,14 @@ class PartFour:
             
         return question
     
+    def clean(self):
+        self.create_table()
+        query = """ DELETE FROM part_four_prof """
+        self.cursor.execute(query)
+        self.db.commit()
+    
 
-class PartFive:
+class PartFiveProf:
     def __init__(self):
         self.db = None
         self.cursor = None
@@ -494,10 +573,10 @@ class PartFive:
     
     def create_table(self):
         """функция для создания таблицы"""
-        with sqlite3.connect('./databases/questions.db') as db:
+        with sqlite3.connect('./databases/prof/questions_prof.db') as db:
             self.db = db
             self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS part_five (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
+            query = """ CREATE TABLE IF NOT EXISTS part_five_prof (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
             self.cursor.execute(query)
             self.db.commit()
             
@@ -505,7 +584,7 @@ class PartFive:
     def get_last_id(self):
         """функция для получения последнего id"""
         self.create_table()
-        query = """ SELECT MAX(id) FROM part_five """
+        query = """ SELECT MAX(id) FROM part_five_prof """
         self.cursor.execute(query)
         for row in self.cursor:
             if  row[0]:
@@ -518,7 +597,7 @@ class PartFive:
         """функция для добавления вопроса в бд"""
         self.create_table()
         self.get_last_id()
-        query = """INSERT INTO part_five (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        query = """INSERT INTO part_five_prof (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         insert_payments = [
             (self.id, question, answer, a, b, c, d, e, f, image,)
         ]
@@ -529,7 +608,7 @@ class PartFive:
     def change_question(self, id, question, answer, a, b, c, d=None, e=None):
         """функция для измениния вопроса либо вариантов ответа"""
         self.create_table()
-        query = """UPDATE part_five SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
+        query = """UPDATE part_five_prof SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
         insert_payments = [
             (question, answer, a, b, c, d, e, id)
         ]
@@ -540,7 +619,7 @@ class PartFive:
     def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
-        query = """ SELECT * FROM part_five """
+        query = """ SELECT * FROM part_five_prof """
         self.cursor.execute(query)
         questions = {}
         count = 1
@@ -562,7 +641,7 @@ class PartFive:
     def get_question(self, id):
         """функция для получения конкретного вопроса"""
         self.create_table()
-        query = """ SELECT * FROM part_five WHERE id=? """
+        query = """ SELECT * FROM part_five_prof WHERE id=? """
         self.cursor.execute(query, (id,))
         question = {}
         
@@ -580,8 +659,14 @@ class PartFive:
             
         return question
     
+    def clean(self):
+        self.create_table()
+        query = """ DELETE FROM part_five_prof """
+        self.cursor.execute(query)
+        self.db.commit()
+    
 
-class PartSix:
+class PartSixProf:
     def __init__(self):
         self.db = None
         self.cursor = None
@@ -590,10 +675,10 @@ class PartSix:
     
     def create_table(self):
         """функция для создания таблицы"""
-        with sqlite3.connect('./databases/questions.db') as db:
+        with sqlite3.connect('./databases/prof/questions_prof.db') as db:
             self.db = db
             self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS part_six (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
+            query = """ CREATE TABLE IF NOT EXISTS part_six_prof (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
             self.cursor.execute(query)
             self.db.commit()
             
@@ -601,7 +686,7 @@ class PartSix:
     def get_last_id(self):
         """функция для получения последнего id"""
         self.create_table()
-        query = """ SELECT MAX(id) FROM part_six """
+        query = """ SELECT MAX(id) FROM part_six_prof """
         self.cursor.execute(query)
         for row in self.cursor:
             if  row[0]:
@@ -614,7 +699,7 @@ class PartSix:
         """функция для добавления вопроса в бд"""
         self.create_table()
         self.get_last_id()
-        query = """INSERT INTO part_six (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        query = """INSERT INTO part_six_prof (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         insert_payments = [
             (self.id, question, answer, a, b, c, d, e, f, image,)
         ]
@@ -625,7 +710,7 @@ class PartSix:
     def change_question(self, id, question, answer, a, b, c, d=None, e=None):
         """функция для измениния вопроса либо вариантов ответа"""
         self.create_table()
-        query = """UPDATE part_six SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
+        query = """UPDATE part_six_prof SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
         insert_payments = [
             (question, answer, a, b, c, d, e, id)
         ]
@@ -636,7 +721,7 @@ class PartSix:
     def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
-        query = """ SELECT * FROM part_six """
+        query = """ SELECT * FROM part_six_prof """
         self.cursor.execute(query)
         questions = {}
         count = 1
@@ -658,7 +743,7 @@ class PartSix:
     def get_question(self, id):
         """функция для получения конкретного вопроса"""
         self.create_table()
-        query = """ SELECT * FROM part_six WHERE id=? """
+        query = """ SELECT * FROM part_six_prof WHERE id=? """
         self.cursor.execute(query, (id,))
         question = {}
         
@@ -676,8 +761,14 @@ class PartSix:
             
         return question
     
+    def clean(self):
+        self.create_table()
+        query = """ DELETE FROM part_six_prof """
+        self.cursor.execute(query)
+        self.db.commit()
+    
 
-class PartSeven:
+class PartSevenProf:
     def __init__(self):
         self.db = None
         self.cursor = None
@@ -686,10 +777,10 @@ class PartSeven:
     
     def create_table(self):
         """функция для создания таблицы"""
-        with sqlite3.connect('./databases/questions.db') as db:
+        with sqlite3.connect('./databases/prof/questions_prof.db') as db:
             self.db = db
             self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS part_seven (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
+            query = """ CREATE TABLE IF NOT EXISTS part_seven_prof (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
             self.cursor.execute(query)
             self.db.commit()
             
@@ -697,7 +788,7 @@ class PartSeven:
     def get_last_id(self):
         """функция для получения последнего id"""
         self.create_table()
-        query = """ SELECT MAX(id) FROM part_seven """
+        query = """ SELECT MAX(id) FROM part_seven_prof """
         self.cursor.execute(query)
         for row in self.cursor:
             if  row[0]:
@@ -710,7 +801,7 @@ class PartSeven:
         """функция для добавления вопроса в бд"""
         self.create_table()
         self.get_last_id()
-        query = """INSERT INTO part_seven (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        query = """INSERT INTO part_seven_prof (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         insert_payments = [
             (self.id, question, answer, a, b, c, d, e, f, image,)
         ]
@@ -721,7 +812,7 @@ class PartSeven:
     def change_question(self, id, question, answer, a, b, c, d=None, e=None):
         """функция для измениния вопроса либо вариантов ответа"""
         self.create_table()
-        query = """UPDATE part_seven SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
+        query = """UPDATE part_seven_prof SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
         insert_payments = [
             (question, answer, a, b, c, d, e, id)
         ]
@@ -732,7 +823,7 @@ class PartSeven:
     def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
-        query = """ SELECT * FROM part_seven """
+        query = """ SELECT * FROM part_seven_prof """
         self.cursor.execute(query)
         questions = {}
         count = 1
@@ -754,7 +845,7 @@ class PartSeven:
     def get_question(self, id):
         """функция для получения конкретного вопроса"""
         self.create_table()
-        query = """ SELECT * FROM part_seven WHERE id=? """
+        query = """ SELECT * FROM part_seven_prof WHERE id=? """
         self.cursor.execute(query, (id,))
         question = {}
         
@@ -772,8 +863,14 @@ class PartSeven:
             
         return question
     
+    def clean(self):
+        self.create_table()
+        query = """ DELETE FROM part_seven_prof """
+        self.cursor.execute(query)
+        self.db.commit()
+    
 
-class PartEight:
+class PartEightProf:
     def __init__(self):
         self.db = None
         self.cursor = None
@@ -782,10 +879,10 @@ class PartEight:
     
     def create_table(self):
         """функция для создания таблицы"""
-        with sqlite3.connect('./databases/questions.db') as db:
+        with sqlite3.connect('./databases/prof/questions_prof.db') as db:
             self.db = db
             self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS part_eight (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
+            query = """ CREATE TABLE IF NOT EXISTS part_eight_prof (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
             self.cursor.execute(query)
             self.db.commit()
             
@@ -793,7 +890,7 @@ class PartEight:
     def get_last_id(self):
         """функция для получения последнего id"""
         self.create_table()
-        query = """ SELECT MAX(id) FROM part_eight """
+        query = """ SELECT MAX(id) FROM part_eight_prof """
         self.cursor.execute(query)
         for row in self.cursor:
             if  row[0]:
@@ -806,7 +903,7 @@ class PartEight:
         """функция для добавления вопроса в бд"""
         self.create_table()
         self.get_last_id()
-        query = """INSERT INTO part_eight (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        query = """INSERT INTO part_eight_prof (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         insert_payments = [
             (self.id, question, answer, a, b, c, d, e, f, image,)
         ]
@@ -817,7 +914,7 @@ class PartEight:
     def change_question(self, id, question, answer, a, b, c, d=None, e=None):
         """функция для измениния вопроса либо вариантов ответа"""
         self.create_table()
-        query = """UPDATE part_eight SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
+        query = """UPDATE part_eight_prof SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
         insert_payments = [
             (question, answer, a, b, c, d, e, id)
         ]
@@ -828,7 +925,7 @@ class PartEight:
     def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
-        query = """ SELECT * FROM part_eight """
+        query = """ SELECT * FROM part_eight_prof """
         self.cursor.execute(query)
         questions = {}
         count = 1
@@ -850,7 +947,7 @@ class PartEight:
     def get_question(self, id):
         """функция для получения конкретного вопроса"""
         self.create_table()
-        query = """ SELECT * FROM part_eight WHERE id=? """
+        query = """ SELECT * FROM part_eight_prof WHERE id=? """
         self.cursor.execute(query, (id,))
         question = {}
         
@@ -867,9 +964,15 @@ class PartEight:
             question['image'] = row[9]
             
         return question
+    
+    def clean(self):
+        self.create_table()
+        query = """ DELETE FROM part_eight_prof """
+        self.cursor.execute(query)
+        self.db.commit()
   
   
-class PartNine:
+class PartNineProf:
     def __init__(self):
         self.db = None
         self.cursor = None
@@ -878,10 +981,10 @@ class PartNine:
     
     def create_table(self):
         """функция для создания таблицы"""
-        with sqlite3.connect('./databases/questions.db') as db:
+        with sqlite3.connect('./databases/prof/questions_prof.db') as db:
             self.db = db
             self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS part_nine (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
+            query = """ CREATE TABLE IF NOT EXISTS part_nine_prof (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
             self.cursor.execute(query)
             self.db.commit()
             
@@ -889,7 +992,7 @@ class PartNine:
     def get_last_id(self):
         """функция для получения последнего id"""
         self.create_table()
-        query = """ SELECT MAX(id) FROM part_nine """
+        query = """ SELECT MAX(id) FROM part_nine_prof """
         self.cursor.execute(query)
         for row in self.cursor:
             if  row[0]:
@@ -901,7 +1004,7 @@ class PartNine:
         """функция для добавления вопроса в бд"""
         self.create_table()
         self.get_last_id()
-        query = """INSERT INTO part_nine (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        query = """INSERT INTO part_nine_prof (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         insert_payments = [
             (self.id, question, answer, a, b, c, d, e, f, image,)
         ]
@@ -912,7 +1015,7 @@ class PartNine:
     def change_question(self, id, question, answer, a, b, c, d=None, e=None):
         """функция для измениния вопроса либо вариантов ответа"""
         self.create_table()
-        query = """UPDATE part_nine SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
+        query = """UPDATE part_nine_prof SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
         insert_payments = [
             (question, answer, a, b, c, d, e, id)
         ]
@@ -923,7 +1026,7 @@ class PartNine:
     def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
-        query = """ SELECT * FROM part_nine """
+        query = """ SELECT * FROM part_nine_prof """
         self.cursor.execute(query)
         questions = {}
         count = 1
@@ -945,7 +1048,7 @@ class PartNine:
     def get_question(self, id):
         """функция для получения конкретного вопроса"""
         self.create_table()
-        query = """ SELECT * FROM part_nine WHERE id=? """
+        query = """ SELECT * FROM part_nine_prof WHERE id=? """
         self.cursor.execute(query, (id,))
         question = {}
         
@@ -962,9 +1065,15 @@ class PartNine:
             question['image'] = row[9]
             
         return question
+    
+    def clean(self):
+        self.create_table()
+        query = """ DELETE FROM part_nine_prof """
+        self.cursor.execute(query)
+        self.db.commit()
 
 
-class PartTen:
+class PartTenProf:
     def __init__(self):
         self.db = None
         self.cursor = None
@@ -973,10 +1082,10 @@ class PartTen:
     
     def create_table(self):
         """функция для создания таблицы"""
-        with sqlite3.connect('./databases/questions.db') as db:
+        with sqlite3.connect('./databases/prof/questions_prof.db') as db:
             self.db = db
             self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS part_ten (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
+            query = """ CREATE TABLE IF NOT EXISTS part_ten_prof (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
             self.cursor.execute(query)
             self.db.commit()
             
@@ -984,7 +1093,7 @@ class PartTen:
     def get_last_id(self):
         """функция для получения последнего id"""
         self.create_table()
-        query = """ SELECT MAX(id) FROM part_ten """
+        query = """ SELECT MAX(id) FROM part_ten_prof """
         self.cursor.execute(query)
         for row in self.cursor:
             if  row[0]:
@@ -997,7 +1106,7 @@ class PartTen:
         """функция для добавления вопроса в бд"""
         self.create_table()
         self.get_last_id()
-        query = """INSERT INTO part_ten (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        query = """INSERT INTO part_ten_prof (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         insert_payments = [
             (self.id, question, answer, a, b, c, d, e, f, image,)
         ]
@@ -1008,7 +1117,7 @@ class PartTen:
     def change_question(self, id, question, answer, a, b, c, d=None, e=None):
         """функция для измениния вопроса либо вариантов ответа"""
         self.create_table()
-        query = """UPDATE part_ten SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
+        query = """UPDATE part_ten_prof SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
         insert_payments = [
             (question, answer, a, b, c, d, e, id)
         ]
@@ -1019,7 +1128,7 @@ class PartTen:
     def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
-        query = """ SELECT * FROM part_ten """
+        query = """ SELECT * FROM part_ten_prof """
         self.cursor.execute(query)
         questions = {}
         count = 1
@@ -1041,7 +1150,7 @@ class PartTen:
     def get_question(self, id):
         """функция для получения конкретного вопроса"""
         self.create_table()
-        query = """ SELECT * FROM part_ten WHERE id=? """
+        query = """ SELECT * FROM part_ten_prof WHERE id=? """
         self.cursor.execute(query, (id,))
         question = {}
         
@@ -1058,9 +1167,15 @@ class PartTen:
             question['image'] = row[9]
             
         return question
+    
+    def clean(self):
+        self.create_table()
+        query = """ DELETE FROM part_ten_prof """
+        self.cursor.execute(query)
+        self.db.commit()
 
 
-class PartEleven:
+class PartElevenProf:
     def __init__(self):
         self.db = None
         self.cursor = None
@@ -1069,10 +1184,10 @@ class PartEleven:
     
     def create_table(self):
         """функция для создания таблицы"""
-        with sqlite3.connect('./databases/questions.db') as db:
+        with sqlite3.connect('./databases/prof/questions_prof.db') as db:
             self.db = db
             self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS part_eleven (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
+            query = """ CREATE TABLE IF NOT EXISTS part_eleven_prof (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
             self.cursor.execute(query)
             self.db.commit()
             
@@ -1080,7 +1195,7 @@ class PartEleven:
     def get_last_id(self):
         """функция для получения последнего id"""
         self.create_table()
-        query = """ SELECT MAX(id) FROM part_eleven """
+        query = """ SELECT MAX(id) FROM part_eleven_prof """
         self.cursor.execute(query)
         for row in self.cursor:
             if  row[0]:
@@ -1092,7 +1207,7 @@ class PartEleven:
         """функция для добавления вопроса в бд"""
         self.create_table()
         self.get_last_id()
-        query = """INSERT INTO part_eleven (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        query = """INSERT INTO part_eleven_prof (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         insert_payments = [
             (self.id, question, answer, a, b, c, d, e, f, image,)
         ]
@@ -1103,7 +1218,7 @@ class PartEleven:
     def change_question(self, id, question, answer, a, b, c, d=None, e=None):
         """функция для измениния вопроса либо вариантов ответа"""
         self.create_table()
-        query = """UPDATE part_eleven SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
+        query = """UPDATE part_eleven_prof SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
         insert_payments = [
             (question, answer, a, b, c, d, e, id)
         ]
@@ -1114,7 +1229,7 @@ class PartEleven:
     def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
-        query = """ SELECT * FROM part_eleven """
+        query = """ SELECT * FROM part_eleven_prof """
         self.cursor.execute(query)
         questions = {}
         count = 1
@@ -1136,7 +1251,7 @@ class PartEleven:
     def get_question(self, id):
         """функция для получения конкретного вопроса"""
         self.create_table()
-        query = """ SELECT * FROM part_eleven WHERE id=? """
+        query = """ SELECT * FROM part_eleven_prof WHERE id=? """
         self.cursor.execute(query, (id,))
         question = {}
         
@@ -1153,9 +1268,15 @@ class PartEleven:
             question['image'] = row[9]
             
         return question
+    
+    def clean(self):
+        self.create_table()
+        query = """ DELETE FROM part_eleven_prof """
+        self.cursor.execute(query)
+        self.db.commit()
 
 
-class PartTwelve:
+class PartTwelveProf:
     def __init__(self):
         self.db = None
         self.cursor = None
@@ -1164,10 +1285,10 @@ class PartTwelve:
     
     def create_table(self):
         """функция для создания таблицы"""
-        with sqlite3.connect('./databases/questions.db') as db:
+        with sqlite3.connect('./databases/prof/questions_prof.db') as db:
             self.db = db
             self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS part_twelve (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
+            query = """ CREATE TABLE IF NOT EXISTS part_twelve_prof (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
             self.cursor.execute(query)
             self.db.commit()
             
@@ -1175,103 +1296,7 @@ class PartTwelve:
     def get_last_id(self):
         """функция для получения последнего id"""
         self.create_table()
-        query = """ SELECT MAX(id) FROM part_twelve """
-        self.cursor.execute(query)
-        for row in self.cursor:
-            if  row[0]:
-                self.id = int(row[0]) + 1
-        return self.id - 1
-        
-    
-    
-    def add_question(self, question, answer, a, b, c, d=None, e=None, f=None, image=None):
-        """функция для добавления вопроса в бд"""
-        self.create_table()
-        self.get_last_id()
-        query = """INSERT INTO part_twelve (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
-        insert_payments = [
-            (self.id, question, answer, a, b, c, d, e, f, image,)
-        ]
-        self.cursor.executemany(query, insert_payments)
-        self.db.commit()
-        
-    
-    def change_question(self, id, question, answer, a, b, c, d=None, e=None):
-        """функция для измениния вопроса либо вариантов ответа"""
-        self.create_table()
-        query = """UPDATE part_twelve SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
-        insert_payments = [
-            (question, answer, a, b, c, d, e, id)
-        ]
-        self.cursor.executemany(query, insert_payments)
-        self.db.commit()
-        
-
-    def get_all_questions(self):
-        """функция для получения всех вопросов из бд"""
-        self.create_table()
-        query = """ SELECT * FROM part_twelve """
-        self.cursor.execute(query)
-        questions = {}
-        count = 1
-        for row in self.cursor:
-            questions[count] = {"id": row[0], 
-                         "question": row[1], 
-                         "answer": row[2], 
-                         "a": row[3], 
-                         "b": row[4], 
-                         "c": row[5], 
-                         "d": row[6], 
-                         "e": row[7],
-                         "f": row[8],
-                         "image": row[9]}
-            count += 1
-        return questions
-    
-    
-    def get_question(self, id):
-        """функция для получения конкретного вопроса"""
-        self.create_table()
-        query = """ SELECT * FROM part_twelve WHERE id=? """
-        self.cursor.execute(query, (id,))
-        question = {}
-        
-        for row in self.cursor:
-            question['id'] = row[0]
-            question['question'] = row[1]
-            question['answer'] = row[2]
-            question['a'] = row[3]
-            question['b'] = row[4]
-            question['c'] = row[5]
-            question['d'] = row[6]
-            question['e'] = row[7]
-            question['f'] = row[8]
-            question['image'] = row[9]
-            
-        return question
-
-
-class PartThirteen:
-    def __init__(self):
-        self.db = None
-        self.cursor = None
-        self.id = 1
-        
-    
-    def create_table(self):
-        """функция для создания таблицы"""
-        with sqlite3.connect('./databases/questions.db') as db:
-            self.db = db
-            self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS part_thirteen (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
-            self.cursor.execute(query)
-            self.db.commit()
-            
-            
-    def get_last_id(self):
-        """функция для получения последнего id"""
-        self.create_table()
-        query = """ SELECT MAX(id) FROM part_thirteen """
+        query = """ SELECT MAX(id) FROM part_twelve_prof """
         self.cursor.execute(query)
         for row in self.cursor:
             if  row[0]:
@@ -1284,7 +1309,7 @@ class PartThirteen:
         """функция для добавления вопроса в бд"""
         self.create_table()
         self.get_last_id()
-        query = """INSERT INTO part_thirteen (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        query = """INSERT INTO part_twelve_prof (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         insert_payments = [
             (self.id, question, answer, a, b, c, d, e, f, image,)
         ]
@@ -1295,7 +1320,7 @@ class PartThirteen:
     def change_question(self, id, question, answer, a, b, c, d=None, e=None):
         """функция для измениния вопроса либо вариантов ответа"""
         self.create_table()
-        query = """UPDATE part_thirteen SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
+        query = """UPDATE part_twelve_prof SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
         insert_payments = [
             (question, answer, a, b, c, d, e, id)
         ]
@@ -1306,7 +1331,7 @@ class PartThirteen:
     def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
-        query = """ SELECT * FROM part_thirteen """
+        query = """ SELECT * FROM part_twelve_prof """
         self.cursor.execute(query)
         questions = {}
         count = 1
@@ -1328,7 +1353,7 @@ class PartThirteen:
     def get_question(self, id):
         """функция для получения конкретного вопроса"""
         self.create_table()
-        query = """ SELECT * FROM part_thirteen WHERE id=? """
+        query = """ SELECT * FROM part_twelve_prof WHERE id=? """
         self.cursor.execute(query, (id,))
         question = {}
         
@@ -1346,8 +1371,14 @@ class PartThirteen:
             
         return question
     
-    
-class PartFourteen:
+    def clean(self):
+        self.create_table()
+        query = """ DELETE FROM part_twelve_prof """
+        self.cursor.execute(query)
+        self.db.commit()
+
+
+class PartThirteenProf:
     def __init__(self):
         self.db = None
         self.cursor = None
@@ -1356,10 +1387,10 @@ class PartFourteen:
     
     def create_table(self):
         """функция для создания таблицы"""
-        with sqlite3.connect('./databases/questions.db') as db:
+        with sqlite3.connect('./databases/prof/questions_prof.db') as db:
             self.db = db
             self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS part_fourteen (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
+            query = """ CREATE TABLE IF NOT EXISTS part_thirteen_prof (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
             self.cursor.execute(query)
             self.db.commit()
             
@@ -1367,7 +1398,7 @@ class PartFourteen:
     def get_last_id(self):
         """функция для получения последнего id"""
         self.create_table()
-        query = """ SELECT MAX(id) FROM part_fourteen """
+        query = """ SELECT MAX(id) FROM part_thirteen_prof """
         self.cursor.execute(query)
         for row in self.cursor:
             if  row[0]:
@@ -1380,7 +1411,7 @@ class PartFourteen:
         """функция для добавления вопроса в бд"""
         self.create_table()
         self.get_last_id()
-        query = """INSERT INTO part_fourteen (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        query = """INSERT INTO part_thirteen_prof (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         insert_payments = [
             (self.id, question, answer, a, b, c, d, e, f, image,)
         ]
@@ -1391,7 +1422,7 @@ class PartFourteen:
     def change_question(self, id, question, answer, a, b, c, d=None, e=None):
         """функция для измениния вопроса либо вариантов ответа"""
         self.create_table()
-        query = """UPDATE part_fourteen SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
+        query = """UPDATE part_thirteen_prof SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
         insert_payments = [
             (question, answer, a, b, c, d, e, id)
         ]
@@ -1402,7 +1433,7 @@ class PartFourteen:
     def get_all_questions(self):
         """функция для получения всех вопросов из бд"""
         self.create_table()
-        query = """ SELECT * FROM part_fourteen """
+        query = """ SELECT * FROM part_thirteen_prof """
         self.cursor.execute(query)
         questions = {}
         count = 1
@@ -1424,7 +1455,109 @@ class PartFourteen:
     def get_question(self, id):
         """функция для получения конкретного вопроса"""
         self.create_table()
-        query = """ SELECT * FROM part_fourteen WHERE id=? """
+        query = """ SELECT * FROM part_thirteen_prof WHERE id=? """
+        self.cursor.execute(query, (id,))
+        question = {}
+        
+        for row in self.cursor:
+            question['id'] = row[0]
+            question['question'] = row[1]
+            question['answer'] = row[2]
+            question['a'] = row[3]
+            question['b'] = row[4]
+            question['c'] = row[5]
+            question['d'] = row[6]
+            question['e'] = row[7]
+            question['f'] = row[8]
+            question['image'] = row[9]
+            
+        return question
+    
+    def clean(self):
+        self.create_table()
+        query = """ DELETE FROM part_thirteen_prof """
+        self.cursor.execute(query)
+        self.db.commit()
+    
+    
+class PartFourteenProf:
+    def __init__(self):
+        self.db = None
+        self.cursor = None
+        self.id = 1
+        
+    
+    def create_table(self):
+        """функция для создания таблицы"""
+        with sqlite3.connect('./databases/prof/questions_prof.db') as db:
+            self.db = db
+            self.cursor = db.cursor()
+            query = """ CREATE TABLE IF NOT EXISTS part_fourteen_prof (id INTEGER, question TEXT, answer TEXT, a TEXT, b TEXT, c TEXT, d TEXT, e TEXT, f TEXT, image TEXT) """
+            self.cursor.execute(query)
+            self.db.commit()
+            
+            
+    def get_last_id(self):
+        """функция для получения последнего id"""
+        self.create_table()
+        query = """ SELECT MAX(id) FROM part_fourteen_prof """
+        self.cursor.execute(query)
+        for row in self.cursor:
+            if  row[0]:
+                self.id = int(row[0]) + 1
+        return self.id - 1
+        
+    
+    
+    def add_question(self, question, answer, a, b, c, d=None, e=None, f=None, image=None):
+        """функция для добавления вопроса в бд"""
+        self.create_table()
+        self.get_last_id()
+        query = """INSERT INTO part_fourteen_prof (id, question, answer, a, b, c, d, e, f, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        insert_payments = [
+            (self.id, question, answer, a, b, c, d, e, f, image,)
+        ]
+        self.cursor.executemany(query, insert_payments)
+        self.db.commit()
+        
+    
+    def change_question(self, id, question, answer, a, b, c, d=None, e=None):
+        """функция для измениния вопроса либо вариантов ответа"""
+        self.create_table()
+        query = """UPDATE part_fourteen_prof SET question=?, answer=?, a=?, b=?, c=?, d=?, e=? WHERE id=? """
+        insert_payments = [
+            (question, answer, a, b, c, d, e, id)
+        ]
+        self.cursor.executemany(query, insert_payments)
+        self.db.commit()
+        
+
+    def get_all_questions(self):
+        """функция для получения всех вопросов из бд"""
+        self.create_table()
+        query = """ SELECT * FROM part_fourteen_prof """
+        self.cursor.execute(query)
+        questions = {}
+        count = 1
+        for row in self.cursor:
+            questions[count] = {"id": row[0], 
+                         "question": row[1], 
+                         "answer": row[2], 
+                         "a": row[3], 
+                         "b": row[4], 
+                         "c": row[5], 
+                         "d": row[6], 
+                         "e": row[7],
+                         "f": row[8],
+                         "image": row[9]}
+            count += 1
+        return questions
+    
+    
+    def get_question(self, id):
+        """функция для получения конкретного вопроса"""
+        self.create_table()
+        query = """ SELECT * FROM part_fourteen_prof WHERE id=? """
         self.cursor.execute(query, (id,))
         question = {}
         
@@ -1443,7 +1576,10 @@ class PartFourteen:
         return question
     
     
-   
+    def clean(self):
+        self.create_table()
+        query = """ DELETE FROM part_fourteen_prof """
+        self.cursor.execute(query)
+        self.db.commit()
    
   
-

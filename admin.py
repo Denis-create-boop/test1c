@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
-from databases.questions import *
+from databases.questions_prof import *
+from databases.questions_erp import *
 from databases.users import Users
 from databases.params import *
 
@@ -7,7 +8,8 @@ from databases.params import *
 app = Flask(__name__)
 
 
-QUESTIONS = Questions()
+QUESTIONSPROF = QuestionsProf()
+QUESTIONSERP = QuestionsErp()
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -95,7 +97,7 @@ def add_question():
             option_c = request.form["option_c"]
             option_d = request.form["option_d"]
             option_e = request.form["option_e"]
-            QUESTIONS.add_question(question=question, a=option_a, b=option_b, c=option_c, d=option_d, e=option_e)
+            QUESTIONSPROF.add_question(question=question, a=option_a, b=option_b, c=option_c, d=option_d, e=option_e)
             context = {
                 "titile": "добавление вопроса",
                 "message": "вопрос успешно добавлен",
@@ -136,7 +138,7 @@ def change_question():
     if ADMIN:
         if request.method == 'POST':
             if "question_id" in request.form.keys():
-                quest = Questions()
+                quest = QuestionsProf()
                 question = quest.get_question(int(request.form["question_id"]))
                 context = {
                     "title": "Изменение вопроса",
@@ -148,7 +150,7 @@ def change_question():
                 
                 return render_template("change_question.html", context=context)
             else:
-                questions = Questions()
+                questions = QuestionsProf()
                 new_question = request.form["question"]
                 option_a = request.form["option_a"]
                 option_b = request.form["option_b"]
@@ -198,7 +200,7 @@ def show_all_questions():
     USER = False if int(params["user"]) == 0 else True
     if ADMIN:
         if request.method == 'POST':
-            question = QUESTIONS.get_question(id=request.form['id'])
+            question = QUESTIONSPROF.get_question(id=request.form['id'])
             
             context = {
                 "questions": question,
@@ -210,7 +212,7 @@ def show_all_questions():
             return render_template('questions.html', context=context)
         
         else:
-            questions = QUESTIONS.get_all_questions()
+            questions = QUESTIONSPROF.get_all_questions()
             context = {
                 "questions": questions,
                 "title": "Все вопросы",
@@ -237,7 +239,7 @@ def show_question():
     USER = False if int(params["user"]) == 0 else True
     if ADMIN:
         if request.method == "POST":
-            question = Questions().get_question(id=request.form["question_id"])
+            question = QuestionsProf().get_question(id=request.form["question_id"])
             
             context = {
                 "title": "просмотр вопроса",
@@ -295,19 +297,19 @@ def categories():
     if ADMIN:
         if request.method == "POST":
             str_db = request.form["db"]
-            class_db = {"PartOne": PartOne,
-                        "PartTwo": PartTwo,
-                        "PartThree": PartThree,
-                        "PartFour": PartFour,
-                        "PartFive": PartFive,
-                        "PartSix": PartSix,
-                        "PartSeven": PartSeven,
-                        "PartEight": PartEight,
-                        "PartNine": PartNine,
-                        "PartEleven": PartEleven,
-                        "PartTwelve": PartTwelve,
-                        "PartThirteen": PartThirteen,
-                        "PartFourteen": PartFourteen}
+            class_db = {"PartOne": PartOneProf,
+                        "PartTwo": PartTwoProf,
+                        "PartThree": PartThreeProf,
+                        "PartFour": PartFourProf,
+                        "PartFive": PartFiveProf,
+                        "PartSix": PartSixProf,
+                        "PartSeven": PartSevenProf,
+                        "PartEight": PartEightProf,
+                        "PartNine": PartNineProf,
+                        "PartEleven": PartElevenProf,
+                        "PartTwelve": PartTwelveProf,
+                        "PartThirteen": PartThirteenProf,
+                        "PartFourteen": PartFourteenProf}
             
             db = class_db[str_db]
             
