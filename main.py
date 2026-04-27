@@ -183,9 +183,13 @@ def write():
     if QuestionsErp().get_last_id() == 0:
         for k, v in data_erp.items():
             write_to_db_questions(v["path"], v["db"], 'erp')
+            
+            
+    if PartsProf().get_last_id() == 0:    
+        write_to_db_parts(parts_prof, PartsProf())
         
-    write_to_db_parts(parts_prof, PartsProf())
-    write_to_db_parts(parts_erp, PartsErp())
+    if PartsErp().get_last_id() == 0:
+        write_to_db_parts(parts_erp, PartsErp())
  
  
 def get_context(title, questions, url, flag, first_question, last_question):

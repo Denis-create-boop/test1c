@@ -1,0 +1,5 @@
+{
+    "markdown.occurrencesHighlight.enabled": true,
+    "editor.unicodeHighlight.nonBasicASCII": "inUntrustedWorkspace",
+    "editor.unicodeHighlight.ambiguousCharacters": false
+}

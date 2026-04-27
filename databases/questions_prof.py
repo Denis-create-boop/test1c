@@ -109,7 +109,7 @@ class PartsProf:
     def __init__(self):
         self.db = None
         self.cursor = None
-
+        self.id = 1
         
     
     def create_table(self):
@@ -117,16 +117,30 @@ class PartsProf:
         with sqlite3.connect('./databases/prof/parts_prof.db') as db:
             self.db = db
             self.cursor = db.cursor()
-            query = """ CREATE TABLE IF NOT EXISTS parts_prof (text TEXT, url TEXT) """
+            query = """ CREATE TABLE IF NOT EXISTS parts_prof (id INTEGER, text TEXT, url TEXT) """
             self.cursor.execute(query)
             self.db.commit()  
-            
+    
+    
+    def get_last_id(self):
+        self.create_table()
+        query = """ SELECT MAX(id) FROM parts_prof """
+        self.cursor.execute(query)
+        last_id = 0
+        for row in self.cursor:
+            if row[0] is not None:
+                last_id = row[0]
+        return last_id
+        
+                
     def write(self, text, path):
         self.create_table()
+        last_id = self.get_last_id()
+        self.id = last_id + 1
         
-        query = """INSERT INTO parts_prof (text, url) VALUES (?, ?)"""
+        query = """INSERT INTO parts_prof (id, text, url) VALUES (?, ?, ?)"""
         insert_payments = [
-            (text, path),
+            (self.id, text, path),
         ]
         self.cursor.executemany(query, insert_payments)
         self.db.commit()
@@ -140,8 +154,8 @@ class PartsProf:
         count = 1
         for row in self.cursor:
             part = {}
-            part["text"] = row[0]
-            part["url"] = row[1] 
+            part["text"] = row[1]
+            part["url"] = row[2] 
             parts[count] = part
             count += 1
             
@@ -1582,4 +1596,4 @@ class PartFourteenProf:
         self.cursor.execute(query)
         self.db.commit()
    
-  
+ 
