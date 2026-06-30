@@ -3,14 +3,34 @@ from databases.questions_prof import *
 from databases.questions_erp import *
 from databases.users import Users
 from databases.params import *
+import os
+import sys
+import time
 
 
-app = Flask(__name__)
+if getattr(sys, 'frozen', False):
+    base_path = sys.executable
+else:
+    base_path = __file__
+
+base_dir = os.path.dirname(base_path)
+static_folder = os.path.join(base_dir, 'static')
+template_folder = os.path.join(base_dir, 'templates')
+
+app = Flask(__name__) #, static_folder=static_folder, template_folder=template_folder)
 
 
 QUESTIONSPROF = QuestionsProf()
 QUESTIONSERP = QuestionsErp()
 
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)         
+ 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

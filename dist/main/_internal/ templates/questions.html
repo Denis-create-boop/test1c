@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>{{ context.title }}</title>
+{% endblock %}
+
+{% block content %}
+    
+    {% for question in context.questions.values() %}
+        <div class="head_inside">
+            <div class="question p">
+                <h3 class="global_text">{{ question.id }}: {{ question.question }}</h3>
+            </div>
+        </div> 
+        {% if question.image %}  
+            <div class="head_inside">
+                <div class="question">
+                    <img class="question_image" src="../static/images/{{ question.image }}" alt="img">
+                </div>   
+            </div>
+        {% endif %} 
+        <div class="head_inside">
+            {% if 'a' == question.answer %}
+                <button class="button_info_green global_text">
+                    <p>a: {{ question.a }}
+                </p>
+                </button>
+            {% else %}
+                <button class="button_info global_text">
+                    <p>a: {{ question.a }}
+                </p>
+                </button>
+            {% endif %}
+        </div>
+        <div class="head_inside">
+            {% if 'b' == question.answer %}
+                <button class="button_info_green global_text">
+                    <p>b: {{ question.b }}
+                </p>
+                </button>
+            {% else %}
+                <button class="button_info global_text">
+                    <p>b: {{ question.b }}
+                </p>
+                </button>
+            {% endif %}
+        </div>
+        <div class="head_inside">
+            {% if 'c' == question.answer %}
+                <button class="button_info_green global_text">
+                    <p>c: {{ question.c }}
+                </p>
+                </button>
+            {% else %}
+                <button class="button_info global_text">
+                    <p>c: {{ question.c }}
+                </p>
+                </button>
+            {% endif %}
+        </div>
+        {% if question.d %}
+            <div class="head_inside">
+                {% if 'd' == question.answer %}
+                    <button class="button_info_green global_text">
+                        <p>d: {{ question.d }}
+                    </p>
+                    </button>
+                {% else %}
+                    <button class="button_info global_text">
+                        <p>d: {{ question.d }}
+                        </p>
+                    </button>
+                {% endif %}
+            </div>
+
+            {% if question.e %}
+                <div class="head_inside">
+                    {% if 'e' == question.answer %}
+                        <button class="button_info_green global_text">
+                            <p>e: {{ question.e }}
+                            </p>
+                        </button>
+                    {% else %}
+                        <button class="button_info global_text">
+                            <p>e: {{ question.e }}
+                            </p>
+                        </button>
+                    {% endif %}
+                </div>
+
+                {% if question.f %}
+                    <div class="head_inside">
+                        {% if 'f' == question.answer %}
+                            <button class="button_info_green global_text">
+                                <p>f: {{ question.f }}
+                            </p>
+                            </button>
+                        {% else %}
+                            <button class="button_info global_text">
+                                <p>f: {{ question.f }}
+                            </p>
+                            </button>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endif %}
+
+        {% endif %}
+        <hr class="line">
+
+        {% endfor %}
+        <div class="head_inside">
+            <a class="start_button clean_a" href="{{ url_for('login') }}"><button class="start_button_1 global_text">В кабинет</button></a>
+            <br>
+        </div>
+        <form action="{{ url_for('index') }}" method="post">
+            <div class="head_inside">
+                <a class="start_button clean_a" href="{{ url_for('index') }}">
+                    <button class="start_button_1 global_text">На главную</button></a>
+                <br>
+            </div>
+        </form>
+        <br>
+    
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>{{ context.title }}</title>
+{% endblock %}
+
+{% block header %}
+    <div class="header">
+        <h2 class="header_text">Тест по вопросам 1с профессионал</h2>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    {% if context.ERP %}
+         <div class="head_inside">
+           <h3 class="header_text">Проверь свои знания в 1с</h3>
+        </div>
+
+        <div class="head_inside">
+            <div class="inside_body_image">
+                <img class="all_img" src="{{ url_for('static', filename='images/1c.jpg') }}" alt="img">
+            </div>
+        </div>
+            <div class="head_inside">
+                <a class="start_button clean_a" href="{{ url_for('test') }}"><button class="start_button_1 global_text">Экзамен</button></a>
+                <br>
+            </div>   
+
+            <div class="head_inside">
+                <a class="start_button clean_a" href="{{ url_for('test_with_answers') }}">
+                    <button class="start_button_1 global_text">
+                        Экзамен с ответами
+                    </button>
+                </a>
+                <br>
+            </div>    
+
+            <div class="head_inside">
+                <a class="start_button clean_a" href="{{ url_for('study') }}">
+                    <button class="start_button_1 global_text">учить по разделам</button>
+                </a>
+                <br>
+            </div>
+
+            <div class="head_inside">
+                <a class="start_button clean_a" href="{{ url_for('index') }}">
+                    <button class="start_button_1 global_text">назад</button>
+                </a>
+                <br>
+            </div>
+
+        {% if context.admin %}
+            <div class="head_inside">
+                <a class="start_button clean_a" href="{{ url_for('login') }}">
+                    <button class="start_button_1 global_text">
+                        В кабинет
+                    </button>
+                </a>
+                <br>
+            </div>
+        {% endif %}
+        <div class="head_inside">
+            <a class="start_button clean_a" href="{{ url_for('out') }}">
+                <button class="start_button_1 global_text">
+                    Выйти
+                </button>
+            </a>
+        </div>
+        <br>
+    {% elif context.platformaprof %}
+        <div class="head_inside">
+           <h3 class="header_text">Проверь свои знания в 1с</h3>
+        </div>
+
+        <div class="head_inside">
+            <div class="inside_body_image">
+                <img class="all_img" src="{{ url_for('static', filename='images/1c.jpg') }}" alt="img">
+            </div>
+        </div>
+            <div class="head_inside">
+                <a class="start_button clean_a" href="{{ url_for('test') }}"><button class="start_button_1 global_text">Экзамен</button></a>
+                <br>
+            </div>   
+
+            <div class="head_inside">
+                <a class="start_button clean_a" href="{{ url_for('test_with_answers') }}">
+                    <button class="start_button_1 global_text">
+                        Экзамен с ответами
+                    </button>
+                </a>
+                <br>
+            </div>    
+
+            <div class="head_inside">
+                <a class="start_button clean_a" href="{{ url_for('study') }}">
+                    <button class="start_button_1 global_text">учить по разделам</button>
+                </a>
+                <br>
+            </div>
+
+            <div class="head_inside">
+                <a class="start_button clean_a" href="{{ url_for('index') }}">
+                    <button class="start_button_1 global_text">назад</button>
+                </a>
+                <br>
+            </div>
+
+        {% if context.admin %}
+            <div class="head_inside">
+                <a class="start_button clean_a" href="{{ url_for('login') }}">
+                    <button class="start_button_1 global_text">
+                        В кабинет
+                    </button>
+                </a>
+                <br>
+            </div>
+        {% endif %}
+        <div class="head_inside">
+            <a class="start_button clean_a" href="{{ url_for('out') }}">
+                <button class="start_button_1 global_text">
+                    Выйти
+                </button>
+            </a>
+        </div>
+        <br>
+    {% else %}
+         <div class="head_inside">
+           <h3 class="header_text">Выберите экзамен</h3>
+        </div>
+
+        <div class="head_inside">
+            <div class="inside_body_image">
+                <img class="all_img" src="{{ url_for('static', filename='images/1c.jpg') }}" alt="img">
+            </div>
+        </div>
+
+        <div class="head_inside">
+            <a class="start_button clean_a" href="{{ url_for('test_prof') }}"><button class="start_button_1 global_text">1с профессионал по платформе</button></a>
+            <br>
+        </div>
+        <div class="head_inside">
+            <a class="start_button clean_a" href="{{ url_for('test_erp') }}"><button class="start_button_1 global_text">1с:ERP Управление предпреятием 2.5</button></a>
+            <br>
+        </div>
+             
+        {% if context.admin %}
+            <div class="head_inside">
+                <a class="start_button clean_a" href="{{ url_for('login') }}">
+                    <button class="start_button_1 global_text">
+                        В кабинет
+                    </button>
+                </a>
+                <br>
+            </div>
+        {% endif %}
+        <div class="head_inside">
+            <a class="start_button clean_a" href="{{ url_for('out') }}">
+                <button class="start_button_1 global_text">
+                    Выйти
+                </button>
+            </a>
+        </div>
+        <br>    
+    {% endif %}
+{% endblock %}

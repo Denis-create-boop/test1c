@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>{{ context.title }}</title>
+{% endblock %}
+
+{% block content %}
+{% if context.admin %}
+    {% if context.flag %}
+    <br>
+        <div class="head_inside">
+            <div class="question p">
+                <h3 class="global_text">{{ context.question.id }}: {{ context.question.question }}</h3>
+            </div>
+        </div>   
+        {% if context.question.image %}  
+            <div class="head_inside">
+                <div class="question">
+                    <img class="question_image" src="../static/images/{{ context.question.image }}" alt="img">
+                </div>   
+            </div>
+        {% endif %} 
+        <div class="head_inside">
+            {% if 'a' == context.question.answer %}
+                <button class="button_info_green global_text">
+                    <p>a: {{ context.question.a }}
+                </p>
+                </button>
+            {% else %}
+                <button class="button_info global_text">
+                    <p>a: {{ context.question.a }}
+                </p>
+                </button>
+            {% endif %}
+        </div>
+        <div class="head_inside">
+            {% if 'b' == context.question.answer %}
+                <button class="button_info_green global_text">
+                    <p>b: {{ context.question.b }}
+                </p>
+                </button>
+            {% else %}
+                <button class="button_info global_text">
+                    <p>b: {{ context.question.b }}
+                </p>
+                </button>
+            {% endif %}
+        </div>
+        <div class="head_inside">
+            {% if 'c' == context.question.answer %}
+                <button class="button_info_green global_text">
+                    <p>c: {{ context.question.c }}
+                </p>
+                </button>
+            {% else %}
+                <button class="button_info global_text">
+                    <p>c: {{ context.question.c }}
+                </p>
+                </button>
+            {% endif %}
+        </div>
+        {% if context.question.d %}
+            <div class="head_inside">
+                {% if 'd' == context.question.answer %}
+                    <button class="button_info_green global_text">
+                        <p>d: {{ context.question.d }}
+                    </p>
+                    </button>
+                {% else %}
+                    <button class="button_info global_text">
+                        <p>d: {{ context.question.d }}
+                        </p>
+                    </button>
+                {% endif %}
+            </div>
+
+            {% if context.question.e %}
+                <div class="head_inside">
+                    {% if 'e' == context.question.answer %}
+                        <button class="button_info_green global_text">
+                            <p>e: {{ context.question.e }}
+                            </p>
+                        </button>
+                    {% else %}
+                        <button class="button_info global_text">
+                            <p>e: {{ context.question.e }}
+                            </p>
+                        </button>
+                    {% endif %}
+                </div>
+
+                {% if context.question.f %}
+                    <div class="head_inside">
+                        {% if 'f' == context.question.answer %}
+                            <button class="button_info_green global_text">
+                                <p>f: {{ context.question.f }}
+                            </p>
+                            </button>
+                        {% else %}
+                            <button class="button_info global_text">
+                                <p>f: {{ context.question.f }}
+                            </p>
+                            </button>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endif %}
+
+        {% endif %}
+        <hr class="line">
+
+        <div class="head_inside">
+            <a class="start_button clean_a" href="{{ url_for('login') }}"><button class="start_button_1 global_text">В кабинет</button></a>
+            <br>
+        </div>
+        <form action="{{ url_for('index') }}" method="post">
+            <div class="head_inside">
+                <a class="start_button clean_a" href="{{ url_for('index') }}">
+                    <button class="start_button_1 global_text">На главную</button></a>
+                <br>
+            </div>
+        </form>
+        <br>
+    {% else %}
+    <div class="form">
+        <form action="" method="post">
+            <div class="head_inside">
+                <label class="global_text label" for="question_id">Введите id вопроса который хотите посмотреть:</label>
+            </div>
+            <div class="head_inside">
+                <input class="input start_button_1 global_text" type="number" id="question_id" name="question_id" required>
+            </div>
+            <div class="head_inside">
+                <a class="start_button clean_a" href="{{ url_for('change_question') }}">
+                    <button class="start_button_1 global_text" type="submit">Найти вопрос</button></a>
+                <br>
+            </div> 
+        </form>
+        <div class="head_inside">
+            <a class="start_button clean_a" href="{{ url_for('login') }}"><button class="start_button_1 global_text">Назад</button></a>
+            <br>
+        </div>
+    </div>
+    {% endif %}
+{% endif %}
+{% endblock %}

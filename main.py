@@ -1,6 +1,8 @@
 from admin import *
 from databases.start_questions import *
 import random
+import subprocess
+import webbrowser
 
 
 QUESTIONS = []
@@ -28,26 +30,26 @@ USER = False if int(params["user"]) == 0 else True
 def study_for_parts(title, url, questions, back_flag=False, flag=False):
     global COUNT, FLAG
     FLAG = True
-    
+    last_id = questions.get_last_id()
     first = False
     if flag:
         all_questions = questions
-        last_id = len(questions)
+        last_question_id = len(questions)
     else:
         all_questions = questions.get_all_questions()
-        last_id = questions.get_last_id()
+        last_question_id = questions.get_last_id()
         
     if back_flag:
-        if COUNT == last_id or COUNT == last_id + 1:
+        if COUNT == last_question_id or COUNT == last_question_id + 1:
             COUNT -= 2
 
         else:
             if COUNT == 1:
-                COUNT = last_id - 1
+                COUNT = last_question_id - 1
             else:    
                 COUNT -= 2
             
-    if COUNT == last_id:
+    if COUNT == last_question_id:
         if flag:
             question = all_questions[COUNT - 1]
         else:
@@ -56,6 +58,7 @@ def study_for_parts(title, url, questions, back_flag=False, flag=False):
             "title": title,
             "question": question,
             "url": url,
+            "last_id": last_id,
             "flag": True,
             "first_question": first,
             "last_question": True
@@ -76,6 +79,7 @@ def study_for_parts(title, url, questions, back_flag=False, flag=False):
             "title": title,
             "question": question,
             'url': url,
+            "last_id": last_id,
             'flag': True,
             "first_question": first,
             'last_question': False,
@@ -106,24 +110,24 @@ def writing_questions(exam):
         question = part.get_question(number)
         QUESTIONS.append(question)
         random.shuffle(QUESTIONS) 
-            
- 
+   
+
 def write():
    
-    data_prof = {1: {"path": "./questions/prof/part_one.txt", "db": PartOneProf()},
-                2: {"path": "./questions/prof/part_two.txt", "db": PartTwoProf()},
-                3: {"path": "./questions/prof/part_three.txt", "db": PartThreeProf()},
-                4: {"path": "./questions/prof/part_four.txt", "db": PartFourProf()},
-                5: {"path": "./questions/prof/part_five.txt", "db": PartFiveProf()},
-                6: {"path": "./questions/prof/part_six.txt", "db": PartSixProf()},
-                7: {"path": "./questions/prof/part_seven.txt", "db": PartSevenProf()},
-                8: {"path": "./questions/prof/part_eight.txt", "db": PartEightProf()},
-                9: {"path": "./questions/prof/part_nine.txt", "db": PartNineProf()},
-                10: {"path": "./questions/prof/part_ten.txt", "db": PartTenProf()},
-                11: {"path": "./questions/prof/part_eleven.txt", "db": PartElevenProf()},
-                12: {"path": "./questions/prof/part_twelve.txt", "db": PartTwelveProf()},
-                13: {"path": "./questions/prof/part_thirteen.txt", "db": PartThirteenProf()},
-                14: {"path": "./questions/prof/part_fourteen.txt", "db": PartFourteenProf()}}
+    data_prof = {1: {"path": resource_path("./questions/prof/part_one.txt"), "db": PartOneProf()},
+                2: {"path": resource_path("./questions/prof/part_two.txt"), "db": PartTwoProf()},
+                3: {"path": resource_path("./questions/prof/part_three.txt"), "db": PartThreeProf()},
+                4: {"path": resource_path("./questions/prof/part_four.txt"), "db": PartFourProf()},
+                5: {"path": resource_path("./questions/prof/part_five.txt"), "db": PartFiveProf()},
+                6: {"path": resource_path("./questions/prof/part_six.txt"), "db": PartSixProf()},
+                7: {"path": resource_path("./questions/prof/part_seven.txt"), "db": PartSevenProf()},
+                8: {"path": resource_path("./questions/prof/part_eight.txt"), "db": PartEightProf()},
+                9: {"path": resource_path("./questions/prof/part_nine.txt"), "db": PartNineProf()},
+                10: {"path": resource_path("./questions/prof/part_ten.txt"), "db": PartTenProf()},
+                11: {"path": resource_path("./questions/prof/part_eleven.txt"), "db": PartElevenProf()},
+                12: {"path": resource_path("./questions/prof/part_twelve.txt"), "db": PartTwelveProf()},
+                13: {"path": resource_path("./questions/prof/part_thirteen.txt"), "db": PartThirteenProf()},
+                14: {"path": resource_path("./questions/prof/part_fourteen.txt"), "db": PartFourteenProf()}}
         
     parts_prof = {
             1: {"text": '1 общие механизмы, понятия и термины', "url": 'part_one'},
@@ -144,20 +148,20 @@ def write():
         
         
     
-    data_erp = {1: {"path": "./questions/erp/part_one.txt", "db": PartOneErp()},
-                2: {"path": "./questions/erp/part_two.txt", "db": PartTwoErp()},
-                3: {"path": "./questions/erp/part_three.txt", "db": PartThreeErp()},
-                4: {"path": "./questions/erp/part_four.txt", "db": PartFourErp()},
-                5: {"path": "./questions/erp/part_five.txt", "db": PartFiveErp()},
-                6: {"path": "./questions/erp/part_six.txt", "db": PartSixErp()},
-                7: {"path": "./questions/erp/part_seven.txt", "db": PartSevenErp()},
-                8: {"path": "./questions/erp/part_eight.txt", "db": PartEightErp()},
-                9: {"path": "./questions/erp/part_nine.txt", "db": PartNineErp()},
-                10: {"path": "./questions/erp/part_ten.txt", "db": PartTenErp()},
-                11: {"path": "./questions/erp/part_eleven.txt", "db": PartElevenErp()},
-                12: {"path": "./questions/erp/part_twelve.txt", "db": PartTwelveErp()},
-                13: {"path": "./questions/erp/part_thirteen.txt", "db": PartThirteenErp()},
-                14: {"path": "./questions/erp/part_fourteen.txt", "db": PartFourteenErp()}}
+    data_erp = {1: {"path": resource_path("./questions/erp/part_one.txt"), "db": PartOneErp()},
+                2: {"path": resource_path("./questions/erp/part_two.txt"), "db": PartTwoErp()},
+                3: {"path": resource_path("./questions/erp/part_three.txt"), "db": PartThreeErp()},
+                4: {"path": resource_path("./questions/erp/part_four.txt"), "db": PartFourErp()},
+                5: {"path": resource_path("./questions/erp/part_five.txt"), "db": PartFiveErp()},
+                6: {"path": resource_path("./questions/erp/part_six.txt"), "db": PartSixErp()},
+                7: {"path": resource_path("./questions/erp/part_seven.txt"), "db": PartSevenErp()},
+                8: {"path": resource_path("./questions/erp/part_eight.txt"), "db": PartEightErp()},
+                9: {"path": resource_path("./questions/erp/part_nine.txt"), "db": PartNineErp()},
+                10: {"path": resource_path("./questions/erp/part_ten.txt"), "db": PartTenErp()},
+                11: {"path": resource_path("./questions/erp/part_eleven.txt"), "db": PartElevenErp()},
+                12: {"path": resource_path("./questions/erp/part_twelve.txt"), "db": PartTwelveErp()},
+                13: {"path": resource_path("./questions/erp/part_thirteen.txt"), "db": PartThirteenErp()},
+                14: {"path": resource_path("./questions/erp/part_fourteen.txt"), "db": PartFourteenErp()}}
         
     parts_erp = {
             1: {"text": '1 Общие положения, нормативно-справочная информация', "url": 'part_one'},
@@ -196,12 +200,14 @@ def get_context(title, questions, url, flag, first_question, last_question):
     global ADMIN, USER, COUNT
 
     all_questions = questions.get_all_questions()
+    last_id = questions.get_last_id()
     
     context = {
         "title": title,
         "question": all_questions[COUNT],
         "url": url,
         "flag": flag,
+        "last_id": last_id,
         "first_question": first_question,
         "last_question": last_question,
         "admin": ADMIN,
@@ -255,6 +261,7 @@ def index():
             return render_template('index.html', context=context)
         else:
             return render_template('login.html', context=context)
+
 
 @app.route('/test_erp')
 def test_erp():
@@ -559,7 +566,6 @@ def study():
 def part_one():
     global COUNT, FLAG, ADMIN, USER, PROF, ERP
     FLAG = True
-    
     
     url = "part_one"
     
@@ -941,13 +947,41 @@ def out():
     
     return render_template('login.html', context=context)
 
-    
+   
+
 if __name__ == '__main__':
+    
+    import subprocess
+    import signal
+
+    def free_port(port):
+        # Команда для поиска процесса: `lsof -i :PORT` (Linux/macOS) или `netstat -ano | findstr PORT` (Windows)
+        # В Python мы формируем список аргументов, а не запускаем shell=True без нужды
+        command = f"lsof -i :{port}"  # Для Linux/macOS
+        # command = f"netstat -ano | findstr {port}"  # Для Windows
+
+        result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if result.stdout:
+            # Из вывода берём PID (второй столбец) и отправляем сигнал
+            pid = int(result.stdout.decode().split())
+            try:
+                os.kill(pid, signal.SIGTERM)  # или SIGKILL
+            except ProcessLookupError:
+                print(f"Процесс с PID {pid} не найден.")
+        else:
+            print(f"Порт {port} уже свободен.")#[1](https://dzen.ru/a/ZXTBii87ZBZRRUnO)
+            
+    free_port(8080)
+  
     write()
     Online().change_params(False, False)
     ADMIN = False if int(params["admin"]) == 0 else  True
     USER = False if int(params["user"]) == 0 else True
-    app.run(debug=False, port=5000)
-    
+    #app.run(debug=False, port=5000)
+    #window = webview.create_window("Тесты по 1с", 'http://127.0.0.1:500', width=1024, height = 768)
+    #webview.start(app.run, args=('127.0.0.1', 5000))
+    time.sleep(1)
+    webbrowser.open_new('http://127.0.0.1:8080/')
+    app.run(port=8080, debug=False)
     
   
