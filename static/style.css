@@ -73,10 +73,28 @@ body::before {
     justify-content: center;
     background-color: rgb(8, 27, 27);
     border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    position: relative;
+    transition: transform 220ms ease, box-shadow 220ms ease, background-color 220ms ease;
+    transform-origin: center;
 }
 
 .start_button_1:hover {
     background-color: rgb(27, 52, 51);
+    transform: scale(1.035);
+    box-shadow: 0 9px 22px rgba(0, 0, 0, 0.38);
+    z-index: 1;
+}
+
+.start_button_1:focus-visible {
+    outline: 2px solid rgb(217, 186, 89);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .start_button_1 { transition: none; }
+    .start_button_1:hover { transform: none; }
 }
 
 .header_text {
