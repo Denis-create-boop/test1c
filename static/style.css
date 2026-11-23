@@ -476,3 +476,31 @@ body:has(.inside_body_image) .inside_body_image .all_img {
     body:has(.inside_body_image) .inside_body_image,
     body:has(.inside_body_image) .inside_body_image .all_img { max-height: 36vh; }
 }
+
+
+/* Home-page vertical balance and narrower menu buttons */
+@media (min-width: 700px) and (min-height: 760px) {
+    body:has(.inside_body_image) .body {
+        min-height: calc(100dvh - 16px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    body:has(.inside_body_image) .header {
+        height: auto;
+        flex-shrink: 0;
+        margin-top: 0;
+    }
+
+    body:has(.inside_body_image) .inside_body {
+        height: auto;
+        flex-shrink: 0;
+        margin-top: 14px;
+        margin-bottom: 0;
+    }
+}
+
+body:has(.inside_body_image) .start_button {
+    width: 84%;
+}
