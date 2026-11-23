@@ -1,46 +1,55 @@
+/* Subtle liquid-metal effect made entirely with CSS, shared by all pages */
+html { min-height: 100%; background: #10171c; }
+
 body {
-    background-color: rgb(20, 29, 33);
+    margin: 8px;
+    min-height: calc(100vh - 16px);
+    background-color: #1d292f;
     background-image:
-        radial-gradient(ellipse 85% 100% at 15% 60%, rgba(186, 197, 203, 0.10), transparent 75%),
-        radial-gradient(ellipse 95% 110% at 91% 64%, rgba(123, 95, 158, 0.13), transparent 75%),
-        radial-gradient(ellipse 78% 90% at 37% 96%, rgba(150, 191, 93, 0.09), transparent 76%),
-        radial-gradient(ellipse 74% 95% at 74% 8%, rgba(209, 185, 104, 0.07), transparent 75%),
-        linear-gradient(130deg, #111d21 0%, #1d272c 53%, #141e24 100%);
+        radial-gradient(ellipse 78% 43% at 25% 10%, rgba(203, 216, 225, .16) 0%, rgba(120, 143, 158, .07) 42%, transparent 75%),
+        radial-gradient(ellipse 62% 52% at 91% 36%, rgba(189, 199, 214, .13) 0%, rgba(89, 103, 124, .07) 42%, transparent 82%),
+        radial-gradient(ellipse 55% 52% at 24% 92%, rgba(171, 188, 197, .12) 0%, transparent 76%),
+        radial-gradient(ellipse 38% 42% at 77% 82%, rgba(221, 190, 103, .055) 0%, transparent 78%),
+        linear-gradient(152deg, transparent 10%, rgba(209, 220, 226, .075) 24%, rgba(7, 14, 21, .12) 37%, transparent 54%),
+        linear-gradient(23deg, transparent 28%, rgba(185, 205, 218, .07) 42%, rgba(6, 13, 18, .11) 55%, transparent 70%),
+        linear-gradient(135deg, #1b282e 0%, #29353d 42%, #19262d 73%, #222d34 100%);
     background-attachment: fixed;
-    min-height: 100vh;
 }
 
-/* Soft shifting metallic sheen, kept behind content */
+/* Slow, low-contrast silver reflection */
 body::after {
     content: "";
     position: fixed;
-    inset: -25%;
+    inset: 0;
     pointer-events: none;
     z-index: 0;
-    background: linear-gradient(115deg, transparent 36%, rgba(218, 222, 223, 0.055) 48%, rgba(201, 173, 235, 0.07) 53%, transparent 66%);
-    transform: translateX(-15%);
-    animation: background-shimmer 15s ease-in-out infinite alternate;
+    background: linear-gradient(116deg,
+        transparent 17%, rgba(226, 235, 239, .035) 39%,
+        rgba(252, 245, 217, .028) 48%, transparent 65%);
+    background-size: 160% 100%;
+    animation: background-shimmer 22s ease-in-out infinite alternate;
 }
 
-@keyframes background-shimmer {
-    from { transform: translateX(-15%); }
-    to { transform: translateX(15%); }
-}
-
-.body {
-    position: relative;
-    z-index: 1;
-}
-
-/* Dark vignette around the viewport edges, without blocking controls */
+/* Recessed dark vignette along all four edges */
 body::before {
     content: "";
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 1000;
-    box-shadow: inset 0 0 95px 25px rgba(0, 0, 0, 0.55);
+    border-radius: 7px;
+    box-shadow:
+        inset 0 0 22px 5px rgba(2, 6, 10, .68),
+        inset 0 0 90px 28px rgba(4, 9, 14, .46),
+        inset 0 0 175px 35px rgba(4, 9, 14, .18);
 }
+
+@keyframes background-shimmer {
+    from { background-position: 0% 50%; }
+    to { background-position: 100% 50%; }
+}
+
+.body { position: relative; z-index: 1; }
 
 @media (prefers-reduced-motion: reduce) {
     body::after { animation: none; }
