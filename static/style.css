@@ -16,7 +16,7 @@ body::after {
     position: fixed;
     inset: -25%;
     pointer-events: none;
-    z-index: -1;
+    z-index: 0;
     background: linear-gradient(115deg, transparent 36%, rgba(218, 222, 223, 0.055) 48%, rgba(201, 173, 235, 0.07) 53%, transparent 66%);
     transform: translateX(-15%);
     animation: background-shimmer 15s ease-in-out infinite alternate;
@@ -25,6 +25,11 @@ body::after {
 @keyframes background-shimmer {
     from { transform: translateX(-15%); }
     to { transform: translateX(15%); }
+}
+
+.body {
+    position: relative;
+    z-index: 1;
 }
 
 /* Dark vignette around the viewport edges, without blocking controls */
