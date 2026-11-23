@@ -4,47 +4,48 @@ html { min-height: 100%; background: #080f15; }
 body {
     margin: 8px;
     min-height: calc(100vh - 16px);
-    background-color: #1c2a32;
-    background-image:
-        linear-gradient(120deg, rgba(8, 15, 21, .28), rgba(12, 19, 25, .14) 48%, rgba(8, 15, 21, .30)),
-        url("images/chrome-flow.svg");
-    background-position: center center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    background: radial-gradient(ellipse at 50% 45%, #34424a 0%, #1b2931 72%, #0c141b 100%);
+    overflow-x: hidden;
 }
 
-/* Metallic sheen moves almost imperceptibly over the textured surface */
+/* Blurred metallic folds; content remains crisp on a separate layer */
 body::after {
     content: "";
     position: fixed;
-    inset: 0;
+    inset: -12px;
     pointer-events: none;
     z-index: 0;
-    background:
-        linear-gradient(110deg, transparent 18%, rgba(223, 237, 245, .035) 42%, rgba(255, 220, 145, .04) 49%, transparent 64%);
-    background-size: 180% 100%;
-    animation: background-shimmer 22s ease-in-out infinite alternate;
+    background-image:
+        linear-gradient(120deg, rgba(8, 15, 21, .22), rgba(12, 19, 25, .12) 48%, rgba(8, 15, 21, .24)),
+        url("images/chrome-flow.svg");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    filter: blur(8px);
+    opacity: .88;
+    animation: metal-breath 18s ease-in-out infinite alternate;
 }
 
-/* Dark recessed bezel: depth on all four sides */
+/* Deep inset perimeter, with a narrow metallic inner edge */
 body::before {
     content: "";
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 1000;
-    border: 1px solid rgba(4, 8, 11, .5);
-    border-radius: 8px;
+    border-radius: 9px;
     box-shadow:
-        inset 0 0 21px 7px rgba(2, 6, 10, .78),
-        inset 0 0 94px 29px rgba(2, 7, 12, .52),
-        inset 0 0 190px 58px rgba(4, 9, 15, .23);
+        inset 0 0 0 7px rgba(1, 5, 9, .88),
+        inset 0 0 0 9px rgba(173, 190, 202, .16),
+        inset 0 0 24px 11px rgba(0, 4, 8, .90),
+        inset 0 0 65px 22px rgba(0, 5, 10, .74),
+        inset 0 0 145px 42px rgba(1, 6, 12, .51),
+        inset 0 0 235px 76px rgba(1, 6, 12, .22);
 }
 
-@keyframes background-shimmer {
-    from { background-position: 0% 50%; }
-    to { background-position: 100% 50%; }
+@keyframes metal-breath {
+    from { opacity: .84; }
+    to { opacity: .92; }
 }
 
 .body { position: relative; z-index: 1; }
