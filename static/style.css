@@ -413,3 +413,66 @@ body:has(.login-panel) .inside_body {
     .login-submit { transition: none; }
     .login-submit:hover { transform: none; }
 }
+
+
+/* Home menu: keep the entire composition within a normal desktop viewport */
+body:has(.inside_body_image) .header {
+    margin-top: 12px;
+    box-shadow:
+        0 0 0 1px rgba(243, 212, 143, .12),
+        0 0 16px rgba(240, 201, 117, .18),
+        0 8px 25px rgba(0, 0, 0, .16),
+        inset 0 1px 1px rgba(252, 232, 190, .12);
+}
+
+body:has(.inside_body_image) .inside_body {
+    margin-top: 14px;
+    margin-bottom: 10px;
+    box-shadow:
+        0 0 0 1px rgba(244, 215, 151, .12),
+        0 0 23px rgba(228, 190, 108, .17),
+        0 15px 45px rgba(0, 0, 0, .20),
+        inset 0 1px 1px rgba(248, 223, 170, .11);
+}
+
+body:has(.inside_body_image) .head_inside {
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+body:has(.inside_body_image) .head_inside h3 {
+    margin: 7px 0;
+}
+
+body:has(.inside_body_image) .inside_body_image {
+    width: fit-content;
+    max-width: 85%;
+    max-height: 39vh;
+}
+
+body:has(.inside_body_image) .inside_body_image .all_img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 39vh;
+    object-fit: contain;
+}
+
+@media (max-height: 740px) and (min-width: 700px) {
+    body:has(.inside_body_image) .inside_body_image,
+    body:has(.inside_body_image) .inside_body_image .all_img {
+        max-height: 32vh;
+    }
+    body:has(.inside_body_image) .head_inside {
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+}
+
+@media (max-width: 699px) {
+    body:has(.inside_body_image) .header { width: 94%; }
+    body:has(.inside_body_image) .inside_body { width: 93%; }
+    body:has(.inside_body_image) .inside_body_image,
+    body:has(.inside_body_image) .inside_body_image .all_img { max-height: 36vh; }
+}
