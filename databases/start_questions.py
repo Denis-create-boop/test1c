@@ -67,8 +67,8 @@ def create_account(flag=False):
               PASSWORD += chr(int(number))
           
           main_user.add_user(LOGIN, PASSWORD, True)
-          main_user.add_user("Andrey", "12345")
-          main_user.add_user("Alecsey", "12345")
+          main_user.add_user("Andrey", "12345", False)
+          main_user.add_user("Alecsey", "12345", False)
      else:
          pass
         
