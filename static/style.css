@@ -1,9 +1,30 @@
 body {
-
-    background-color: rgb(23, 38, 41);
+    background-color: rgb(20, 29, 33);
     background-image:
-        radial-gradient(ellipse at 85% 55%, rgba(132, 91, 175, 0.12) 0%, rgba(132, 91, 175, 0.04) 36%, transparent 70%),
-        radial-gradient(ellipse at 55% 12%, rgba(230, 195, 75, 0.09) 0%, rgba(230, 195, 75, 0.025) 38%, transparent 72%);
+        radial-gradient(ellipse at 20% 22%, rgba(194, 205, 210, 0.17) 0%, rgba(194, 205, 210, 0.045) 35%, transparent 60%),
+        radial-gradient(ellipse at 78% 30%, rgba(157, 105, 204, 0.23) 0%, rgba(157, 105, 204, 0.07) 34%, transparent 63%),
+        radial-gradient(ellipse at 22% 82%, rgba(175, 221, 91, 0.16) 0%, rgba(175, 221, 91, 0.045) 33%, transparent 62%),
+        radial-gradient(ellipse at 66% 80%, rgba(229, 194, 84, 0.12) 0%, rgba(229, 194, 84, 0.035) 32%, transparent 58%),
+        linear-gradient(135deg, rgb(11, 25, 29), rgb(24, 33, 40) 52%, rgb(13, 25, 29));
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+/* Soft shifting metallic sheen, kept behind content */
+body::after {
+    content: "";
+    position: fixed;
+    inset: -25%;
+    pointer-events: none;
+    z-index: -1;
+    background: linear-gradient(115deg, transparent 36%, rgba(218, 222, 223, 0.055) 48%, rgba(201, 173, 235, 0.07) 53%, transparent 66%);
+    transform: translateX(-15%);
+    animation: background-shimmer 15s ease-in-out infinite alternate;
+}
+
+@keyframes background-shimmer {
+    from { transform: translateX(-15%); }
+    to { transform: translateX(15%); }
 }
 
 /* Dark vignette around the viewport edges, without blocking controls */
@@ -14,6 +35,10 @@ body::before {
     pointer-events: none;
     z-index: 1000;
     box-shadow: inset 0 0 95px 25px rgba(0, 0, 0, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body::after { animation: none; }
 }
 
 .header {
