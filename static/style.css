@@ -478,26 +478,26 @@ body:has(.inside_body_image) .inside_body_image .all_img {
 }
 
 
-/* Home-page vertical balance and narrower menu buttons */
+/* Home-page vertical balance: center both panels as one group */
 @media (min-width: 700px) and (min-height: 760px) {
     body:has(.inside_body_image) .body {
         min-height: calc(100dvh - 16px);
         display: flex;
         flex-direction: column;
         justify-content: center;
+        gap: 14px;
     }
 
     body:has(.inside_body_image) .header {
         height: auto;
         flex-shrink: 0;
-        margin-top: 0;
+        margin: 0 auto;
     }
 
     body:has(.inside_body_image) .inside_body {
         height: auto;
         flex-shrink: 0;
-        margin-top: 14px;
-        margin-bottom: 0;
+        margin: 0 auto;
     }
 }
 
