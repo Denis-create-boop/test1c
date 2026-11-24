@@ -5,7 +5,19 @@
     <p class="question-list-overline">Личный кабинет · {{ context.exam_title }}</p>
     <h1 class="question-editor-title">Удаление вопроса</h1>
     {% if context.message %}<p class="question-editor-error" role="alert">{{ context.message }}</p>{% endif %}
-    {% if context.question %}
+    {% if context.get('select_question') %}
+        <form class="question-editor-form" action="{{ url_for('delete_question') }}" method="get">
+            <input type="hidden" name="exam" value="{{ context.exam }}">
+            <div class="question-editor-field">
+                <label for="delete_id">Номер вопроса для удаления</label>
+                <input class="question-editor-number" type="number" id="delete_id" name="id" min="1" required>
+            </div>
+            <div class="question-editor-actions">
+                <button class="question-editor-submit" type="submit">Найти вопрос</button>
+                <a class="question-editor-back" href="{{ url_for('login', exam=context.exam) }}">Отмена</a>
+            </div>
+        </form>
+    {% elif context.question %}
         <div class="deletion-preview">
             <span class="question-list-number">Вопрос №{{ context.question.id }}</span>
             <p class="deletion-question">{{ context.question.question }}</p>
