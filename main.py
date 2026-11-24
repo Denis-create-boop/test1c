@@ -223,9 +223,13 @@ def get_context(title, questions, url, flag, first_question, last_question):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     global COUNT, QUESTIONS, EXAM_COUNT, ANSWERS_LIST, ADMIN, USER, params, question_misstakes
-    
-    ADMIN = False if int(params["admin"]) == 0 else  True
-    USER = False if int(params["user"]) == 0 else True
+
+    # Re-read the current login state. The module-level "params" snapshot
+    # was created before /login and would otherwise cause a false logout
+    # whenever a visitor returned to the home page.
+    params = Online().get_params()
+    ADMIN = bool(int(params["admin"]))
+    USER = bool(int(params["user"]))
     
     create_account(flag=True)
     create_account()
