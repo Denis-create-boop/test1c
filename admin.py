@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, abort
 from databases.questions_prof import *
 from databases.questions_erp import *
 from databases.users import Users
@@ -104,281 +104,130 @@ def login():
         return render_template("login.html", context=context)
 
     
+
+EXAM_LABELS = {"prof": "1С:Профессионал по платформе", "erp": "1С:ERP Управление предприятием"}
+
+def exam_database():
+    p = Online().get_params()
+    if not bool(int(p["admin"])):
+        abort(403)
+    exam = request.values.get("exam")
+    if exam not in EXAM_LABELS:
+        return None, None
+    return exam, QuestionsProf() if exam == "prof" else QuestionsErp()
+
+def exam_context(exam, **kwargs):
+    context = {"admin": True, "exam": exam, "exam_title": EXAM_LABELS[exam]}
+    context.update(kwargs)
+    return context
+
 @app.route('/add_question', methods=['GET', 'POST'])
 def add_question():
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else True
-    USER = False if int(params["user"]) == 0 else True
-    if ADMIN:
-        if request.method == "POST":
-            values = {key: request.form.get(key, "").strip()
-                      for key in ("question", "option_a", "option_b", "option_c", "option_d", "option_e", "answer")}
-            answer = values["answer"].lower()
-            selected_text = values.get("option_" + answer, "") if answer in ("a", "b", "c", "d", "e") else ""
-            if (not values["question"] or
-                    any(not values["option_" + key] for key in ("a", "b", "c")) or
-                    not selected_text):
-                context = {
-                    "title": "Добавление вопроса",
-                    "message": "Заполните вопрос, варианты A–C и выберите правильный ответ с заполненным текстом.",
-                    "values": values,
-                    "admin": ADMIN,
-                    "user": USER,
-                }
-                return render_template("add_question.html", context=context), 400
-            QUESTIONSPROF.add_question(
-                question=values["question"], answer=answer,
-                a=values["option_a"], b=values["option_b"], c=values["option_c"],
-                d=values["option_d"] or None, e=values["option_e"] or None
-            )
-            context = {
-                "titile": "добавление вопроса",
-                "message": "вопрос успешно добавлен",
-                "info": "добавить еще",
-                "url": 'add_question',
-                "admin": ADMIN,
-                "user": USER,
-            }
-            
-            return render_template('info.html', context=context)
-            
-        
-        else:
-            context = {
-                "title": "add new question",
-                "admin": ADMIN,
-                "user": USER,
-            }
-        
-            return render_template('add_question.html', context=context)
-    else:
-        
-        context = {
-            "title": "ошибка входа",
-            "message": "Вы не авторизованы, пожалуйста войдите в аккаунт",
-            "admin": ADMIN,
-            "user": USER,
-        }
-        
-        return render_template("info.html", context=context)
-    
-    
+    exam, db = exam_database()
+    if db is None:
+        return redirect(url_for('login'))
+    if request.method == "POST":
+        values = {k: request.form.get(k, "").strip() for k in
+                  ("question", "option_a", "option_b", "option_c", "option_d", "option_e", "answer")}
+        answer = values["answer"].lower()
+        if (not values["question"] or any(not values["option_" + k] for k in ("a", "b", "c"))
+                or answer not in ("a", "b", "c", "d", "e")
+                or not values.get("option_" + answer, "")):
+            return render_template('add_question.html',
+                context=exam_context(exam, values=values,
+                    message="Заполните вопрос и выберите правильный вариант с текстом.")), 400
+        db.add_question(question=values["question"], answer=answer,
+            a=values["option_a"], b=values["option_b"], c=values["option_c"],
+            d=values["option_d"] or None, e=values["option_e"] or None)
+        return render_template('info.html', context=exam_context(exam,
+            title="Добавление вопроса", message="Вопрос успешно добавлен",
+            info="Добавить ещё", url="add_question"))
+    return render_template('add_question.html', context=exam_context(exam, title="Добавление вопроса"))
+
 @app.route('/change_question', methods=['GET', 'POST'])
 def change_question():
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else True
-    USER = False if int(params["user"]) == 0 else True
-    if ADMIN:
-        if request.method == 'POST':
-            if "question_id" in request.form.keys():
-                quest = QuestionsProf()
-                question = quest.get_question(int(request.form["question_id"]))
-                context = {
-                    "title": "Изменение вопроса",
-                    "question": question,
-                    "flag": True,
-                    "admin": ADMIN,
-                    "user": USER,
-                }
-                
-                return render_template("change_question.html", context=context)
-            else:
-                questions = QuestionsProf()
-                new_question = request.form["question"]
-                option_a = request.form["option_a"]
-                option_b = request.form["option_b"]
-                option_c = request.form["option_c"]
-                option_d = request.form["option_d"]
-                option_e = request.form["option_e"]
-                option_f = request.form["option_f"]
-                answer = request.form["answer"]
-                id = request.form["id"]
-                questions.change_question(id=id, question=new_question, answer=answer, a=option_a, b=option_b, c=option_c, d=option_d, e=option_e, f=option_f)
-                context = {
-                    "title": "изменение вопроса",
-                    "message": "вопрос успешно изменен",
-                    "info": "изменить еще",
-                    "url": 'change_question',
-                    "admin": ADMIN,
-                    "user": USER,
-                }
-                
-                return render_template("info.html", context=context)
-        else:
-        
-            context = {
-                "title": "Изменение вопроса",
-                "flag": False,
-                "admin": ADMIN,
-                "user": USER,
-            }
-        
-            return render_template("change_question.html", context=context)    
- 
-    else:
-        context = {
-            "title": "ошибка входа",
-            "message": "Вы не авторизованы, пожалуйста войдите в аккаунт",
-            "admin": ADMIN,
-            "user": USER,
-        }
-        
-        return render_template("info.html", context=context)
-    
-    
-@app.route('/show_all_questions', methods=["GET", "POST"])
+    exam, db = exam_database()
+    if db is None:
+        return redirect(url_for('login'))
+    if request.method == "POST":
+        if "question_id" in request.form:
+            try:
+                q = db.get_question(int(request.form["question_id"]))
+            except ValueError:
+                abort(400)
+            if not q:
+                return render_template('change_question.html', context=exam_context(exam,
+                    flag=False, message="Вопрос не найден.")), 404
+            return render_template('change_question.html',
+                context=exam_context(exam, flag=True, question=q))
+        try:
+            question_id = int(request.form["id"])
+        except (ValueError, KeyError):
+            abort(400)
+        old = db.get_question(question_id)
+        if not old:
+            abort(404)
+        values = {k: request.form.get("option_" + k, "").strip()
+                  for k in ("a", "b", "c", "d", "e", "f")}
+        answer = request.form.get("answer", "").lower()
+        question = request.form.get("question", "").strip()
+        if not question or any(not values[k] for k in ("a", "b", "c")) or answer not in values or not values[answer]:
+            return render_template('change_question.html', context=exam_context(exam,
+                flag=True, question=dict(old, question=question, answer=answer, **values),
+                message="Заполните вопрос, варианты и правильный ответ.")), 400
+        db.change_question(id=question_id, question=question, answer=answer,
+            a=values["a"], b=values["b"], c=values["c"],
+            d=values["d"] or None, e=values["e"] or None, f=values["f"] or None,
+            image=old.get("image"))
+        return render_template('info.html', context=exam_context(exam,
+            title="Изменение вопроса", message="Вопрос изменён", info="Изменить ещё", url="change_question"))
+    return render_template('change_question.html', context=exam_context(exam, flag=False))
+
+@app.route('/show_all_questions', methods=['GET', 'POST'])
 def show_all_questions():
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else True
-    USER = False if int(params["user"]) == 0 else True
-    if ADMIN:
-        if request.method == 'POST':
-            question = QUESTIONSPROF.get_question(id=request.form['id'])
-            
-            context = {
-                "questions": question,
-                "title": "Просмотр вопроса",
-                "admin": ADMIN,
-                "user": USER,
-            }
-            
-            return render_template('questions.html', context=context)
-        
-        else:
-            questions = QUESTIONSPROF.get_all_questions()
-            context = {
-                "questions": questions,
-                "title": "Все вопросы",
-                "admin": ADMIN,
-                "user": USER,
-            }
-        return render_template('questions.html', context=context)
-    
-    else:
-        context = {
-            "title": "ошибка входа",
-            "message": "Вы не авторизованы, пожалуйста войдите в аккаунт",
-            "admin": ADMIN,
-            "user": USER,
-        }
-        
-        return render_template("info.html", context=context)
-    
-    
-@app.route("/show_question", methods=["GET", "POST"])
+    exam, db = exam_database()
+    if db is None:
+        return redirect(url_for('login'))
+    questions = db.get_all_questions()
+    return render_template('questions.html', context=exam_context(exam,
+        title="Вопросы экзамена", questions=questions))
+
+@app.route('/show_question', methods=['GET', 'POST'])
 def show_question():
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else True
-    USER = False if int(params["user"]) == 0 else True
-    if ADMIN:
-        if request.method == "POST":
-            question = QuestionsProf().get_question(id=request.form["question_id"])
-            
-            context = {
-                "title": "просмотр вопроса",
-                "flag": True,
-                "question": question,
-                "admin": ADMIN,
-                "user": USER,
-            }
-            return render_template("show_question.html", context=context)
-        
-        else:
-            context = {
-                "title": "просмотр вопроса",
-                "flag": False,
-                "admin": ADMIN,
-                "user": USER,
-            }
-            return render_template("show_question.html", context=context)
-    
-    else:
-        context = {
-            "title": "ошибка входа",
-            "message": "Вы не авторизованы, пожалуйста войдите в аккаунт",
-            "flag": False,
-            "admin": ADMIN,
-            "user": USER,
-        }
-        
-        return render_template("info.html", context=context)
-    
-    
-    
+    exam, db = exam_database()
+    if db is None:
+        return redirect(url_for('login'))
+    if request.method == "POST":
+        try:
+            q = db.get_question(int(request.form["question_id"]))
+        except (ValueError, KeyError):
+            abort(400)
+        if not q:
+            return render_template('show_question.html',
+                context=exam_context(exam, flag=False, message="Вопрос не найден.")), 404
+        return render_template('show_question.html',
+            context=exam_context(exam, flag=True, question=q))
+    return render_template('show_question.html', context=exam_context(exam, flag=False))
+
 @app.route("/categories", methods=["GET", "POST"])
 def categories():
-    params = Online().get_params()
-    ADMIN = False if int(params["admin"]) == 0 else True
-    USER = False if int(params["user"]) == 0 else True
-    
-    CATEGORIES = {1: {'text': '1 общие механизмы, понятия и термины', 'db': "PartOne"},
-                    2: {'text': '2 Редакторы и инструменты общие', 'db': "PartTwo"},
-                    3: {'text': '3 Редакторы и инструменты режима разработки', 'db': "PartThree"},
-                    4: {'text': '4 Конструкторы', 'db': "PartFour"},
-                    5: {'text': '5 Технология разработки', 'db': "PartFive"},
-                    6: {'text': '6 Объектная модель прикладного решения', 'db': "PartSix"},
-                    7: {'text': '7 Табличная модель прикладного решения', 'db': "PartSeven"},
-                    8: {'text': '8 Механизмы интеграции и обмена данными', 'db': "PartEight"},
-                    9: {'text': '9 Система взаимодействия', 'db': "PartNine"},
-                    10: {'text': '10 Интерфейсные механизмы', 'db': "PartTen"},
-                    11: {'text': '11 Механизмы построения отчетности', 'db': "PartEleven"},
-                    12: {'text': '12 Механизмы оперативного учета', 'db': "PartTwelve"},
-                    13: {'text': '13 Объекты и механизмы бухгалтирского учета', 'db': "PartThirteen"},
-                    14: {'text': '14 Механизмы сложных переодических расчетов', 'db': "PartFourteen"}}
-    
-    
-    if ADMIN:
-        if request.method == "POST":
-            str_db = request.form["db"]
-            class_db = {"PartOne": PartOneProf,
-                        "PartTwo": PartTwoProf,
-                        "PartThree": PartThreeProf,
-                        "PartFour": PartFourProf,
-                        "PartFive": PartFiveProf,
-                        "PartSix": PartSixProf,
-                        "PartSeven": PartSevenProf,
-                        "PartEight": PartEightProf,
-                        "PartNine": PartNineProf,
-                        "PartEleven": PartElevenProf,
-                        "PartTwelve": PartTwelveProf,
-                        "PartThirteen": PartThirteenProf,
-                        "PartFourteen": PartFourteenProf}
-            
-            db = class_db[str_db]
-            
-            questions = db().get_all_questions()
-            title = None
-            
-            for k, v in CATEGORIES.items():
-                if v["db"] == str_db:
-                    title = v["text"][2:]
-                    break      
-            
-            context = {
-                "questions": questions,
-                "title": f"Все вопросы по категории '{title}'",
-                "admin": ADMIN,
-                "user": USER,
-            }
-            return render_template('questions.html', context=context)
-            
-        
-        else:
-            context = {
-                'questions': CATEGORIES,
-                'flag': True,
-                "show_category": True,
-                "admin": ADMIN,
-                "user": USER,
-            }
-
-            return render_template('parts.html', context= context)
-    
-    else:
-        context = {
-            "title": "ошибка входа",
-            "message": "Вы не авторизованы, пожалуйста войдите в аккаунт",
-            "flag": False,
-            "admin": ADMIN,
-            "user": USER,
-        }
+    exam, db = exam_database()
+    if db is None:
+        return redirect(url_for("login"))
+    names = ("One", "Two", "Three", "Four", "Five", "Six", "Seven",
+             "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen")
+    parts = {name: globals()["Part" + name + ("Prof" if exam == "prof" else "Erp")]
+             for name in names}
+    part_titles = PartsProf().get_parts() if exam == "prof" else PartsErp().get_parts()
+    if request.method == "POST":
+        key = request.form.get("db")
+        if key not in parts:
+            abort(400)
+        return render_template("questions.html", context=exam_context(exam,
+            title="Вопросы раздела", questions=parts[key]().get_all_questions()))
+    options = {}
+    for index, name in enumerate(names, 1):
+        title = part_titles.get(index, {}).get("text", "Раздел " + str(index))
+        options[index] = {"text": title, "db": name}
+    return render_template("parts.html", context=exam_context(exam,
+        title="Разделы экзамена", questions=options, flag=True, show_category=True))
