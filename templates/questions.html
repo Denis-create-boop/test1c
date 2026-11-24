@@ -10,10 +10,10 @@
     <div class="question-list-heading">
         <div>
             <p class="question-list-overline">Личный кабинет · Банк вопросов</p>
-            <h1 class="question-list-title">Все вопросы</h1>
+            <h1 class="question-list-title">{{ context.category_title if context.get("category_key") else "Все вопросы" }}</h1>
             <p class="question-list-exam">{{ context.exam_title }}</p>
         </div>
-        <a class="question-list-back" href="{{ url_for('login', exam=context.exam) }}">← В кабинет</a>
+        <a class="question-list-back" href="{{ url_for('categories', exam=context.exam) if context.get('category_key') else url_for('login', exam=context.exam) }}">← {{ "К категориям" if context.get("category_key") else "В кабинет" }}</a>
     </div>
     <div class="question-list-toolbar">
         <span>Показаны {{ context.first_number }}–{{ context.last_number }} из {{ context.total_questions }}</span>
@@ -21,23 +21,24 @@
     </div>
     <nav class="question-list-pagination" aria-label="Навигация по страницам вопросов">
     {% if context.page > 1 %}
-        <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=1) }}">« Первая</a>
-        <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=context.page - 1) }}">‹ Назад</a>
+        <a class="question-page-link" href="{{ (url_for('categories', exam=context.exam, db=context.category_key, page=1) if context.get('category_key') else url_for('show_all_questions', exam=context.exam, page=1)) }}">« Первая</a>
+        <a class="question-page-link" href="{{ (url_for('categories', exam=context.exam, db=context.category_key, page=context.page - 1) if context.get('category_key') else url_for('show_all_questions', exam=context.exam, page=context.page - 1)) }}">‹ Назад</a>
     {% endif %}
     {% if context.pages.start > 1 %}<span class="question-page-ellipsis">…</span>{% endif %}
     {% for page_number in context.pages %}
         {% if page_number == context.page %}
             <span class="question-page-link is-current" aria-current="page">{{ page_number }}</span>
         {% else %}
-            <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=page_number) }}">{{ page_number }}</a>
+            <a class="question-page-link" href="{{ (url_for('categories', exam=context.exam, db=context.category_key, page=page_number) if context.get('category_key') else url_for('show_all_questions', exam=context.exam, page=page_number)) }}">{{ page_number }}</a>
         {% endif %}
     {% endfor %}
     {% if context.pages.stop - 1 < context.total_pages %}<span class="question-page-ellipsis">…</span>{% endif %}
     {% if context.page < context.total_pages %}
-        <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=context.page + 1) }}">Вперёд ›</a>
-        <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=context.total_pages) }}">Последняя »</a>
+        <a class="question-page-link" href="{{ (url_for('categories', exam=context.exam, db=context.category_key, page=context.page + 1) if context.get('category_key') else url_for('show_all_questions', exam=context.exam, page=context.page + 1)) }}">Вперёд ›</a>
+        <a class="question-page-link" href="{{ (url_for('categories', exam=context.exam, db=context.category_key, page=context.total_pages) if context.get('category_key') else url_for('show_all_questions', exam=context.exam, page=context.total_pages)) }}">Последняя »</a>
     {% endif %}
 </nav>
+    {% if request.args.get("deleted") and not context.get("category_key") %}<p class="question-list-success" role="status">Вопрос №{{ request.args.get("deleted") }} удалён.</p>{% endif %}
     <div class="question-list-items">
     {% for question in context.questions.values() %}
         <article class="question-list-card">
@@ -60,6 +61,11 @@
                     {% endif %}
                 {% endfor %}
             </div>
+            {% if not context.get('category_key') %}
+            <div class="question-list-card-actions">
+                <a class="question-list-edit" href="{{ url_for('delete_question', exam=context.exam, id=question.id, page=context.page) }}">Удалить вопрос</a>
+            </div>
+            {% endif %}
         </article>
     {% else %}
         <p class="question-list-empty">Для этого экзамена пока нет вопросов.</p>
@@ -67,25 +73,25 @@
     </div>
     <nav class="question-list-pagination" aria-label="Навигация по страницам вопросов">
     {% if context.page > 1 %}
-        <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=1) }}">« Первая</a>
-        <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=context.page - 1) }}">‹ Назад</a>
+        <a class="question-page-link" href="{{ (url_for('categories', exam=context.exam, db=context.category_key, page=1) if context.get('category_key') else url_for('show_all_questions', exam=context.exam, page=1)) }}">« Первая</a>
+        <a class="question-page-link" href="{{ (url_for('categories', exam=context.exam, db=context.category_key, page=context.page - 1) if context.get('category_key') else url_for('show_all_questions', exam=context.exam, page=context.page - 1)) }}">‹ Назад</a>
     {% endif %}
     {% if context.pages.start > 1 %}<span class="question-page-ellipsis">…</span>{% endif %}
     {% for page_number in context.pages %}
         {% if page_number == context.page %}
             <span class="question-page-link is-current" aria-current="page">{{ page_number }}</span>
         {% else %}
-            <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=page_number) }}">{{ page_number }}</a>
+            <a class="question-page-link" href="{{ (url_for('categories', exam=context.exam, db=context.category_key, page=page_number) if context.get('category_key') else url_for('show_all_questions', exam=context.exam, page=page_number)) }}">{{ page_number }}</a>
         {% endif %}
     {% endfor %}
     {% if context.pages.stop - 1 < context.total_pages %}<span class="question-page-ellipsis">…</span>{% endif %}
     {% if context.page < context.total_pages %}
-        <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=context.page + 1) }}">Вперёд ›</a>
-        <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=context.total_pages) }}">Последняя »</a>
+        <a class="question-page-link" href="{{ (url_for('categories', exam=context.exam, db=context.category_key, page=context.page + 1) if context.get('category_key') else url_for('show_all_questions', exam=context.exam, page=context.page + 1)) }}">Вперёд ›</a>
+        <a class="question-page-link" href="{{ (url_for('categories', exam=context.exam, db=context.category_key, page=context.total_pages) if context.get('category_key') else url_for('show_all_questions', exam=context.exam, page=context.total_pages)) }}">Последняя »</a>
     {% endif %}
 </nav>
     <div class="question-list-footer">
-        <a class="question-list-back" href="{{ url_for('login', exam=context.exam) }}">← Вернуться в кабинет</a>
+        <a class="question-list-back" href="{{ url_for('categories', exam=context.exam) if context.get('category_key') else url_for('login', exam=context.exam) }}">← {{ "К категориям" if context.get("category_key") else "Вернуться в кабинет" }}</a>
     </div>
 </section>
 {% else %}
