@@ -105,6 +105,37 @@
                         </div>
                     </form>
                 </div>
+                {% set explanation = get_question_explanation(context.question) %}
+                <div class="explanation-trigger-row">
+                    <button class="explanation-trigger" type="button"
+                            onclick="document.getElementById('question-explanation-dialog').showModal()">
+                        <span aria-hidden="true">💡</span> Почему этот ответ правильный?
+                    </button>
+                </div>
+                <dialog class="explanation-dialog" id="question-explanation-dialog" aria-labelledby="question-explanation-title">
+                    <div class="explanation-dialog-inner">
+                        <div class="explanation-dialog-top">
+                            <p class="question-list-overline">ПОЯСНЕНИЕ К ВОПРОСУ</p>
+                            <form method="dialog">
+                                <button class="explanation-close" aria-label="Закрыть пояснение" type="submit">×</button>
+                            </form>
+                        </div>
+                        <h2 id="question-explanation-title">Почему ответ верный?</h2>
+                        {% if explanation %}
+                            <p class="explanation-correct">Правильный ответ: {{ context.question.answer|upper }} — {{ context.question.get(context.question.answer) }}</p>
+                            <p class="explanation-text">{{ explanation.text }}</p>
+                            <div class="explanation-source">
+                                <span>Источник: {{ explanation.source_type }}</span>
+                                <a href="{{ explanation.source_url }}" target="_blank" rel="noopener noreferrer">{{ explanation.source_title }}</a>
+                            </div>
+                        {% else %}
+                            <p class="explanation-text">Проверенное пояснение к этому вопросу пока не добавлено. Мы не показываем неподтверждённые объяснения.</p>
+                        {% endif %}
+                        <form method="dialog" class="explanation-bottom">
+                            <button type="submit" class="explanation-done">Вернуться к вопросу</button>
+                        </form>
+                    </div>
+                </dialog>
                 <div class="head_inside">
                     <a class="start_button clean_a" href="{{ url_for('study') }}">
                         <button class="start_button_1 global_text">
