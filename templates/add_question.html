@@ -14,7 +14,7 @@
     <form action="{{ url_for('add_question') }}" method="post" class="question-editor-form">
         <div class="question-editor-field">
             <label for="question">Текст вопроса</label>
-            <textarea id="question" name="question" rows="3" required placeholder="Введите текст вопроса">{{ context.values.get('question', '') if context.values else '' }}</textarea>
+            <textarea id="question" name="question" rows="3" required placeholder="Введите текст вопроса">{{ context.get('values', {}).get('question', '') if context.get('values') else '' }}</textarea>
         </div>
         <div class="question-editor-heading">Варианты ответа</div>
         <p class="question-editor-hint">Отметьте кружком один правильный ответ. Варианты A, B и C обязательны.</p>
@@ -25,13 +25,13 @@
                     <label for="option_{{ letter }}">Вариант {{ letter|upper }}</label>
                     <label class="question-editor-correct" for="correct_{{ letter }}">
                         <input type="radio" id="correct_{{ letter }}" name="answer" value="{{ letter }}" required
-                            {% if context.values and context.values.get('answer') == letter %}checked{% endif %}>
+                            {% if context.get('values') and context.get('values', {}).get('answer') == letter %}checked{% endif %}>
                         Правильный
                     </label>
                 </div>
                 <textarea id="option_{{ letter }}" name="option_{{ letter }}" rows="2"
                     placeholder="Текст варианта {{ letter|upper }}"
-                    {% if letter in ['a', 'b', 'c'] %}required{% endif %}>{{ context.values.get('option_' ~ letter, '') if context.values else '' }}</textarea>
+                    {% if letter in ['a', 'b', 'c'] %}required{% endif %}>{{ context.get('values', {}).get('option_' ~ letter, '') if context.get('values') else '' }}</textarea>
             </div>
             {% endfor %}
         </div>
