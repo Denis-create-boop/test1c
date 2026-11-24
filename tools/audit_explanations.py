@@ -5,6 +5,7 @@ Read-only: does not import Flask or alter the SQLite databases.
 """
 import json
 import re
+import sqlite3
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -49,12 +50,32 @@ def audit():
                 if key in by_key:
                     totals[exam]["explained"] += 1
                     found.add(key)
+    database_stats = {"verified_or_curated": 0, "unverified_drafts": 0}
+    database_path = ROOT / "explanations.db"
+    if database_path.is_file():
+        connection = sqlite3.connect(f"file:{database_path}?mode=ro", uri=True)
+        try:
+            found = connection.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name='explanations'"
+            ).fetchone()
+            if found:
+                for source_type, count in connection.execute(
+                    "SELECT source_type, COUNT(*) FROM explanations GROUP BY source_type"
+                ):
+                    kind = ("unverified_drafts"
+                            if source_type.startswith("Предварительный разбор")
+                            else "verified_or_curated")
+                    database_stats[kind] += count
+        finally:
+            connection.close()
     return {
         "per_exam": totals,
         "total_questions": sum(x["questions"] for x in totals.values()),
         "covered_questions": sum(x["explained"] for x in totals.values()),
         "seed_entries": len(seeds),
         "orphan_seeds": len(by_key - found),
+        "sqlite_rows_after_import": database_stats,
+        "note": "Unverified drafts are answer-key walkthroughs, not independent confirmations."
     }
 
 
