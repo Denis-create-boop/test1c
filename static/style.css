@@ -540,7 +540,7 @@ body:has(.cabinet-menu) .inside_body {
 
 .cabinet-menu .start_button {
     box-sizing: border-box;
-    width: 78%;
+    width: 90%;
     height: 46px;
     background: transparent;
 }
@@ -556,7 +556,7 @@ body:has(.cabinet-menu) .inside_body {
 }
 
 .cabinet-menu .line {
-    width: 78%;
+    width: 90%;
     margin: 4px auto;
     opacity: .65;
 }
