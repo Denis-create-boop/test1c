@@ -1035,3 +1035,194 @@ body:has(.category-panel) .inside_body {
     .category-card, .question-list-edit { transition: none; }
     .category-card:hover { transform: none; }
 }
+
+
+/* Unified premium buttons across all exam pages — 2026-11-24 */
+/* Primary menus: home, exam, study and result pages. */
+.start_button {
+    box-sizing: border-box;
+    display: flex;
+    width: 94%;
+    height: auto;
+    min-height: 48px;
+    align-items: stretch;
+    justify-content: center;
+    background: transparent;
+    border-radius: 13px;
+    text-decoration: none;
+}
+.start_button_1,
+.start_button .start_button_1 {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+    min-height: 48px;
+    padding: 10px 20px;
+    border: 1px solid rgba(226, 197, 142, .51);
+    border-radius: 13px;
+    background: linear-gradient(
+        128deg,
+        rgba(10, 33, 38, .97) 0%,
+        rgba(22, 50, 54, .96) 54%,
+        rgba(77, 64, 43, .75) 100%
+    );
+    color: #f0ede5;
+    font: 500 clamp(15px, 1.25vw, 17px)/1.35 Georgia, "Times New Roman", serif;
+    letter-spacing: .12px;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, .38);
+    cursor: pointer;
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, .20),
+        inset 0 1px rgba(255, 231, 181, .12),
+        0 0 12px rgba(221, 189, 122, .07);
+    transform: translateY(0) scale(1);
+    transition: transform .2s ease, background .2s ease,
+                box-shadow .2s ease, border-color .2s ease, color .2s ease;
+}
+.start_button_1:hover,
+.start_button:hover .start_button_1,
+.start_button_1:focus-visible,
+.start_button:focus-visible .start_button_1 {
+    border-color: rgba(246, 215, 151, .82);
+    background: linear-gradient(
+        128deg,
+        rgba(24, 52, 57, .99),
+        rgba(34, 66, 69, .97) 58%,
+        rgba(108, 84, 46, .80)
+    );
+    color: #fff7e7;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .4);
+    transform: translateY(-2px) scale(1.012);
+    box-shadow:
+        0 10px 24px rgba(0, 0, 0, .29),
+        0 0 17px rgba(226, 189, 119, .16),
+        inset 0 1px rgba(255, 236, 195, .18);
+    z-index: 1;
+}
+.start_button_1:active,
+.start_button:active .start_button_1 { transform: translateY(0) scale(.997); }
+.start_button_1:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+    box-shadow: none;
+    transform: none;
+}
+.start_button_1 p { margin: 0; }
+/* Keep full menu buttons wide, including the home page. */
+body:has(.inside_body_image) .start_button { width: 94%; }
+body:has(.inside_body_image) .head_inside {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+body:has(.inside_body_image) .inside_body_image,
+body:has(.inside_body_image) .inside_body_image .all_img { max-height: 34vh; }
+/* A compact vertical layout preserves the no-scroll home menu on laptops. */
+@media (max-height: 820px) and (min-width: 700px) {
+    body:has(.inside_body_image) .start_button_1 { min-height: 43px; padding-top: 8px; padding-bottom: 8px; }
+    body:has(.inside_body_image) .inside_body_image,
+    body:has(.inside_body_image) .inside_body_image .all_img { max-height: 29vh; }
+    body:has(.inside_body_image) .head_inside { margin-top: 4px; margin-bottom: 4px; }
+}
+
+/* Study/exam controls: comfortable widths, without enormous arrows/Back buttons. */
+.two_buttons { gap: clamp(10px, 2vw, 20px); align-items: stretch; }
+.two_buttons .next { box-sizing: border-box; width: min(43%, 240px); margin-top: 12px; }
+.two_buttons .next .start_button { width: 100%; min-height: 46px; }
+.two_buttons .next .start_button_1 { min-height: 46px; }
+.form > .start_button_1 { margin: 10px 0; }
+.form > .start_button_1:has(p) { justify-content: flex-start; text-align: left; }
+
+/* Clickable answer choices in study mode, retaining selected/correct colours. */
+.form .ans {
+    box-sizing: border-box;
+    width: 100%;
+    margin: 8px 0;
+    border: 1px solid rgba(212, 197, 157, .39);
+    border-radius: 12px;
+    background: linear-gradient(115deg, rgba(9, 33, 38, .88), rgba(45, 48, 41, .71));
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .12);
+    overflow: hidden;
+}
+.form .ans:has(input[type="radio"]) {
+    transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.form .ans:has(input[type="radio"]):hover {
+    transform: translateY(-1px);
+    border-color: rgba(230, 204, 154, .68);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .18);
+}
+.form .ans:has(input[type="radio"]:checked) {
+    border-color: rgba(239, 206, 142, .85);
+    box-shadow: 0 0 13px rgba(223, 183, 109, .15);
+}
+.form .ans .answer { margin: 0; }
+.form .ans .answer label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    box-sizing: border-box;
+    padding: 11px 16px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1.4;
+    color: #f0eee8;
+}
+.form .ans .answer input[type="radio"] {
+    flex: 0 0 auto;
+    width: 17px;
+    height: 17px;
+    accent-color: #d9b877;
+    cursor: pointer;
+}
+.form .ans:has(.misstake_button_green) { border-color: rgba(139, 218, 161, .56); }
+.form .ans:has(.misstake_button_red) { border-color: rgba(234, 135, 123, .56); }
+
+/* Admin and auxiliary actions: same finish, purpose-sensitive sizes. */
+.cabinet-menu .start_button { width: 94%; min-height: 50px; }
+.cabinet-menu .start_button_1 { min-height: 50px; font-size: 17px; }
+.question-editor-submit,
+.question-editor-back,
+.question-list-back,
+.question-page-link,
+.login-submit {
+    border-color: rgba(226, 197, 142, .55);
+    background: linear-gradient(128deg, rgba(12, 37, 42, .95), rgba(70, 61, 44, .78));
+    color: #f3ead9;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, .17), inset 0 1px rgba(255, 231, 181, .09);
+}
+.question-editor-submit:hover,
+.question-editor-back:hover,
+.question-list-back:hover,
+.question-page-link:not(.is-current):hover,
+.login-submit:hover {
+    border-color: rgba(241, 210, 148, .81);
+    background: linear-gradient(128deg, rgba(24, 57, 60, .98), rgba(99, 78, 47, .88));
+    color: #fff5e5;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .25), 0 0 12px rgba(225, 185, 112, .11);
+}
+.category-card { min-height: 96px; }
+.category-card:hover { transform: translateY(-2px) scale(1.01); }
+/* Destructive controls keep their warning-red meaning. */
+.deletion-submit { box-shadow: 0 4px 16px rgba(0, 0, 0, .2); }
+
+@media (max-width: 700px) {
+    .start_button, body:has(.inside_body_image) .start_button { width: 96%; }
+    .start_button_1 { min-height: 48px; padding: 10px 13px; font-size: 15px; }
+    .cabinet-menu .start_button { width: 96%; }
+    .cabinet-menu .start_button_1 { font-size: 15px; }
+    .two_buttons .next { width: min(46%, 210px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .start_button_1,
+    .form .ans:has(input[type="radio"]) { transition: none; }
+    .start_button_1:hover,
+    .start_button:hover .start_button_1,
+    .form .ans:has(input[type="radio"]):hover,
+    .category-card:hover { transform: none; }
+}
