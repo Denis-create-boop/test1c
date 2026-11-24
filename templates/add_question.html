@@ -8,10 +8,11 @@
 {% if not context.flag %}
 <section class="question-editor">
     <h2 class="question-editor-title">Добавить вопрос</h2>
+    <p class="cabinet-exam-subtitle">{{ context.exam_title }}</p>
     {% if context.message %}
         <p class="question-editor-error" role="alert">{{ context.message }}</p>
     {% endif %}
-    <form action="{{ url_for('add_question') }}" method="post" class="question-editor-form">
+    <form action="{{ url_for('add_question', exam=context.exam) }}" method="post" class="question-editor-form">
         <div class="question-editor-field">
             <label for="question">Текст вопроса</label>
             <textarea id="question" name="question" rows="3" required placeholder="Введите текст вопроса">{{ context.get('values', {}).get('question', '') if context.get('values') else '' }}</textarea>
@@ -37,7 +38,7 @@
         </div>
         <div class="question-editor-actions">
             <button class="question-editor-submit" type="submit">Сохранить вопрос</button>
-            <a class="question-editor-back" href="{{ url_for('login') }}">Назад в кабинет</a>
+            <a class="question-editor-back" href="{{ url_for('login', exam=context.exam) }}">Назад в кабинет</a>
         </div>
     </form>
 </section>
