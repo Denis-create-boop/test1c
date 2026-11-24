@@ -1,46 +1,50 @@
 {% extends 'base.html' %}
 
-{% block title %}
-    <title>{{ context.title }}</title>
-{% endblock %}
+{% block title %}<title>{{ context.title }}</title>{% endblock %}
 
 {% block header %}
-    <div class="header">
-        <h2 class="header_text">{{ 'Вопросы по категориям: ' ~ context.exam_title if context.get('show_category') else 'Учить по категориям, выберите категорию' }}</h2>
-    </div>
+{% if not context.get('show_category') %}
+    <div class="header"><h2 class="header_text">Учить по категориям, выберите категорию</h2></div>
+{% endif %}
 {% endblock %}
 
 {% block content %}
-    <br>
-    {% for k, v in context.questions.items() %}
-        {% if context.show_category %}
-            <form action="{{ url_for('categories', exam=context.exam) }}" method="post">
-                <div class="head_inside">
-                    <a class="start_button clean_a">
-                        <button class="start_button_1 global_text" name="db" value="{{ v.db }}">{{ v.text }}</button>
-                    </a>
-                    <br>
-                </div>   
-            </form>
-        {% else %}
-            <div class="head_inside">
-                <a class="start_button clean_a" href="{{ v.url }}">
-                    <button class="start_button_1 global_text">
-                        {{ v.text }}     
-                    </button>
-                </a>
-                <br>
-            </div>
-        {% endif %}
-    {% endfor %}
-    {% if context.get('show_category') %}<div class="head_inside"><a class="question-editor-back" href="{{ url_for('login', exam=context.exam) }}">В кабинет</a></div>{% endif %}
-    <form action="{{ url_for('index') }}" method="post">
-        <div class="head_inside">
-            <a class="start_button clean_a" href="{{ url_for('index') }}">
-
-                <button class="start_button_1 global_text">На главную</button></a>
+{% if context.get('show_category') %}
+<section class="category-panel">
+    <div class="category-heading">
+        <div>
+            <p class="question-list-overline">Личный кабинет · Разделы экзамена</p>
+            <h1 class="question-list-title">Категории вопросов</h1>
+            <p class="question-list-exam">{{ context.exam_title }}</p>
         </div>
-        <br>
-    </form>
-
+        <a class="question-list-back" href="{{ url_for('login', exam=context.exam) }}">← В кабинет</a>
+    </div>
+    <p class="category-intro">Выберите раздел, чтобы посмотреть вопросы и правильные ответы.</p>
+    <div class="category-grid">
+        {% for number, item in context.questions.items() %}
+        <a class="category-card" href="{{ url_for('categories', exam=context.exam, db=item.db) }}">
+            <span class="category-number">{{ '%02d'|format(number) }}</span>
+            <span class="category-name">{{ item.text }}</span>
+            <span class="category-arrow" aria-hidden="true">›</span>
+        </a>
+        {% endfor %}
+    </div>
+    <div class="category-footer">
+        <a class="question-list-back" href="{{ url_for('login', exam=context.exam) }}">← Вернуться в кабинет</a>
+        <a class="question-list-back" href="{{ url_for('index') }}">На главную</a>
+    </div>
+</section>
+{% else %}
+    <br>
+    {% for number, item in context.questions.items() %}
+        <div class="head_inside">
+            <a class="start_button clean_a" href="{{ url_for(item.url) }}">
+                <button class="start_button_1 global_text">{{ item.text }}</button>
+            </a>
+        </div>
+    {% endfor %}
+    <div class="head_inside">
+        <a class="start_button clean_a" href="{{ url_for('index') }}"><button class="start_button_1 global_text">На главную</button></a>
+    </div>
+{% endif %}
 {% endblock %}
