@@ -120,13 +120,22 @@
                                 <button class="explanation-close" aria-label="Закрыть пояснение" type="submit">×</button>
                             </form>
                         </div>
-                        <h2 id="question-explanation-title">Почему ответ верный?</h2>
+                        <h2 id="question-explanation-title">{{ 'Предварительный разбор ответа' if explanation and explanation.is_draft else 'Почему ответ верный?' }}</h2>
                         {% if explanation %}
-                            <p class="explanation-correct">Правильный ответ: {{ context.question.answer|upper }} — {{ context.question.get(context.question.answer) }}</p>
+                            {% if explanation.is_draft %}
+                                <p class="explanation-draft-note">Это разбор на основе ключа из нашего теста. Правильность ответа ещё не проверена по официальным материалам 1С. Не используйте его вместо документации.</p>
+                                <p class="explanation-correct">В исходном тесте указан ответ {{ context.question.answer|upper }} — {{ context.question.get(context.question.answer) }}</p>
+                            {% else %}
+                                <p class="explanation-correct">Правильный ответ: {{ context.question.answer|upper }} — {{ context.question.get(context.question.answer) }}</p>
+                            {% endif %}
                             <p class="explanation-text">{{ explanation.text }}</p>
                             <div class="explanation-source">
-                                <span>Источник: {{ explanation.source_type }}</span>
-                                <a href="{{ explanation.source_url }}" target="_blank" rel="noopener noreferrer">{{ explanation.source_title }}</a>
+                                <span>{{ 'Основа разбора' if explanation.is_draft else 'Источник' }}: {{ explanation.source_type }}</span>
+                                {% if explanation.source_url %}
+                                    <a href="{{ explanation.source_url }}" target="_blank" rel="noopener noreferrer">{{ explanation.source_title }}</a>
+                                {% else %}
+                                    <span>{{ explanation.source_title }}</span>
+                                {% endif %}
                             </div>
                         {% else %}
                             <p class="explanation-text">Проверенное пояснение к этому вопросу пока не добавлено. Мы не показываем неподтверждённые объяснения.</p>
