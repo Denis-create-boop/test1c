@@ -24,7 +24,7 @@
         {% for number, item in context.questions.items() %}
         <a class="category-card" href="{{ url_for('categories', exam=context.exam, db=item.db) }}">
             <span class="category-number">{{ '%02d'|format(number) }}</span>
-            <span class="category-name">{{ item.text }}</span>
+            <span class="category-name">{{ item.text.split(' ', 1)[1] if ' ' in item.text and item.text.split(' ', 1)[0].isdigit() else item.text }}</span>
             <span class="category-arrow" aria-hidden="true">›</span>
         </a>
         {% endfor %}
