@@ -1114,7 +1114,7 @@ body:has(.category-panel) .inside_body {
 }
 .start_button_1 p { margin: 0; }
 /* Keep full menu buttons wide, including the home page. */
-body:has(.inside_body_image) .start_button { width: 94%; }
+body:has(.inside_body_image) .start_button { width: 85%; max-width: 950px; }
 body:has(.inside_body_image) .head_inside {
     margin-top: 5px;
     margin-bottom: 5px;
@@ -1212,7 +1212,8 @@ body:has(.inside_body_image) .inside_body_image .all_img { max-height: 34vh; }
 .deletion-submit { box-shadow: 0 4px 16px rgba(0, 0, 0, .2); }
 
 @media (max-width: 700px) {
-    .start_button, body:has(.inside_body_image) .start_button { width: 96%; }
+    .start_button { width: 96%; }
+    body:has(.inside_body_image) .start_button { width: 92%; }
     .start_button_1 { min-height: 48px; padding: 10px 13px; font-size: 15px; }
     .cabinet-menu .start_button { width: 96%; }
     .cabinet-menu .start_button_1 { font-size: 15px; }
