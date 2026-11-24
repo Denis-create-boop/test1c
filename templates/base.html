@@ -26,6 +26,7 @@
    
 
     function checkRadioSelections() {
+        if (!submitButton || !context) return;
         let isChecked = false;
 
         for (const radio of radioButtons) {
@@ -77,6 +78,7 @@
     const contextParts = document.getElementById('context');
     
     function checkRadioSelectionsParts() {
+        if (!submitButtonParts || !contextParts) return;
         let isChecked = false;
         for (const radio of radioButtonsParts) {
             const div = document.getElementById(radio.value);
