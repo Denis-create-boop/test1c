@@ -5,6 +5,91 @@
 {% endblock %}
 
 {% block content %}
+{% if context.get('is_paginated') %}
+<section class="question-list-panel">
+    <div class="question-list-heading">
+        <div>
+            <p class="question-list-overline">Личный кабинет · Банк вопросов</p>
+            <h1 class="question-list-title">Все вопросы</h1>
+            <p class="question-list-exam">{{ context.exam_title }}</p>
+        </div>
+        <a class="question-list-back" href="{{ url_for('login', exam=context.exam) }}">← В кабинет</a>
+    </div>
+    <div class="question-list-toolbar">
+        <span>Показаны {{ context.first_number }}–{{ context.last_number }} из {{ context.total_questions }}</span>
+        <span>Страница {{ context.page }} из {{ context.total_pages }}</span>
+    </div>
+    <nav class="question-list-pagination" aria-label="Навигация по страницам вопросов">
+    {% if context.page > 1 %}
+        <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=1) }}">« Первая</a>
+        <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=context.page - 1) }}">‹ Назад</a>
+    {% endif %}
+    {% if context.pages.start > 1 %}<span class="question-page-ellipsis">…</span>{% endif %}
+    {% for page_number in context.pages %}
+        {% if page_number == context.page %}
+            <span class="question-page-link is-current" aria-current="page">{{ page_number }}</span>
+        {% else %}
+            <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=page_number) }}">{{ page_number }}</a>
+        {% endif %}
+    {% endfor %}
+    {% if context.pages.stop - 1 < context.total_pages %}<span class="question-page-ellipsis">…</span>{% endif %}
+    {% if context.page < context.total_pages %}
+        <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=context.page + 1) }}">Вперёд ›</a>
+        <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=context.total_pages) }}">Последняя »</a>
+    {% endif %}
+</nav>
+    <div class="question-list-items">
+    {% for question in context.questions.values() %}
+        <article class="question-list-card">
+            <div class="question-list-card-header">
+                <span class="question-list-number">Вопрос №{{ question.id }}</span>
+                <span class="question-list-answer-note">Правильный ответ выделен</span>
+            </div>
+            <h2 class="question-list-question">{{ question.question }}</h2>
+            {% if question.image %}
+                <img class="question-list-image" src="{{ url_for('static', filename='images/' ~ question.image) }}" alt="Иллюстрация к вопросу {{ question.id }}" loading="lazy">
+            {% endif %}
+            <div class="question-list-answers">
+                {% for letter in ['a','b','c','d','e','f'] %}
+                    {% if question.get(letter) %}
+                        <div class="question-list-answer {% if letter == question.answer %}is-correct{% endif %}">
+                            <span class="question-list-letter">{{ letter|upper }}</span>
+                            <span class="question-list-answer-text">{{ question.get(letter) }}</span>
+                            {% if letter == question.answer %}<span class="question-list-check" aria-label="Правильный ответ">✓</span>{% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </article>
+    {% else %}
+        <p class="question-list-empty">Для этого экзамена пока нет вопросов.</p>
+    {% endfor %}
+    </div>
+    <nav class="question-list-pagination" aria-label="Навигация по страницам вопросов">
+    {% if context.page > 1 %}
+        <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=1) }}">« Первая</a>
+        <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=context.page - 1) }}">‹ Назад</a>
+    {% endif %}
+    {% if context.pages.start > 1 %}<span class="question-page-ellipsis">…</span>{% endif %}
+    {% for page_number in context.pages %}
+        {% if page_number == context.page %}
+            <span class="question-page-link is-current" aria-current="page">{{ page_number }}</span>
+        {% else %}
+            <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=page_number) }}">{{ page_number }}</a>
+        {% endif %}
+    {% endfor %}
+    {% if context.pages.stop - 1 < context.total_pages %}<span class="question-page-ellipsis">…</span>{% endif %}
+    {% if context.page < context.total_pages %}
+        <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=context.page + 1) }}">Вперёд ›</a>
+        <a class="question-page-link" href="{{ url_for('show_all_questions', exam=context.exam, page=context.total_pages) }}">Последняя »</a>
+    {% endif %}
+</nav>
+    <div class="question-list-footer">
+        <a class="question-list-back" href="{{ url_for('login', exam=context.exam) }}">← Вернуться в кабинет</a>
+    </div>
+</section>
+{% else %}
+
     {% if context.get('exam_title') %}<h2 class="cabinet-list-title">{{ context.exam_title }}</h2>{% endif %}
     
     {% for question in context.questions.values() %}
@@ -123,4 +208,6 @@
         </form>
         <br>
     
+
+{% endif %}
 {% endblock %}
