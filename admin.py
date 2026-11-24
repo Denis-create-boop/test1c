@@ -281,6 +281,11 @@ def delete_question():
 
     from databases.question_deletion import delete_exam_question
 
+    if request.method == "GET" and not request.args.get("id"):
+        return render_template("delete_question.html", context=exam_context(
+            exam, question=None, select_question=True,
+        ))
+
     try:
         question_id = int(request.values.get("id", ""))
         if question_id < 1:
