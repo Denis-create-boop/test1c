@@ -1,6 +1,7 @@
 from admin import *
 from databases.start_questions import *
 import random
+from databases.explanations import find_explanation
 import subprocess
 import webbrowser
 
@@ -12,6 +13,15 @@ FLAG = False
 EXAM_COUNT = 0
 PROF = False
 ERP = False
+
+@app.template_global()
+def get_question_explanation(question):
+    """Available only in training / exam-with-answers templates."""
+    exam = "prof" if PROF else "erp" if ERP else None
+    if not exam:
+        return None
+    return find_explanation(exam, question)
+
 
 part_list_prof = [PartOneProf(), PartTwoProf(), PartThreeProf(), PartFourProf(), PartFiveProf(), PartSixProf(), PartSevenProf(), PartEightProf(), 
                   PartNineProf(), PartTenProf(), PartElevenProf(), PartTwelveProf(), PartThirteenProf(), PartFourteenProf()]
