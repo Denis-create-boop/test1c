@@ -188,9 +188,33 @@ def show_all_questions():
     exam, db = exam_database()
     if db is None:
         return redirect(url_for('login'))
-    questions = db.get_all_questions()
-    return render_template('questions.html', context=exam_context(exam,
-        title="Вопросы экзамена", questions=questions))
+
+    # The database can have gaps in question IDs; paginate actual records, not IDs.
+    questions = sorted(
+        db.get_all_questions().values(),
+        key=lambda question: question["id"],
+    )
+    per_page = 10
+    total = len(questions)
+    total_pages = max(1, (total + per_page - 1) // per_page)
+    requested_page = request.args.get("page", default=1, type=int) or 1
+    page = max(1, min(requested_page, total_pages))
+    start = (page - 1) * per_page
+    current_questions = questions[start:start + per_page]
+    visible_pages = range(max(1, page - 2), min(total_pages, page + 2) + 1)
+
+    return render_template('questions.html', context=exam_context(
+        exam,
+        title="Все вопросы экзамена",
+        questions={index: question for index, question in enumerate(current_questions, 1)},
+        is_paginated=True,
+        total_questions=total,
+        first_number=start + 1 if total else 0,
+        last_number=start + len(current_questions),
+        page=page,
+        total_pages=total_pages,
+        pages=visible_pages,
+    ))
 
 @app.route('/show_question', methods=['GET', 'POST'])
 def show_question():
