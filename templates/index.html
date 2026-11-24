@@ -1,166 +1,54 @@
 {% extends 'base.html' %}
 
-{% block title %}
-    <title>{{ context.title }}</title>
-{% endblock %}
+{% block title %}<title>{{ context.title }}</title>{% endblock %}
 
 {% block header %}
-    <div class="header">
-        <h2 class="header_text">Тест по вопросам 1с профессионал</h2>
+<header class="header home-header">
+    <div class="home-header-inner">
+        <span class="home-brand-mark">1С</span>
+        <div class="home-header-copy">
+            <span class="home-eyebrow">ПОДГОТОВКА К СЕРТИФИКАЦИИ</span>
+            <h1 class="home-header-title">Тесты 1С:Профессионал</h1>
+        </div>
     </div>
+</header>
 {% endblock %}
 
 {% block content %}
-
+<main class="home-dashboard">
     {% if context.ERP %}
-         <div class="head_inside">
-           <h3 class="header_text">Проверь свои знания в 1с</h3>
-        </div>
-
-        <div class="head_inside">
-            <div class="inside_body_image">
-                <img class="all_img" src="{{ url_for('static', filename='images/1c.jpg') }}" alt="img">
-            </div>
-        </div>
-            <div class="head_inside">
-                <a class="start_button clean_a" href="{{ url_for('test') }}"><button class="start_button_1 global_text">Экзамен</button></a>
-                <br>
-            </div>   
-
-            <div class="head_inside">
-                <a class="start_button clean_a" href="{{ url_for('test_with_answers') }}">
-                    <button class="start_button_1 global_text">
-                        Экзамен с ответами
-                    </button>
-                </a>
-                <br>
-            </div>    
-
-            <div class="head_inside">
-                <a class="start_button clean_a" href="{{ url_for('study') }}">
-                    <button class="start_button_1 global_text">учить по разделам</button>
-                </a>
-                <br>
-            </div>
-
-            <div class="head_inside">
-                <a class="start_button clean_a" href="{{ url_for('index') }}">
-                    <button class="start_button_1 global_text">назад</button>
-                </a>
-                <br>
-            </div>
-
-        {% if context.admin %}
-            <div class="head_inside">
-                <a class="start_button clean_a" href="{{ url_for('login') }}">
-                    <button class="start_button_1 global_text">
-                        В кабинет
-                    </button>
-                </a>
-                <br>
-            </div>
-        {% endif %}
-        <div class="head_inside">
-            <a class="start_button clean_a" href="{{ url_for('out') }}">
-                <button class="start_button_1 global_text">
-                    Выйти
-                </button>
-            </a>
-        </div>
-        <br>
+        {% set chosen_exam = '1С:ERP · Управление предприятием 2.5' %}
     {% elif context.platformaprof %}
-        <div class="head_inside">
-           <h3 class="header_text">Проверь свои знания в 1с</h3>
-        </div>
-
-        <div class="head_inside">
-            <div class="inside_body_image">
-                <img class="all_img" src="{{ url_for('static', filename='images/1c.jpg') }}" alt="img">
-            </div>
-        </div>
-            <div class="head_inside">
-                <a class="start_button clean_a" href="{{ url_for('test') }}"><button class="start_button_1 global_text">Экзамен</button></a>
-                <br>
-            </div>   
-
-            <div class="head_inside">
-                <a class="start_button clean_a" href="{{ url_for('test_with_answers') }}">
-                    <button class="start_button_1 global_text">
-                        Экзамен с ответами
-                    </button>
-                </a>
-                <br>
-            </div>    
-
-            <div class="head_inside">
-                <a class="start_button clean_a" href="{{ url_for('study') }}">
-                    <button class="start_button_1 global_text">учить по разделам</button>
-                </a>
-                <br>
-            </div>
-
-            <div class="head_inside">
-                <a class="start_button clean_a" href="{{ url_for('index') }}">
-                    <button class="start_button_1 global_text">назад</button>
-                </a>
-                <br>
-            </div>
-
-        {% if context.admin %}
-            <div class="head_inside">
-                <a class="start_button clean_a" href="{{ url_for('login') }}">
-                    <button class="start_button_1 global_text">
-                        В кабинет
-                    </button>
-                </a>
-                <br>
-            </div>
-        {% endif %}
-        <div class="head_inside">
-            <a class="start_button clean_a" href="{{ url_for('out') }}">
-                <button class="start_button_1 global_text">
-                    Выйти
-                </button>
-            </a>
-        </div>
-        <br>
-    {% else %}
-         <div class="head_inside">
-           <h3 class="header_text">Выберите экзамен</h3>
-        </div>
-
-        <div class="head_inside">
-            <div class="inside_body_image">
-                <img class="all_img" src="{{ url_for('static', filename='images/1c.jpg') }}" alt="img">
-            </div>
-        </div>
-
-        <div class="head_inside">
-            <a class="start_button clean_a" href="{{ url_for('test_prof') }}"><button class="start_button_1 global_text">1с профессионал по платформе</button></a>
-            <br>
-        </div>
-        <div class="head_inside">
-            <a class="start_button clean_a" href="{{ url_for('test_erp') }}"><button class="start_button_1 global_text">1с:ERP Управление предпреятием 2.5</button></a>
-            <br>
-        </div>
-             
-        {% if context.admin %}
-            <div class="head_inside">
-                <a class="start_button clean_a" href="{{ url_for('login') }}">
-                    <button class="start_button_1 global_text">
-                        В кабинет
-                    </button>
-                </a>
-                <br>
-            </div>
-        {% endif %}
-        <div class="head_inside">
-            <a class="start_button clean_a" href="{{ url_for('out') }}">
-                <button class="start_button_1 global_text">
-                    Выйти
-                </button>
-            </a>
-        </div>
-        <br>    
+        {% set chosen_exam = '1С:Профессионал · Платформа' %}
     {% endif %}
+
+    <div class="home-introduction">
+        <span class="home-kicker">{{ 'РЕЖИМ ПОДГОТОВКИ' if context.ERP or context.platformaprof else 'ДОБРО ПОЖАЛОВАТЬ' }}</span>
+        <h2 class="home-main-title">{{ 'Выберите режим обучения' if context.ERP or context.platformaprof else 'Выберите экзамен' }}</h2>
+        <p class="home-description">{{ chosen_exam if context.ERP or context.platformaprof else 'Проверяйте знания, тренируйтесь по разделам и готовьтесь в удобном темпе.' }}</p>
+    </div>
+
+    <div class="home-logo-frame">
+        <img class="home-logo" src="{{ url_for('static', filename='images/1c.jpg') }}" alt="Логотип 1С">
+    </div>
+
+    <nav class="home-actions" aria-label="Навигация по экзаменам">
+        {% if context.ERP or context.platformaprof %}
+            <a class="home-action" href="{{ url_for('test') }}"><span class="home-action-label">Экзамен</span><span class="home-action-arrow" aria-hidden="true">›</span></a>
+            <a class="home-action" href="{{ url_for('test_with_answers') }}"><span class="home-action-label">Экзамен с ответами</span><span class="home-action-arrow" aria-hidden="true">›</span></a>
+            <a class="home-action" href="{{ url_for('study') }}"><span class="home-action-label">Учить по разделам</span><span class="home-action-arrow" aria-hidden="true">›</span></a>
+            <a class="home-action home-action-secondary" href="{{ url_for('index') }}"><span class="home-action-label">Выбрать другой экзамен</span><span class="home-action-arrow" aria-hidden="true">‹</span></a>
+        {% else %}
+            <a class="home-action" href="{{ url_for('test_prof') }}"><span class="home-action-label">1С:Профессионал по платформе</span><span class="home-action-arrow" aria-hidden="true">›</span></a>
+            <a class="home-action" href="{{ url_for('test_erp') }}"><span class="home-action-label">1С:ERP Управление предприятием 2.5</span><span class="home-action-arrow" aria-hidden="true">›</span></a>
+        {% endif %}
+    </nav>
+
+    <div class="home-footer-actions">
+        {% if context.admin %}
+            <a class="home-footer-link" href="{{ url_for('login') }}">Личный кабинет</a>
+        {% endif %}
+        <a class="home-footer-link home-logout" href="{{ url_for('out') }}">Выйти</a>
+    </div>
+</main>
 {% endblock %}
