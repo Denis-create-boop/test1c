@@ -6,7 +6,7 @@
 
 {% block header %}
     <div class="header">
-        <h2 class="header_text">Учить по категориям, выберите категорию</h2>
+        <h2 class="header_text">{{ 'Вопросы по категориям: ' ~ context.exam_title if context.get('show_category') else 'Учить по категориям, выберите категорию' }}</h2>
     </div>
 {% endblock %}
 
@@ -14,7 +14,7 @@
     <br>
     {% for k, v in context.questions.items() %}
         {% if context.show_category %}
-            <form action="{{ url_for('categories') }}" method="post">
+            <form action="{{ url_for('categories', exam=context.exam) }}" method="post">
                 <div class="head_inside">
                     <a class="start_button clean_a">
                         <button class="start_button_1 global_text" name="db" value="{{ v.db }}">{{ v.text }}</button>
@@ -33,6 +33,7 @@
             </div>
         {% endif %}
     {% endfor %}
+    {% if context.get('show_category') %}<div class="head_inside"><a class="question-editor-back" href="{{ url_for('login', exam=context.exam) }}">В кабинет</a></div>{% endif %}
     <form action="{{ url_for('index') }}" method="post">
         <div class="head_inside">
             <a class="start_button clean_a" href="{{ url_for('index') }}">
