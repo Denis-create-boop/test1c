@@ -37,7 +37,7 @@ def study_for_parts(title, url, questions, back_flag=False, flag=False):
         last_question_id = len(questions)
     else:
         all_questions = questions.get_all_questions()
-        last_question_id = questions.get_last_id()
+        last_question_id = len(all_questions)
         
     if back_flag:
         if COUNT == last_question_id or COUNT == last_question_id + 1:
@@ -105,11 +105,12 @@ def writing_questions(exam):
     last_id = questions.get_last_id()
     
     for part in part_list:
-        last_id = part.get_last_id()
-        number = random.randrange(1, last_id)
-        question = part.get_question(number)
-        QUESTIONS.append(question)
-        random.shuffle(QUESTIONS) 
+        section_questions = list(part.get_all_questions().values())
+        if not section_questions:
+            section_questions = list(questions.get_all_questions().values())
+        if section_questions:
+            QUESTIONS.append(random.choice(section_questions))
+    random.shuffle(QUESTIONS)
    
 
 def write():
@@ -200,7 +201,7 @@ def get_context(title, questions, url, flag, first_question, last_question):
     global ADMIN, USER, COUNT
 
     all_questions = questions.get_all_questions()
-    last_id = questions.get_last_id()
+    last_id = len(all_questions)
     
     context = {
         "title": title,
@@ -330,10 +331,11 @@ def test_with_answers():
     last_id = questions.get_last_id()
     
     for part in part_list:
-        last_id = part.get_last_id()
-        number = random.randrange(1, last_id)
-        question = part.get_question(number)
-        QUESTIONS.append(question)
+        section_questions = list(part.get_all_questions().values())
+        if not section_questions:
+            section_questions = list(questions.get_all_questions().values())
+        if section_questions:
+            QUESTIONS.append(random.choice(section_questions))
 
     context = {
         "title": "Экзамен с ответами",
