@@ -67,6 +67,14 @@ def delete_exam_question(exam, question_id):
                 )
             if matches:
                 matched_table, matched_rowid = matches[0]
+                remaining_count = connection.execute(
+                    f"SELECT COUNT(*) FROM sections.{matched_table}"
+                ).fetchone()[0]
+                if remaining_count <= 1:
+                    raise ValueError(
+                        "Это последний вопрос раздела. Пока удаление запрещено, "
+                        "чтобы режим обучения не остался без вопросов."
+                    )
                 connection.execute(
                     f"DELETE FROM sections.{matched_table} WHERE rowid=?",
                     (matched_rowid,),
