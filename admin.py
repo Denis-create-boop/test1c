@@ -111,13 +111,26 @@ def add_question():
     USER = False if int(params["user"]) == 0 else True
     if ADMIN:
         if request.method == "POST":
-            question = request.form["question"]
-            option_a = request.form["option_a"]
-            option_b = request.form["option_b"]
-            option_c = request.form["option_c"]
-            option_d = request.form["option_d"]
-            option_e = request.form["option_e"]
-            QUESTIONSPROF.add_question(question=question, a=option_a, b=option_b, c=option_c, d=option_d, e=option_e)
+            values = {key: request.form.get(key, "").strip()
+                      for key in ("question", "option_a", "option_b", "option_c", "option_d", "option_e", "answer")}
+            answer = values["answer"].lower()
+            selected_text = values.get("option_" + answer, "") if answer in ("a", "b", "c", "d", "e") else ""
+            if (not values["question"] or
+                    any(not values["option_" + key] for key in ("a", "b", "c")) or
+                    not selected_text):
+                context = {
+                    "title": "Добавление вопроса",
+                    "message": "Заполните вопрос, варианты A–C и выберите правильный ответ с заполненным текстом.",
+                    "values": values,
+                    "admin": ADMIN,
+                    "user": USER,
+                }
+                return render_template("add_question.html", context=context), 400
+            QUESTIONSPROF.add_question(
+                question=values["question"], answer=answer,
+                a=values["option_a"], b=values["option_b"], c=values["option_c"],
+                d=values["option_d"] or None, e=values["option_e"] or None
+            )
             context = {
                 "titile": "добавление вопроса",
                 "message": "вопрос успешно добавлен",
