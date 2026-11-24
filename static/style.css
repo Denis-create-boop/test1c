@@ -649,3 +649,44 @@ body:has(.question-editor) .inside_body {
     .question-editor-submit, .question-editor-back { transition: none; }
     .question-editor-submit:hover, .question-editor-back:hover { transform: none; }
 }
+
+/* Exam selector and shared question management controls */
+.cabinet-exam-title {
+    max-width: 90%;
+    margin: 2px auto 12px;
+    font: italic 600 clamp(19px, 3vw, 23px) Georgia, 'Times New Roman', serif;
+    color: #f1e4ca;
+    text-align: center;
+}
+.cabinet-menu .cabinet-action {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+}
+.cabinet-exam-subtitle, .cabinet-list-title {
+    text-align: center;
+    color: #e2cc9d;
+    font: italic 17px Georgia, 'Times New Roman', serif;
+    margin: -13px 0 22px;
+}
+.cabinet-list-title { margin: 22px 0; }
+.question-editor-number {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    max-width: 340px;
+    height: 49px;
+    margin: 0 auto;
+    padding: 9px 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(212, 205, 184, .43);
+    background: #e5e7e1;
+    color: #14272c;
+    font-size: 18px;
+}
+.question-editor-field:has(.question-editor-number) label { text-align: center; }
+.cabinet-answer { box-sizing: border-box; padding: 12px 16px; border-radius: 8px; width: 90%; }
