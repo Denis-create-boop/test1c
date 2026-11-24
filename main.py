@@ -39,6 +39,8 @@ def study_for_parts(title, url, questions, back_flag=False, flag=False):
         all_questions = questions.get_all_questions()
         last_question_id = len(all_questions)
         
+    last_id = last_question_id
+
     if back_flag:
         if COUNT == last_question_id or COUNT == last_question_id + 1:
             COUNT -= 2
