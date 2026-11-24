@@ -40,7 +40,6 @@ USER = False if int(params["user"]) == 0 else True
 def study_for_parts(title, url, questions, back_flag=False, flag=False):
     global COUNT, FLAG
     FLAG = True
-    last_id = questions.get_last_id()
     first = False
     if flag:
         all_questions = questions
