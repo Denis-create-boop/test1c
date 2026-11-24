@@ -40,7 +40,7 @@
 </nav>
     {% if request.args.get("deleted") and not context.get("category_key") %}<p class="question-list-success" role="status">Вопрос №{{ request.args.get("deleted") }} удалён.</p>{% endif %}
     <div class="question-list-items">
-    {% for question in context.questions.values() %}
+    {% for question in context.questions %}
         <article class="question-list-card">
             <div class="question-list-card-header">
                 <span class="question-list-number">Вопрос №{{ question.id }}</span>
