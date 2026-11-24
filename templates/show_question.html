@@ -16,6 +16,7 @@
             {% endif %}
         {% endfor %}
         <div class="question-editor-actions">
+            <a class="question-list-edit" href="{{ url_for('delete_question', exam=context.exam, id=context.question.id) }}">Удалить вопрос</a>
             <a class="question-editor-back" href="{{ url_for('show_question', exam=context.exam) }}">Найти другой</a>
             <a class="question-editor-back" href="{{ url_for('login', exam=context.exam) }}">В кабинет</a>
         </div>
