@@ -6,42 +6,38 @@
 
 {% block content %}
     {% if context.admin %}
+        {% set exam = request.args.get('exam') %}
         <div class="cabinet-menu">
-        <br>
-        <div class="head_inside">
-            <a class="start_button clean_a" href="{{ url_for('add_question') }}" >
-                <button class="start_button_1 global_text" name="answer">добавить вопрос</button>
-            </a>
-        </div>   
-
-        <div class="head_inside">
-            <a class="start_button clean_a" href="{{ url_for('change_question') }}" >
-                <button class="start_button_1 global_text" name="answer">изменить вопрос</button>
-            </a>
-        </div>
-        <div class="head_inside">
-            <a class="start_button clean_a" href="{{ url_for('show_all_questions') }}" >
-                <button class="start_button_1 global_text"  name="answer">посмотреть все вопросы</button>
-            </a>
-        </div>
-        <div class="head_inside">
-            <a class="start_button clean_a" href="{{ url_for('show_question') }}" >
-                <button class="start_button_1 global_text" name="answer">посмотреть конкретный вопрос</button>
-            </a>
-            <br>
-        </div> 
-        <div class="head_inside">
-            <a class="start_button clean_a" href="{{ url_for('categories') }}" >
-                <button class="start_button_1 global_text" name="answer">посмотреть вопросы по категориям</button>
-            </a>
-            <br>
-        </div>  
-        <hr class="line">
-        <div class="head_inside">
-            <a class="start_button clean_a" href="{{ url_for('index') }}">
-                <button class="start_button_1 global_text">На главную</button></a>    
-        </div>
-        <br>
+            {% if exam in ['prof', 'erp'] %}
+                <h2 class="cabinet-exam-title">{{ '1С:Профессионал по платформе' if exam == 'prof' else '1С:ERP Управление предприятием' }}</h2>
+                {% for endpoint, label in [
+                    ('add_question', 'Добавить вопрос'),
+                    ('change_question', 'Изменить вопрос'),
+                    ('show_all_questions', 'Посмотреть все вопросы'),
+                    ('show_question', 'Посмотреть конкретный вопрос'),
+                    ('categories', 'Вопросы по категориям')
+                ] %}
+                <div class="head_inside">
+                    <a class="start_button clean_a" href="{{ url_for(endpoint, exam=exam) }}"><span class="start_button_1 global_text cabinet-action">{{ label }}</span></a>
+                </div>
+                {% endfor %}
+                <hr class="line">
+                <div class="head_inside">
+                    <a class="start_button clean_a" href="{{ url_for('login') }}"><span class="start_button_1 global_text cabinet-action">Выбрать другой экзамен</span></a>
+                </div>
+            {% else %}
+                <h2 class="cabinet-exam-title">Выберите экзамен</h2>
+                <div class="head_inside">
+                    <a class="start_button clean_a" href="{{ url_for('login', exam='prof') }}"><span class="start_button_1 global_text cabinet-action">1С:Профессионал по платформе</span></a>
+                </div>
+                <div class="head_inside">
+                    <a class="start_button clean_a" href="{{ url_for('login', exam='erp') }}"><span class="start_button_1 global_text cabinet-action">1С:ERP Управление предприятием</span></a>
+                </div>
+            {% endif %}
+            <hr class="line">
+            <div class="head_inside">
+                <a class="start_button clean_a" href="{{ url_for('index') }}"><span class="start_button_1 global_text cabinet-action">На главную</span></a>
+            </div>
         </div>
     {% else %}
         <div class="login-panel">
