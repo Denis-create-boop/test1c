@@ -1506,3 +1506,16 @@ body:has(.home-dashboard) .inside_body {
     .explanation-trigger { transition: none; }
     .explanation-trigger:hover { transform: none; }
 }
+
+
+/* Unverified explanation notice: distinguish drafts from checked sources. */
+.explanation-draft-note {
+    margin: 14px 0;
+    padding: 13px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(236, 193, 112, .56);
+    border-left: 4px solid #d7ac64;
+    background: rgba(106, 76, 34, .25);
+    color: #ffe4b6;
+    font: 14px/1.5 system-ui, sans-serif;
+}
