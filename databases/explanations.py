@@ -292,11 +292,8 @@ def _initialize(connection):
                    source_title=excluded.source_title,
                    source_url=excluded.source_url,
                    source_type=excluded.source_type
-               WHERE explanations.source_type=?""".replace(
-                   "WHERE explanations.source_type=?",
-                   "WHERE explanations.source_type='" + DRAFT_TYPE + "'"
-               ),
-            seed_rows,
+               WHERE explanations.source_type=:draft_type""",
+            [{**entry, "draft_type": DRAFT_TYPE} for entry in seed_rows],
         )
         # The source files ship in Git and are the canonical initial bank.
         # The current SQLite banks may contain additional user questions.
