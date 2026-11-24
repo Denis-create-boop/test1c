@@ -1226,3 +1226,14 @@ body:has(.inside_body_image) .inside_body_image .all_img { max-height: 34vh; }
     .form .ans:has(input[type="radio"]):hover,
     .category-card:hover { transform: none; }
 }
+
+
+/* Study section menu: slightly narrower buttons without changing their height */
+.study-section-menu .head_inside { justify-content: center; }
+.study-section-menu .start_button {
+    width: 85%;
+    max-width: 950px;
+}
+@media (max-width: 700px) {
+    .study-section-menu .start_button { width: 92%; }
+}
