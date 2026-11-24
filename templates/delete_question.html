@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}<title>Удаление вопроса</title>{% endblock %}
+{% block content %}
+<section class="question-editor deletion-panel">
+    <p class="question-list-overline">Личный кабинет · {{ context.exam_title }}</p>
+    <h1 class="question-editor-title">Удаление вопроса</h1>
+    {% if context.message %}<p class="question-editor-error" role="alert">{{ context.message }}</p>{% endif %}
+    {% if context.question %}
+        <div class="deletion-preview">
+            <span class="question-list-number">Вопрос №{{ context.question.id }}</span>
+            <p class="deletion-question">{{ context.question.question }}</p>
+        </div>
+        <p class="deletion-warning">Этот вопрос будет удалён из экзамена и связанного раздела. Отменить удаление после подтверждения нельзя.</p>
+        <form action="{{ url_for('delete_question', exam=context.exam, id=context.question.id) }}" method="post" class="deletion-form">
+            <input type="hidden" name="page" value="{{ context.page or 1 }}">
+            <label class="deletion-confirm">
+                <input type="checkbox" name="confirmation" value="delete" required>
+                <span>Подтверждаю удаление вопроса №{{ context.question.id }}</span>
+            </label>
+            <div class="question-editor-actions">
+                <button class="deletion-submit" type="submit">Удалить безвозвратно</button>
+                <a class="question-editor-back" href="{{ url_for('show_all_questions', exam=context.exam, page=context.page or 1) }}">Отмена — к списку</a>
+            </div>
+        </form>
+    {% else %}
+        <div class="question-editor-actions"><a class="question-editor-back" href="{{ url_for('show_all_questions', exam=context.exam) }}">К списку вопросов</a></div>
+    {% endif %}
+</section>
+{% endblock %}
