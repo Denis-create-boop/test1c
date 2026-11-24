@@ -1238,3 +1238,190 @@ body:has(.inside_body_image) .inside_body_image .all_img { max-height: 34vh; }
 @media (max-width: 700px) {
     .study-section-menu .start_button { width: 92%; }
 }
+
+
+/* Compact and balanced home/exam dashboard */
+body:has(.home-dashboard) .body {
+    box-sizing: border-box;
+    min-height: calc(100dvh - 16px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(12px, 2vh, 20px);
+    padding: clamp(12px, 2.5vh, 28px) 0;
+}
+body:has(.home-dashboard) .home-header,
+body:has(.home-dashboard) .inside_body {
+    box-sizing: border-box;
+    margin: 0 auto;
+    height: auto;
+}
+body:has(.home-dashboard) .home-header {
+    width: min(1030px, calc(100% - 36px));
+    min-height: 73px;
+    padding: 13px 22px;
+    border-color: rgba(234, 199, 125, .23);
+    border-radius: 15px;
+    background: linear-gradient(100deg, rgba(11, 27, 31, .70), rgba(74, 63, 45, .30), rgba(11, 27, 31, .65));
+}
+.home-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+.home-brand-mark {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border: 1px solid rgba(231, 198, 124, .50);
+    border-radius: 12px;
+    background: linear-gradient(145deg, rgba(165, 137, 70, .27), rgba(23, 44, 45, .76));
+    color: #f8ddb0;
+    font: 700 21px Georgia, serif;
+    box-shadow: inset 0 1px rgba(255, 239, 194, .17);
+}
+.home-header-copy { text-align: left; }
+.home-eyebrow, .home-kicker {
+    display: block;
+    color: #d4b984;
+    font: 600 10px/1.4 system-ui, sans-serif;
+    letter-spacing: .19em;
+}
+.home-header-title {
+    margin: 4px 0 0;
+    color: #f1eee6;
+    font: 600 clamp(18px, 2vw, 24px)/1.2 Georgia, serif;
+}
+body:has(.home-dashboard) .inside_body {
+    width: min(890px, calc(100% - 42px));
+    padding: clamp(19px, 3vh, 30px) clamp(18px, 4vw, 42px);
+    border: 1px solid rgba(226, 193, 129, .29);
+    border-radius: 19px;
+    background: linear-gradient(130deg, rgba(12, 30, 34, .69), rgba(65, 59, 49, .35) 52%, rgba(12, 29, 33, .71));
+    backdrop-filter: blur(11px);
+    box-shadow: 0 16px 45px rgba(0, 0, 0, .25), 0 0 22px rgba(228, 190, 110, .07),
+        inset 0 1px rgba(246, 226, 178, .12);
+}
+.home-dashboard { display: flex; flex-direction: column; align-items: center; }
+.home-introduction { text-align: center; }
+.home-kicker { margin-bottom: 8px; }
+.home-main-title {
+    margin: 0;
+    color: #f4ead8;
+    font: italic 600 clamp(23px, 3.1vw, 30px)/1.25 Georgia, serif;
+}
+.home-description {
+    margin: 8px auto 0;
+    max-width: 660px;
+    color: #d1d8d5;
+    font: 14px/1.45 system-ui, sans-serif;
+}
+.home-logo-frame {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    width: min(260px, 65vw);
+    height: clamp(120px, 20vh, 177px);
+    margin: clamp(14px, 2.2vh, 22px) auto;
+    overflow: hidden;
+    border: 1px solid rgba(220, 203, 163, .33);
+    border-radius: 16px;
+    background: rgba(240, 241, 234, .95);
+    box-shadow: 0 0 0 4px rgba(230, 205, 140, .07), 0 10px 26px rgba(0, 0, 0, .27);
+}
+.home-logo { display: block; width: 100%; height: 100%; object-fit: contain; }
+.home-actions {
+    box-sizing: border-box;
+    width: min(680px, 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+.home-action {
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 10px 42px;
+    border: 1px solid rgba(223, 194, 138, .48);
+    border-radius: 12px;
+    background: linear-gradient(110deg, rgba(8, 38, 41, .94), rgba(30, 54, 55, .95) 56%, rgba(73, 61, 40, .67));
+    color: #f1ede5;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, .15), inset 0 1px rgba(250, 233, 193, .10);
+    text-align: center;
+    text-decoration: none;
+    font: 500 clamp(15px, 1.2vw, 17px)/1.35 Georgia, serif;
+    transition: transform .18s ease, background .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.home-action:hover, .home-action:focus-visible {
+    transform: translateY(-2px) scale(1.008);
+    border-color: rgba(250, 219, 160, .78);
+    background: linear-gradient(110deg, rgba(20, 49, 52, .97), rgba(45, 67, 65, .96), rgba(103, 78, 43, .77));
+    color: #fff6e6;
+    box-shadow: 0 9px 22px rgba(0, 0, 0, .22), 0 0 15px rgba(228, 188, 115, .13);
+}
+.home-action:focus-visible { outline: 2px solid #e9cb93; outline-offset: 2px; }
+.home-action-arrow {
+    position: absolute;
+    right: 19px;
+    top: 50%;
+    transform: translateY(-54%);
+    color: #e3c792;
+    font: 24px/1 Georgia, serif;
+}
+.home-action-secondary {
+    border-color: rgba(194, 205, 199, .25);
+    background: rgba(16, 35, 39, .48);
+    color: #d5dcd7;
+}
+.home-action-secondary .home-action-arrow { right: auto; left: 19px; }
+.home-footer-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px 22px;
+    margin-top: clamp(14px, 2vh, 22px);
+}
+.home-footer-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 130px;
+    min-height: 34px;
+    padding: 4px 16px;
+    border: 1px solid rgba(202, 188, 154, .26);
+    border-radius: 9px;
+    background: rgba(13, 30, 34, .48);
+    color: #ddd9cf;
+    text-decoration: none;
+    font: 14px Georgia, serif;
+}
+.home-footer-link:hover { color: #ffe7b7; border-color: rgba(232, 198, 131, .64); }
+.home-logout { opacity: .82; }
+@media (max-width: 650px) {
+    body:has(.home-dashboard) .home-header { width: calc(100% - 22px); padding: 10px 16px; }
+    body:has(.home-dashboard) .inside_body { width: calc(100% - 22px); padding: 17px 14px 22px; }
+    .home-logo-frame { width: min(235px, 70vw); height: 145px; }
+    .home-action { padding: 10px 33px; }
+    .home-brand-mark { width: 38px; height: 38px; }
+    .home-eyebrow { font-size: 9px; }
+}
+@media (max-height: 700px) and (min-width: 650px) {
+    body:has(.home-dashboard) .body { justify-content: flex-start; gap: 10px; padding: 8px 0 14px; }
+    body:has(.home-dashboard) .home-header { min-height: 59px; padding: 8px 18px; }
+    body:has(.home-dashboard) .inside_body { padding-top: 15px; padding-bottom: 15px; }
+    .home-logo-frame { height: 110px; width: 210px; margin: 11px auto; }
+    .home-actions { gap: 6px; }
+    .home-action { min-height: 40px; padding-top: 7px; padding-bottom: 7px; }
+    .home-footer-actions { margin-top: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .home-action { transition: none; }
+    .home-action:hover { transform: none; }
+}
